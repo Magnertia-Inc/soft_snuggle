@@ -1,0 +1,64 @@
+# Deploys to Railway on every push to main.
+#
+# The repository and the Railway account belong to two different logins, so
+# Railway cannot see this repository and its GitHub connection is empty. This
+# runs the deploy from inside GitHub instead, authenticating with a token, so
+# neither account needs access to the other.
+#
+# One-time setup, on Railway:
+#   Project Settings -> Tokens -> create a token for the production environment
+# then, on GitHub:
+#   Settings -> Secrets and variables -> Actions -> New repository secret
+#   Name: RAILWAY_TOKEN     Value: the token
+#
+# Nothing happens until that secret exists; the job fails with a clear message.
+
+name: Deploy to Railway
+
+on:
+  push:
+    branches: [main]
+  # Lets you deploy by hand from the Actions tab without pushing anything.
+  workflow_dispatch:
+
+# A second push while one deploy is running cancels the older run, so the last
+# commit is the one that ends up live.
+concurrency:
+  group: railway-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the commit being deployed
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # Checked in the shell rather than in an `if:`, because the secrets
+      # context is not dependable in a step condition.
+      - name: Fail early if the token is missing
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          if [ -z "$RAILWAY_TOKEN" ]; then
+            echo "RAILWAY_TOKEN is not set."
+            echo "Add it under Settings > Secrets and variables > Actions."
+            echo "Create the token in Railway under Project Settings > Tokens."
+            exit 1
+          fi
+          echo "Token found."
+
+      - name: Install the Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Deploy
+        # A project token already knows its project, so only the service is named.
+        run: railway up --service "${{ vars.RAILWAY_SERVICE || 'Soft-snuggle' }}" --ci
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}

@@ -35,40 +35,6 @@ function groupsFor(sizes: string[]) {
 const RAW: Omit<SeedProduct, "ageGroups">[] = [
   // Real Soft Snuggle pieces (photos in public/products/<slug>). Prices are placeholders.
   {
-    slug: "cherry-frock",
-    name: "Cherry Bloom Frock",
-    category: "frock",
-    fabric: "50% bamboo, 50% cotton",
-    colour: "Butter yellow, cherry print",
-    // Temporary test price so a real order can be put through the checkout
-    // end to end. Put this back to 349 before the shop takes real orders.
-    price: 1,
-    badge: "New",
-    organic: false,
-    sizes: CHART_SIZES,
-    description:
-      "A twirl-ready sleeveless frock in breathable muslin, scattered with little red cherries. Gathered waist, a comfy round neck and snap buttons at the back for quick, easy changes.",
-    care: "Hand wash or gentle machine wash cold. Dry in shade. Do not bleach.",
-    tint: "#F6EFD3",
-    garment: "#F3EBC4",
-  },
-  {
-    slug: "cherry-jabla",
-    name: "Cherry Bloom Jabla",
-    category: "jabla",
-    fabric: "Soft muslin cotton",
-    colour: "Butter yellow, cherry print",
-    price: 449,
-    badge: "New",
-    organic: false,
-    sizes: CHART_SIZES,
-    description:
-      "A classic sleeveless jabla in soft, breathable muslin with a sweet cherry print. Snap buttons all the way down the front make dressing a wriggly baby quick and easy.",
-    care: "Hand wash or gentle machine wash cold. Dry in shade. Do not bleach.",
-    tint: "#F3EBD6",
-    garment: "#F3EBC4",
-  },
-  {
     slug: "lemon-frock",
     name: "Lemon Grove Frock",
     category: "frock",
