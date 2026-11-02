@@ -19,36 +19,6 @@ export interface Collection {
 // A photo at public/hero/<slug>.(png|webp) replaces the drawing for that slide.
 export const COLLECTIONS: Collection[] = [
   {
-    // Shown with the real photo in public/hero/cherry.webp. The look below is
-    // only the fallback if that photo is ever removed.
-    slug: "cherry",
-    productSlug: "cherry-frock",
-    eyebrow: "New in",
-    title: "Cherry",
-    accent: "Bloom",
-    label: "Cherry Bloom Frock",
-    blurb: "A twirl-ready muslin frock scattered with little red cherries, with snaps down the front.",
-    glow: "#F6E6CC",
-    look: {
-      skin: "#B97F5C", hair: "#24190F", hairStyle: "curls", outfit: "#F6E7C8",
-      kind: "bodysuit", detail: "heart", accessory: "bow", accessoryColor: "#F2B8B0", prop: "none",
-    },
-  },
-  {
-    slug: "jabla",
-    productSlug: "cherry-jabla",
-    eyebrow: "New in",
-    title: "Cherry",
-    accent: "Jabla",
-    label: "Cherry Bloom Jabla",
-    blurb: "A sleeveless muslin jabla with snaps all the way down, for dressing a wriggly baby in seconds.",
-    glow: "#F3EBD6",
-    look: {
-      skin: "#F3CDB0", hair: "#6B4A36", hairStyle: "tuft", outfit: "#F1E8DA",
-      kind: "bodysuit", detail: "dots", accessory: "none", prop: "teddy",
-    },
-  },
-  {
     slug: "lemon",
     productSlug: "lemon-frock",
     eyebrow: "New in",
