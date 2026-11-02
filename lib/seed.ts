@@ -100,22 +100,6 @@ const RAW: Omit<SeedProduct, "ageGroups">[] = [
     garment: "#FBFAF7",
   },
   {
-    slug: "moonbeam-set",
-    name: "Moonbeam Night Set",
-    category: "set",
-    fabric: "50% bamboo, 50% cotton",
-    colour: "White, blue moon print",
-    price: 599,
-    badge: "New",
-    organic: false,
-    sizes: CHART_SIZES,
-    description:
-      "A two-piece set in airy crinkled muslin, printed with little blue crescent moons. The short-sleeved top buttons down the front and the pyjamas have a soft covered waist, so nothing digs in on a warm night.",
-    care: "Hand wash or gentle machine wash cold. Dry in shade. Do not bleach.",
-    tint: "#EAF0F7",
-    garment: "#F8FAFC",
-  },
-  {
     slug: "peaks-frock",
     name: "Tiny Peaks Frock",
     category: "frock",
