@@ -59,8 +59,13 @@ added to `lib/seed.ts` still appear on the next deploy.
 **Order emails** (`lib/order-emails.ts`, sent through Gmail by `lib/mail.ts`): one email per order to
 everyone in `ADMIN_EMAILS`, and a thank-you to the customer if they gave an email. Cash on delivery is
 emailed as soon as it's placed; a UPI order once the customer enters their UTR (an unpaid UPI order sends
-nothing). A corrected UTR sends the admins a short "UTR changed" email. Needs `GMAIL_USER` and
-`GMAIL_APP_PASSWORD` (see `.env.example`); without them the shop works as before and simply doesn't email.
+nothing). A corrected UTR sends the admins a short "UTR changed" email.
+
+Railway's Hobby plan blocks outbound SMTP, so the live site sends through a small Google Apps Script on the
+shop's Gmail (`scripts/gmail-relay.gs`, set-up steps at the top): `MAIL_RELAY_URL` and `MAIL_RELAY_SECRET`.
+Locally, or on a host that allows SMTP, `GMAIL_USER` + `GMAIL_APP_PASSWORD` send straight to Gmail instead.
+With neither, the shop works as before and simply doesn't email. Every send is logged
+(`email sent: …` / `email failed: …`).
 
 Customers follow the same steps at `/track` (order ID + mobile number), or from their account.
 
@@ -106,7 +111,7 @@ The live site runs on Railway (`soft-snuggle-production.up.railway.app`), deploy
    - `DATABASE_URL` = `${{Postgres.DATABASE_URL}}` (Railway's private network; no SSL setting needed)
    - `SESSION_SECRET` = a long random value (`openssl rand -base64 32`)
    - `ADMIN_EMAILS`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` for the admin panel
-   - `GMAIL_USER`, `GMAIL_APP_PASSWORD` for order emails
+   - `MAIL_RELAY_URL`, `MAIL_RELAY_SECRET` for order emails (see `scripts/gmail-relay.gs`)
    - the WhatsApp, UPI and shipping values from `.env.example`
 3. Redeploy. The first start creates the tables and loads the catalogue.
 

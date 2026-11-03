@@ -2,16 +2,24 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { Transporter } from "nodemailer";
 
-// Sends email through a Gmail account, using an app password (Google Account →
-// Security → 2-Step Verification → App passwords). Free, up to about 500
-// emails a day, which is far more than the shop sends.
+// Sends the shop's email from its Gmail account, one of two ways:
 //
-//   GMAIL_USER          the Gmail address that sends, e.g. shop@gmail.com
-//   GMAIL_APP_PASSWORD  the 16-letter app password made on that same account
+// 1. Through the Apps Script relay (scripts/gmail-relay.gs), over HTTPS. This
+//    is what the live site uses: Railway's Hobby plan blocks the mail
+//    connection (SMTP) that option 2 needs, so Gmail can't be reached directly.
+//      MAIL_RELAY_URL     the script's Web app URL (…/exec)
+//      MAIL_RELAY_SECRET  the secret its setup() printed
 //
-// Without them nothing is sent and the site carries on as normal: an order
-// never fails because an email couldn't go. For working on the templates,
-// MAIL_OUTBOX=<folder> writes each email there as an .html file instead.
+// 2. Straight to Gmail over SMTP, with an app password (Google Account →
+//    Security → 2-Step Verification → App passwords). Works locally, and on
+//    hosts that allow SMTP (Railway Pro).
+//      GMAIL_USER          the Gmail address that sends
+//      GMAIL_APP_PASSWORD  the 16-letter app password made on that account
+//
+// The relay wins when both are set. With neither, nothing is sent and the site
+// carries on as normal: an order never fails because an email couldn't go.
+// For working on the templates, MAIL_OUTBOX=<folder> writes each email there as
+// an .html file instead.
 
 export interface Mail {
   to: string[];
@@ -33,7 +41,31 @@ async function transport() {
   return globalForMail.__softSnuggleMail;
 }
 
-export const mailConfigured = () => !!(process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD);
+const relayConfigured = () => !!(process.env.MAIL_RELAY_URL && process.env.MAIL_RELAY_SECRET);
+const smtpConfigured = () => !!(process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD);
+export const mailConfigured = () => relayConfigured() || smtpConfigured();
+
+async function viaRelay(mail: Mail, to: string[]) {
+  const res = await fetch(process.env.MAIL_RELAY_URL!, {
+    method: "POST",
+    // text/plain keeps Apps Script from rejecting the request before doPost runs.
+    headers: { "content-type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ secret: process.env.MAIL_RELAY_SECRET, to, subject: mail.subject, html: mail.html, text: mail.text, fromName: "Soft Snuggle" }),
+    redirect: "follow",
+    signal: AbortSignal.timeout(20_000),
+  });
+  const body = await res.text();
+  let reply: { ok?: boolean; error?: string; remaining?: number } = {};
+  try {
+    reply = JSON.parse(body);
+  } catch {
+    // Apps Script answers with an HTML page when the URL is wrong or the
+    // deployment isn't open to "Anyone".
+    throw new Error(`the relay didn't answer as expected (HTTP ${res.status}). Check MAIL_RELAY_URL and that the web app is deployed for "Anyone".`);
+  }
+  if (!reply.ok) throw new Error(`the relay refused: ${reply.error ?? "no reason given"}`);
+  return reply.remaining;
+}
 
 /** Sends one email. Never throws: a failure is logged and reported as false. */
 export async function sendMail(mail: Mail): Promise<boolean> {
@@ -49,21 +81,28 @@ export async function sendMail(mail: Mail): Promise<boolean> {
   }
 
   if (!mailConfigured()) {
-    console.info(`email not sent (GMAIL_USER / GMAIL_APP_PASSWORD not set): "${mail.subject}" to ${to.length}`);
+    console.info(`email not sent (no MAIL_RELAY_URL, and no GMAIL_USER / GMAIL_APP_PASSWORD): "${mail.subject}"`);
     return false;
   }
 
   try {
-    await (await transport()).sendMail({
-      from: { name: "Soft Snuggle", address: process.env.GMAIL_USER! },
-      to,
-      subject: mail.subject,
-      html: mail.html,
-      text: mail.text,
-    });
+    if (relayConfigured()) {
+      const remaining = await viaRelay(mail, to);
+      console.info(`email sent: "${mail.subject}" to ${to.length} (Gmail allows ${remaining ?? "?"} more today)`);
+    } else {
+      await (await transport()).sendMail({
+        from: { name: "Soft Snuggle", address: process.env.GMAIL_USER! },
+        to,
+        subject: mail.subject,
+        html: mail.html,
+        text: mail.text,
+      });
+      console.info(`email sent: "${mail.subject}" to ${to.length}`);
+    }
     return true;
   } catch (err) {
-    // Most often a wrong or revoked app password; the message from Gmail says which.
+    // A wrong password or secret, or (over SMTP on Railway Hobby) a connection
+    // timeout because SMTP is blocked there.
     console.error(`email failed: "${mail.subject}"`, err instanceof Error ? err.message : err);
     return false;
   }
