@@ -26,6 +26,14 @@ export const AGE_GROUPS = [
   { slug: "on-the-move", title: "On the Move", range: "9–12 months", tint: "#F1E7BC", sizes: ["9–12M"] },
 ] as const;
 
+/** The standard sizes, youngest first, offered as tick boxes in the product editor. */
+export const STANDARD_SIZES: string[] = AGE_GROUPS.flatMap((g) => g.sizes);
+
+/** The Shop by age groups a product appears under, worked out from its sizes. */
+export function ageGroupsFor(sizes: string[]): string[] {
+  return AGE_GROUPS.filter((g) => g.sizes.some((s) => sizes.includes(s))).map((g) => g.slug);
+}
+
 export const CATEGORY_LABELS = {
   frock: "Frocks",
   jabla: "Jablas",

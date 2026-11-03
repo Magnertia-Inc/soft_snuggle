@@ -44,8 +44,17 @@ an address locks it out immediately. Needs `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_S
   `new → confirmed → packed → shipped (courier + tracking no.) → out for delivery → delivered`, or cancelled
   (with a reason; can be reopened). Confirming a UPI order marks it paid. Every step and note is kept in
   the order's history with who did it.
-- **Stock**: take a piece off sale, or mark single sizes sold out. Sold-out sizes are crossed out in the
-  shop and refused at checkout.
+- **Products**: add, edit, hide or delete products: name, price and "was" price, sizes, wording, badge,
+  card colours and photos (uploaded from the phone or computer, shrunk to WebP and kept in the database,
+  served at `/media/p-<id>.webp`). New products start hidden. The same page takes a piece off sale or marks
+  single sizes sold out; sold-out sizes are crossed out in the shop and refused at checkout.
+- **Coupons**: discount codes (% or ₹ off the items, optional cap, minimum order, last day, total uses,
+  once per mobile number). Shoppers enter them at checkout; the order is re-priced on the server.
+  Cancelling an order gives its use of the code back. A used code can only be switched off, not deleted.
+
+`lib/seed.ts` is only the starting catalogue. Once a product has been saved in the panel, the panel owns
+it and edits to `lib/seed.ts` no longer reach it (a deploy can't undo the owner's price). New products
+added to `lib/seed.ts` still appear on the next deploy.
 
 Customers follow the same steps at `/track` (order ID + mobile number), or from their account.
 
@@ -59,6 +68,7 @@ requests from other sites (Origin check), and admin pages are marked noindex.
 | WhatsApp number, UPI ID, payee name, shipping rules | `.env.local` |
 | Hero carousel slides (title, text, character look) | `lib/collections.ts` |
 | Baby characters (swap for 3D PNGs later) | `components/art/Baby.tsx` |
+| Product prices, wording, photos, new products, discount codes | admin panel → Products / Coupons |
 | Product photos (front/back/close-up/lifestyle) | drop into `public/products/<slug>/1.jpg … 4.jpg` — prompts in `IMAGE-PROMPTS.md` |
 | Real photos on their own background | name them e.g. `1-photo.webp`, `2-photo.webp` (only files named exactly `1`/`2`/`3` are treated as white-background studio shots and blended into the card colour) |
 | Hero 3D characters | drop into `public/hero/<collection>.png` (white background) |
@@ -82,7 +92,8 @@ database would be wiped on every deploy, and the fallback secret is public in th
 
 ### Railway
 
-The live site runs on Railway (`soft-snuggle-production.up.railway.app`), deployed from `main`.
+The live site runs on Railway (`soft-snuggle-production.up.railway.app`), deployed automatically from the
+`suve` branch of `Magnertia-Inc/soft_snuggle`.
 
 1. In the project, **+ Create → Database → PostgreSQL**. The service is named `Postgres`.
 2. On the app service's **Variables**, add:

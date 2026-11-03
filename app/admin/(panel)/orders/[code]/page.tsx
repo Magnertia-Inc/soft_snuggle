@@ -50,6 +50,12 @@ export default async function AdminOrderPage({ params }: { params: Promise<{ cod
             </ul>
             <dl className="mt-3 space-y-1 border-t border-line pt-3 text-sm">
               <div className="flex justify-between"><dt className="text-ink-soft">Subtotal</dt><dd>{inr(order.subtotal)}</dd></div>
+              {order.discount > 0 && (
+                <div className="flex justify-between">
+                  <dt className="text-ink-soft">Discount{order.couponCode ? ` · ${order.couponCode}` : ""}</dt>
+                  <dd>−{inr(order.discount)}</dd>
+                </div>
+              )}
               <div className="flex justify-between"><dt className="text-ink-soft">Shipping</dt><dd>{order.shipping ? inr(order.shipping) : "Free"}</dd></div>
               <div className="flex justify-between text-base font-bold"><dt>Total</dt><dd>{inr(order.total)}</dd></div>
             </dl>

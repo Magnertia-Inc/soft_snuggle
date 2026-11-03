@@ -1,3 +1,4 @@
+import { reclaimCoupon, releaseCoupon } from "./coupons";
 import { getDb } from "./db";
 import { logOrderEvent } from "./queries";
 import type { OrderItem, PaymentMethod } from "./types";
@@ -150,6 +151,8 @@ export interface AdminOrder extends AdminOrderRow {
   pincode: string;
   items: OrderItem[];
   subtotal: number;
+  discount: number;
+  couponCode: string | null;
   shipping: number;
   utr: string | null;
   courier: string | null;
@@ -164,7 +167,7 @@ export async function getAdminOrder(code: string): Promise<AdminOrder | null> {
   const { rows } = await db.query<ListRow & {
     id: number; email: string | null; address: string; state: string; pincode: string; subtotal: number;
     shipping: number; utr: string | null; courier: string | null; tracking_number: string | null;
-    tracking_url: string | null; customer_id: number | null;
+    tracking_url: string | null; customer_id: number | null; discount: number | null; coupon_code: string | null;
   }>("SELECT * FROM orders WHERE code = $1", [code]);
   const r = rows[0];
   if (!r) return null;
@@ -181,6 +184,8 @@ export async function getAdminOrder(code: string): Promise<AdminOrder | null> {
     pincode: r.pincode,
     items: parseItems(r.items),
     subtotal: r.subtotal,
+    discount: r.discount ?? 0,
+    couponCode: r.coupon_code,
     shipping: r.shipping,
     utr: r.utr,
     courier: r.courier,
@@ -263,12 +268,17 @@ export async function updateOrder(code: string, action: OrderAction, input: Acti
 
   const params: unknown[] = [code, step.from];
   if (action === "ship") params.push(courier, trackingNumber, trackingUrl);
-  const { rows } = await db.query<{ id: number }>(
+  const { rows } = await db.query<{ id: number; coupon_code: string | null }>(
     `UPDATE orders SET status = '${step.to}', updated_at = now()${step.set ? `, ${step.set}` : ""}
-     WHERE code = $1 AND status = ANY($2::text[]) RETURNING id`,
+     WHERE code = $1 AND status = ANY($2::text[]) RETURNING id, coupon_code`,
     params,
   );
   if (!rows[0]) throw new AdminError("This order has moved on since the page loaded. Refresh to see where it is.");
+
+  // A cancelled order gives its use of a discount code back; reopening takes it again.
+  const coupon = rows[0].coupon_code;
+  if (coupon && action === "cancel") await releaseCoupon(coupon);
+  if (coupon && action === "reopen") await reclaimCoupon(coupon);
 
   const detail = action === "ship" ? `${courier} · ${trackingNumber}` : note;
   await logOrderEvent(rows[0].id, action, detail, actor);

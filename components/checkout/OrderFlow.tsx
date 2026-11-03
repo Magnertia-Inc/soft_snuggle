@@ -254,7 +254,13 @@ export function OrderFlow({ order, upiUrl, upiId, payee, qrSvg }: Props) {
                 <span className="font-bold">{inr(i.price * i.qty)}</span>
               </li>
             ))}
-            <li className="flex justify-between border-t border-line pt-2 text-ink-soft">
+            {order.discount > 0 && (
+              <li className="flex justify-between border-t border-line pt-2 text-ink-soft">
+                <span>Discount{order.couponCode ? ` (${order.couponCode})` : ""}</span>
+                <span>−{inr(order.discount)}</span>
+              </li>
+            )}
+            <li className={`flex justify-between text-ink-soft ${order.discount > 0 ? "" : "border-t border-line pt-2"}`}>
               <span>Shipping</span>
               <span>{order.shipping === 0 ? "Free" : inr(order.shipping)}</span>
             </li>

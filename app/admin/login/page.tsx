@@ -25,7 +25,7 @@ export default async function AdminLogin({ searchParams }: { searchParams: Promi
         <Logo className="mx-auto h-10" />
         <p className="eyebrow mt-6">Shop admin</p>
         <h1 className="mt-2 font-display text-3xl tracking-tight">Sign in</h1>
-        <p className="mt-2 text-sm text-ink-soft">Orders, payments, shipping and stock. Only the shop&apos;s own Google accounts can get in.</p>
+        <p className="mt-2 text-sm text-ink-soft">Orders, payments, shipping, products and discount codes. Only the shop&apos;s own Google accounts can get in.</p>
 
         {(error || !ready) && (
           <p role="alert" className="mt-5 rounded-2xl bg-peach/60 px-4 py-3 text-left text-sm">

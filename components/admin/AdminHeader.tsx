@@ -7,7 +7,8 @@ import { Logo } from "../art/Logo";
 const NAV = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/orders", label: "Orders" },
-  { href: "/admin/stock", label: "Stock" },
+  { href: "/admin/products", label: "Products" },
+  { href: "/admin/coupons", label: "Coupons" },
 ];
 
 export function AdminHeader({ email }: { email: string }) {

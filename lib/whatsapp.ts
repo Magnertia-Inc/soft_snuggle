@@ -14,6 +14,7 @@ export function orderMessage(order: Order, utr?: string | null, trackUrl?: strin
   lines.push("", "*Items*");
   for (const i of order.items) lines.push(`• ${i.name} (${i.colour ? `${i.colour}, ` : ""}${i.size}) × ${i.qty} — ${inr(i.price * i.qty)}`);
   lines.push("", `Subtotal: ${inr(order.subtotal)}`);
+  if (order.discount > 0) lines.push(`Discount${order.couponCode ? ` (${order.couponCode})` : ""}: −${inr(order.discount)}`);
   lines.push(`Shipping: ${order.shipping === 0 ? "Free" : inr(order.shipping)}`);
   lines.push(`*Total: ${inr(order.total)}* (${order.paymentMethod === "upi" ? "Paid via UPI" : "Cash on Delivery"})`);
   lines.push("", "*Deliver to*", `${order.customerName}, +91 ${order.phone}`, order.address, `${order.city}, ${order.state} – ${order.pincode}`);

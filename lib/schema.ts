@@ -128,6 +128,54 @@ CREATE TABLE IF NOT EXISTS order_events (
 CREATE INDEX IF NOT EXISTS order_events_order_idx ON order_events (order_id, id);
 CREATE INDEX IF NOT EXISTS orders_status_idx ON orders (status);
 
+-- The admin panel's product editor. A product the owner has saved there has
+-- edited_at set, and from then on the catalogue sync leaves it alone, so a
+-- deploy never undoes a price change. origin says where a product came from:
+-- 'seed' (lib/seed.ts) or 'admin' (added in the panel). hidden keeps a piece
+-- out of the shop without losing it; deleted_at takes it out of the panel too,
+-- and the row stays so lib/seed.ts can't bring it back on the next start.
+-- images is the owner's own photo list; empty means the photos in
+-- public/products/<slug> are used.
+ALTER TABLE products ADD COLUMN IF NOT EXISTS edited_at  TIMESTAMPTZ;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS origin     TEXT NOT NULL DEFAULT 'seed';
+ALTER TABLE products ADD COLUMN IF NOT EXISTS hidden     BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS images     TEXT[];
+
+-- Photos uploaded in the admin panel, kept in the database so they survive a
+-- deploy and are backed up with everything else. Served at /media/p-<id>.webp.
+CREATE TABLE IF NOT EXISTS media (
+  id          SERIAL PRIMARY KEY,
+  mime        TEXT NOT NULL,
+  data        BYTEA NOT NULL,
+  width       INTEGER,
+  height      INTEGER,
+  bytes       INTEGER NOT NULL,
+  uploaded_by TEXT,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- Discount codes. code is stored in capitals and matched without regard to
+-- case. used_count goes up when an order is placed with the code and down
+-- again if that order is cancelled.
+CREATE TABLE IF NOT EXISTS coupons (
+  id             SERIAL PRIMARY KEY,
+  code           TEXT UNIQUE NOT NULL,
+  kind           TEXT NOT NULL CHECK (kind IN ('percent', 'flat')),
+  value          INTEGER NOT NULL CHECK (value > 0),
+  min_order      INTEGER NOT NULL DEFAULT 0,
+  max_discount   INTEGER,
+  expires_at     TIMESTAMPTZ,
+  max_uses       INTEGER,
+  once_per_phone BOOLEAN NOT NULL DEFAULT FALSE,
+  used_count     INTEGER NOT NULL DEFAULT 0,
+  active         BOOLEAN NOT NULL DEFAULT TRUE,
+  created_by     TEXT,
+  created_at     TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS coupon_code TEXT;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS discount    INTEGER NOT NULL DEFAULT 0;
+
 CREATE TABLE IF NOT EXISTS subscribers (
   id          SERIAL PRIMARY KEY,
   email       TEXT UNIQUE NOT NULL,

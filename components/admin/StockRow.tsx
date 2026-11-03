@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { Product } from "@/lib/types";
@@ -50,8 +51,22 @@ export function StockRow({ product }: { product: Product }) {
       </div>
 
       <div className="min-w-0 flex-1 basis-48">
-        <a href={`/product/${product.slug}`} target="_blank" rel="noreferrer" className="font-bold hover:underline">{product.name}</a>
-        <p className="text-sm text-ink-soft">{inr(product.price)} · {product.colour}</p>
+        <Link href={`/admin/products/${product.id}`} className="font-bold hover:underline">{product.name}</Link>
+        {product.hidden && (
+          <span className="ml-2 rounded-full bg-butter px-2 py-0.5 align-middle text-[11px] font-extrabold">Hidden</span>
+        )}
+        <p className="text-sm text-ink-soft">
+          {inr(product.price)}
+          {product.compareAt ? <s className="ml-1.5">{inr(product.compareAt)}</s> : null} · {product.colour}
+        </p>
+        <p className="mt-0.5 text-xs font-bold">
+          <Link href={`/admin/products/${product.id}`} className="underline underline-offset-4">Edit</Link>
+          {!product.hidden && (
+            <a href={`/product/${product.slug}`} target="_blank" rel="noreferrer" className="ml-3 text-ink-soft underline underline-offset-4">
+              View in shop ↗
+            </a>
+          )}
+        </p>
         {error && <p role="alert" className="mt-1 text-sm font-bold text-[#a0573f]">{error}</p>}
       </div>
 

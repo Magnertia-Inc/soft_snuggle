@@ -1,4 +1,4 @@
-import { AGE_GROUPS } from "./store";
+import { ageGroupsFor } from "./store";
 import type { Category } from "./types";
 
 interface SeedProduct {
@@ -26,12 +26,13 @@ const CHART_SIZES = ["0–3M", "3–6M", "6–9M", "9–12M"];
 const SET_SIZES = ["0–3M", "3–6M"];
 const CARE = "Machine wash cold, inside out, with similar colours. Tumble dry low. No bleach, no fuss.";
 
-function groupsFor(sizes: string[]) {
-  return AGE_GROUPS.filter((g) => g.sizes.some((s) => sizes.includes(s))).map((g) => g.slug);
-}
-
 // Placeholder catalogue taken from the Soft Snuggle PDF. Sizes and copy are
 // stand-ins until the client sends the real product sheet.
+//
+// This is only the starting point. Once the owner saves a product in the admin
+// panel (Products → Edit), the panel owns it and changes made here no longer
+// reach it — see syncCatalogue in lib/db.ts. New products added here still
+// appear in the shop on the next deploy.
 const RAW: Omit<SeedProduct, "ageGroups">[] = [
   // Real Soft Snuggle pieces (photos in public/products/<slug>). Prices are placeholders.
   {
@@ -327,4 +328,4 @@ const RAW: Omit<SeedProduct, "ageGroups">[] = [
   },
 ];
 
-export const SEED_PRODUCTS: SeedProduct[] = RAW.map((p) => ({ ...p, ageGroups: groupsFor(p.sizes) }));
+export const SEED_PRODUCTS: SeedProduct[] = RAW.map((p) => ({ ...p, ageGroups: ageGroupsFor(p.sizes) }));

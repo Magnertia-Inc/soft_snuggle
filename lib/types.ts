@@ -37,8 +37,10 @@ export interface Product {
   soldOutSizes: string[];
   /** Colour choices shown as round swatches on the product page */
   colours: ColourOption[];
-  /** Real photos from public/products/<slug>; empty means use the illustration */
+  /** Photos: the ones uploaded in the admin panel, else public/products/<slug>; empty means use the illustration */
   images: string[];
+  /** Kept out of the shop by the owner; only the admin panel sees it */
+  hidden: boolean;
 }
 
 export interface CartItem {
@@ -78,6 +80,9 @@ export interface Order {
   pincode: string;
   items: OrderItem[];
   subtotal: number;
+  /** Taken off by a coupon; 0 when none was used */
+  discount: number;
+  couponCode: string | null;
   shipping: number;
   total: number;
   paymentMethod: PaymentMethod;

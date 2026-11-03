@@ -2,19 +2,26 @@ import { randomBytes } from "node:crypto";
 import { getDb } from "./db";
 import { coloursFor } from "./colours";
 import { productImages } from "./images";
-import { shippingFor } from "./store";
+import { CouponError, checkCoupon, claimCoupon, releaseCoupon } from "./coupons";
+import { inr, shippingFor } from "./store";
 import { courierLink, type TrackInfo } from "./tracking";
 import type { Order, OrderItem, PaymentMethod, Product } from "./types";
 
-type ProductRow = {
+export type ProductRow = {
   id: number; slug: string; name: string; category: Product["category"]; fabric: string;
   colour: string; price: number; compare_at: number | null; badge: string | null;
   organic: boolean; sizes: string[]; age_groups: string[]; description: string; care: string;
   tint: string; garment: string; in_stock: boolean; sold_out_sizes: string[] | null;
+  hidden: boolean; deleted_at: Date | string | null; images: string[] | null;
 };
 
-function toProduct(r: ProductRow): Product {
-  const images = productImages(r.slug);
+/** What shoppers may see: not hidden by the owner and not deleted. */
+const LISTED = "NOT hidden AND deleted_at IS NULL";
+
+export function toProduct(r: ProductRow): Product {
+  // The owner's own photo list once they have edited the photos in the admin
+  // panel (an empty list there means "no photos"), the public/ folder until then.
+  const images = r.images ?? productImages(r.slug);
   return {
     id: r.id, slug: r.slug, name: r.name, category: r.category, fabric: r.fabric,
     colour: r.colour, price: r.price, compareAt: r.compare_at, badge: r.badge,
@@ -22,19 +29,20 @@ function toProduct(r: ProductRow): Product {
     care: r.care, tint: r.tint, garment: r.garment, inStock: r.in_stock,
     soldOutSizes: r.sold_out_sizes ?? [],
     images,
+    hidden: r.hidden ?? false,
     colours: coloursFor({ slug: r.slug, colour: r.colour, garment: r.garment, category: r.category }),
   };
 }
 
 export async function getProducts(): Promise<Product[]> {
   const db = await getDb();
-  const { rows } = await db.query<ProductRow>("SELECT * FROM products ORDER BY sort, id");
+  const { rows } = await db.query<ProductRow>(`SELECT * FROM products WHERE ${LISTED} ORDER BY sort, id`);
   return rows.map(toProduct);
 }
 
 export async function getProduct(slug: string): Promise<Product | null> {
   const db = await getDb();
-  const { rows } = await db.query<ProductRow>("SELECT * FROM products WHERE slug = $1", [slug]);
+  const { rows } = await db.query<ProductRow>(`SELECT * FROM products WHERE slug = $1 AND ${LISTED}`, [slug]);
   return rows[0] ? toProduct(rows[0]) : null;
 }
 
@@ -49,6 +57,7 @@ export interface NewOrderInput {
   pincode: string;
   paymentMethod: PaymentMethod;
   items: { productId: number; size: string; colour?: string; qty: number }[];
+  couponCode?: string | null;
 }
 
 export class OrderError extends Error {}
@@ -62,7 +71,9 @@ export async function createOrder(input: NewOrderInput) {
 
   const items: OrderItem[] = input.items.map((i) => {
     const p = byId.get(i.productId);
-    if (!p || !p.in_stock) throw new OrderError("One of the items in your bag is no longer available.");
+    if (!p || !p.in_stock || p.hidden || p.deleted_at) {
+      throw new OrderError("One of the items in your bag is no longer available.");
+    }
     if (!p.sizes.includes(i.size)) throw new OrderError(`Size ${i.size} is not available for ${p.name}.`);
     if (p.sold_out_sizes?.includes(i.size)) {
       throw new OrderError(`Size ${i.size} of ${p.name} has just sold out. Please remove it from your bag.`);
@@ -75,23 +86,49 @@ export async function createOrder(input: NewOrderInput) {
 
   const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
   const shipping = shippingFor(subtotal);
-  const total = subtotal + shipping;
+
+  // The code is checked again here, against the real prices, whatever the
+  // checkout page showed: it may have expired or run out since.
+  let discount = 0;
+  let couponCode: string | null = null;
+  if (input.couponCode) {
+    try {
+      const checked = await checkCoupon(input.couponCode, subtotal, input.phone);
+      if (!(await claimCoupon(checked.coupon.id))) throw new CouponError("That code has just been fully used.");
+      discount = checked.discount;
+      couponCode = checked.coupon.code;
+    } catch (err) {
+      if (err instanceof CouponError) throw new OrderError(`${err.message} Remove the code to order without it.`);
+      throw err;
+    }
+  }
+
+  const total = subtotal - discount + shipping;
   const accessKey = randomBytes(12).toString("hex");
 
-  const res = await db.query<{ id: number; code: string }>(
-    `INSERT INTO orders
-      (access_key, customer_name, phone, email, address, city, state, pincode,
-       items, subtotal, shipping, total, payment_method, payment_status, customer_id)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
-     RETURNING id, code`,
-    [
-      accessKey, input.customerName, input.phone, input.email, input.address, input.city,
-      input.state, input.pincode, JSON.stringify(items), subtotal, shipping, total,
-      input.paymentMethod, input.paymentMethod === "cod" ? "cod" : "pending",
-      input.customerId ?? null,
-    ],
-  );
-  await logOrderEvent(res.rows[0].id, "placed", input.paymentMethod === "cod" ? "Cash on delivery" : "UPI", "customer");
+  let res;
+  try {
+    res = await db.query<{ id: number; code: string }>(
+      `INSERT INTO orders
+        (access_key, customer_name, phone, email, address, city, state, pincode,
+         items, subtotal, shipping, total, payment_method, payment_status, customer_id,
+         coupon_code, discount)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)
+       RETURNING id, code`,
+      [
+        accessKey, input.customerName, input.phone, input.email, input.address, input.city,
+        input.state, input.pincode, JSON.stringify(items), subtotal, shipping, total,
+        input.paymentMethod, input.paymentMethod === "cod" ? "cod" : "pending",
+        input.customerId ?? null, couponCode, discount,
+      ],
+    );
+  } catch (err) {
+    // The order never existed, so neither did its use of the code.
+    if (couponCode) await releaseCoupon(couponCode).catch(() => {});
+    throw err;
+  }
+  const how = input.paymentMethod === "cod" ? "Cash on delivery" : "UPI";
+  await logOrderEvent(res.rows[0].id, "placed", couponCode ? `${how} · ${couponCode} −${inr(discount)}` : how, "customer");
   return { code: res.rows[0].code, accessKey, total };
 }
 
@@ -108,6 +145,7 @@ type OrderRow = {
   address: string; city: string; state: string; pincode: string; items: OrderItem[];
   subtotal: number; shipping: number; total: number; payment_method: PaymentMethod;
   payment_status: string; utr: string | null; created_at: Date | string;
+  discount: number | null; coupon_code: string | null;
 };
 
 export async function getOrder(code: string, accessKey: string): Promise<Order | null> {
@@ -122,7 +160,8 @@ export async function getOrder(code: string, accessKey: string): Promise<Order |
     code: r.code, accessKey: r.access_key, customerName: r.customer_name, phone: r.phone,
     email: r.email, address: r.address, city: r.city, state: r.state, pincode: r.pincode,
     items: typeof r.items === "string" ? JSON.parse(r.items) : r.items,
-    subtotal: r.subtotal, shipping: r.shipping, total: r.total,
+    subtotal: r.subtotal, discount: r.discount ?? 0, couponCode: r.coupon_code,
+    shipping: r.shipping, total: r.total,
     paymentMethod: r.payment_method, paymentStatus: r.payment_status, utr: r.utr,
     createdAt: new Date(r.created_at).toISOString(),
   };
@@ -291,7 +330,8 @@ export async function getWishlistProducts(customerId: number): Promise<Product[]
   const { rows } = await db.query<ProductRow>(
     `SELECT p.* FROM products p
      JOIN wishlist w ON w.product_id = p.id
-     WHERE w.customer_id = $1 ORDER BY w.created_at DESC`,
+     WHERE w.customer_id = $1 AND NOT p.hidden AND p.deleted_at IS NULL
+     ORDER BY w.created_at DESC`,
     [customerId],
   );
   return rows.map(toProduct);
