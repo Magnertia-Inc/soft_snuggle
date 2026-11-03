@@ -56,6 +56,12 @@ an address locks it out immediately. Needs `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_S
 it and edits to `lib/seed.ts` no longer reach it (a deploy can't undo the owner's price). New products
 added to `lib/seed.ts` still appear on the next deploy.
 
+**Order emails** (`lib/order-emails.ts`, sent through Gmail by `lib/mail.ts`): one email per order to
+everyone in `ADMIN_EMAILS`, and a thank-you to the customer if they gave an email. Cash on delivery is
+emailed as soon as it's placed; a UPI order once the customer enters their UTR (an unpaid UPI order sends
+nothing). A corrected UTR sends the admins a short "UTR changed" email. Needs `GMAIL_USER` and
+`GMAIL_APP_PASSWORD` (see `.env.example`); without them the shop works as before and simply doesn't email.
+
 Customers follow the same steps at `/track` (order ID + mobile number), or from their account.
 
 The code is in `app/admin/`, `app/api/admin/`, `components/admin/` and `lib/admin*.ts`. Admin APIs refuse
@@ -76,7 +82,7 @@ requests from other sites (Origin check), and admin pages are marked noindex.
 | Loading screen (clothesline) | `components/Loader.tsx` |
 | Logo | `public/logo.webp` (favicon: `app/icon.png`) |
 | Size charts (Frock in inches, Jabla in cm) | `components/shop/SizeChart.tsx` |
-| Email, Instagram, WhatsApp | `lib/store.ts` / `.env.local` |
+| Instagram, WhatsApp (the shop shows no email address; customers use WhatsApp) | `lib/store.ts` / `.env.local` |
 | Age groups | `lib/store.ts` |
 | Policy page wording (drafts) | `app/policies/[slug]/page.tsx` |
 | Colours & fonts | `app/globals.css`, `app/layout.tsx` |
@@ -100,6 +106,7 @@ The live site runs on Railway (`soft-snuggle-production.up.railway.app`), deploy
    - `DATABASE_URL` = `${{Postgres.DATABASE_URL}}` (Railway's private network; no SSL setting needed)
    - `SESSION_SECRET` = a long random value (`openssl rand -base64 32`)
    - `ADMIN_EMAILS`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` for the admin panel
+   - `GMAIL_USER`, `GMAIL_APP_PASSWORD` for order emails
    - the WhatsApp, UPI and shipping values from `.env.example`
 3. Redeploy. The first start creates the tables and loads the catalogue.
 

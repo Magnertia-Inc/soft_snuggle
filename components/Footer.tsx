@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { STORE } from "@/lib/store";
+import { STORE, whatsappDisplay } from "@/lib/store";
 import { Logo } from "./art/Logo";
 import { WhatsAppIcon } from "@/components/art/WhatsAppIcon";
 
@@ -87,15 +87,9 @@ export function Footer() {
               <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
             </svg>
           </a>
-          <a href={`mailto:${STORE.email}`} className={social} aria-label="Email">
-            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <rect x="3" y="5" width="18" height="14" rx="3" />
-              <path d="m4 7 8 6 8-6" />
-            </svg>
-          </a>
         </div>
-        <a href={`mailto:${STORE.email}`} className="text-sm hover:text-ink">
-          {STORE.email}
+        <a href={`https://wa.me/${STORE.whatsappNumber}`} target="_blank" rel="noreferrer" className="text-sm hover:text-ink">
+          WhatsApp {whatsappDisplay}
         </a>
       </div>
 

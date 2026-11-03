@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { STORE, inr, shippingIsFree } from "@/lib/store";
+import { STORE, inr, shippingIsFree, whatsappDisplay } from "@/lib/store";
 
 // Draft copy. Replace with the client's approved wording before launch.
 const POLICIES: Record<string, { title: string; sections: [string, string][] }> = {
@@ -34,9 +34,9 @@ const POLICIES: Record<string, { title: string; sections: [string, string][] }> 
     title: "Privacy",
     sections: [
       ["What we collect", "Your name, phone number, delivery address, optional email, and the details of your order."],
-      ["How we use it", "Only to process, deliver and support your order, and, if you sign up, to send occasional emails. We never sell your data."],
+      ["How we use it", "Only to process, deliver and support your order: if you give an email, we send your order confirmation there. If you sign up for news, we send occasional emails. We never sell your data."],
       ["Payments", "UPI payments happen inside your own UPI app. We never see or store your bank or card details."],
-      ["Contact", `Questions about your data? Email us at ${STORE.email}.`],
+      ["Contact", `Questions about your data? Message us on WhatsApp at ${whatsappDisplay}.`],
     ],
   },
   terms: {

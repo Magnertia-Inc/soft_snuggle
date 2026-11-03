@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { FlowerMark } from "@/components/art/FlowerMark";
 import { Reveal } from "@/components/Reveal";
 import { WhatsAppIcon } from "@/components/art/WhatsAppIcon";
-import { STORE } from "@/lib/store";
+import { STORE, whatsappDisplay } from "@/lib/store";
 
 export const metadata: Metadata = { title: "Contact" };
 
@@ -10,19 +10,11 @@ export default function ContactPage() {
   const cards = [
     {
       title: "WhatsApp",
-      body: "Order any hour, or ask about sizes and delivery.",
-      cta: "Chat with us",
+      body: "Order any hour, ask about sizes and delivery, bulk orders or collaborations.",
+      cta: `Chat on ${whatsappDisplay}`,
       href: `https://wa.me/${STORE.whatsappNumber}?text=${encodeURIComponent("Hi Soft Snuggle! ")}`,
       tint: "#DFE7DD",
       icon: <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />,
-    },
-    {
-      title: "Email",
-      body: "For bulk orders, collaborations or anything longer.",
-      cta: STORE.email,
-      href: `mailto:${STORE.email}`,
-      tint: "#F3D8C8",
-      icon: <span className="text-lg">✉️</span>,
     },
     {
       title: "Instagram",
@@ -35,7 +27,7 @@ export default function ContactPage() {
   ];
 
   return (
-    // Sized to one phone screen with no footer below it, so the three ways to
+    // Sized to one phone screen with no footer below it, so the ways to
     // reach the shop are all in view without scrolling. svh rather than vh so
     // the mobile browser's own chrome is taken into account.
     <div className="speckle flex min-h-[100svh] flex-col justify-center px-5 pb-8 pt-24 sm:min-h-0 sm:px-6 sm:pb-24 sm:pt-32">
@@ -50,9 +42,9 @@ export default function ContactPage() {
           </p>
         </Reveal>
 
-        {/* A row per channel on a phone, so three fit in a screen; the old
+        {/* A row per channel on a phone, so they all fit in a screen; the old
             stacked cards ran to nearly twice the height of one. */}
-        <div className="mt-6 grid gap-3 sm:mt-12 sm:gap-4 md:grid-cols-3">
+        <div className="mx-auto mt-6 grid max-w-3xl gap-3 sm:mt-12 sm:gap-4 md:grid-cols-2">
           {cards.map((c, i) => (
             <Reveal key={c.title} delay={i * 0.08}>
               <a

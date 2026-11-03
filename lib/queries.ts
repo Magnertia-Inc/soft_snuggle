@@ -167,19 +167,25 @@ export async function getOrder(code: string, accessKey: string): Promise<Order |
   };
 }
 
+/**
+ * Saves the customer's UPI reference. Returns null when the order can't take
+ * one, otherwise the reference it replaced (null the first time).
+ */
 export async function submitUtr(code: string, accessKey: string, utr: string) {
   const db = await getDb();
   // Only while the payment is still unchecked: once the owner has marked it
   // paid, sending a UTR again would quietly put it back to "submitted".
-  const { rows } = await db.query<{ id: number }>(
-    `UPDATE orders SET utr = $3, payment_status = 'submitted', updated_at = now()
-     WHERE code = $1 AND access_key = $2 AND payment_method = 'upi'
-       AND payment_status IN ('pending', 'submitted')
-     RETURNING id`,
+  const { rows } = await db.query<{ id: number; previous: string | null }>(
+    `UPDATE orders o SET utr = $3, payment_status = 'submitted', updated_at = now()
+     FROM (SELECT id, utr AS previous FROM orders WHERE code = $1) prev
+     WHERE o.id = prev.id AND o.access_key = $2 AND o.payment_method = 'upi'
+       AND o.payment_status IN ('pending', 'submitted')
+     RETURNING o.id, prev.previous`,
     [code, accessKey, utr],
   );
-  if (rows[0]) await logOrderEvent(rows[0].id, "utr_submitted", utr, "customer");
-  return rows.length > 0;
+  if (!rows[0]) return null;
+  await logOrderEvent(rows[0].id, "utr_submitted", utr, "customer");
+  return { previousUtr: rows[0].previous };
 }
 
 export async function addSubscriber(email: string) {

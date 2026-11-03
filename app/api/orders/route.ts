@@ -1,5 +1,7 @@
-import { NextResponse } from "next/server";
-import { OrderError, createOrder, saveCustomerAddress } from "@/lib/queries";
+import { NextResponse, after } from "next/server";
+import { emailSiteUrl, sendOrderEmails } from "@/lib/order-emails";
+import { OrderError, createOrder, getOrder, saveCustomerAddress } from "@/lib/queries";
+import { siteOrigin } from "@/lib/site";
 import { currentCustomer } from "@/lib/session";
 
 const str = (v: unknown, max = 200) => (typeof v === "string" ? v.trim().slice(0, max) : "");
@@ -57,6 +59,15 @@ export async function POST(req: Request) {
     });
     if (customer) {
       await saveCustomerAddress(customer.id, { name: customerName, email, address, city, state, pincode });
+    }
+    // Cash on delivery is emailed straight away. A UPI order waits until the
+    // customer enters their UTR (app/api/orders/[code]/utr).
+    if (paymentMethod === "cod") {
+      const site = emailSiteUrl(siteOrigin(req));
+      after(async () => {
+        const placed = await getOrder(order.code, order.accessKey);
+        if (placed) await sendOrderEmails(placed, "cod_placed", site);
+      });
     }
     return NextResponse.json(order, { status: 201 });
   } catch (err) {

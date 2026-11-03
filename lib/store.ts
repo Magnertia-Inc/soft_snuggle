@@ -16,8 +16,11 @@ export const STORE = {
   shippingFlat: 0,
   freeShippingAbove: Number(process.env.NEXT_PUBLIC_FREE_SHIPPING_ABOVE ?? 1499),
   instagram: "https://instagram.com/",
-  email: "softsnuggle2026@gmail.com",
+  // No public email address: customers reach the shop on WhatsApp.
 };
+
+/** The WhatsApp number as people read it, e.g. "+91 95856 92553". */
+export const whatsappDisplay = STORE.whatsappNumber.replace(/^(\d{2})(\d{5})(\d+)$/, "+$1 $2 $3");
 
 export const AGE_GROUPS = [
   { slug: "newborn", title: "Newborn", range: "0–3 months", tint: "#DFE7DD", sizes: ["0–3M"] },
