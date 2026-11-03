@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useState } from "react";
-import { STORE, inr } from "@/lib/store";
+import { STORE, inr, phoneDigits } from "@/lib/store";
 import { TRACK_STEPS, type TrackInfo } from "@/lib/tracking";
 import { WhatsAppIcon } from "@/components/art/WhatsAppIcon";
 import { useAccount } from "../providers/AccountProvider";
@@ -97,9 +97,8 @@ export function TrackOrder({ initialCode }: { initialCode?: string }) {
             className="field"
             required={!customer}
             inputMode="numeric"
-            maxLength={10}
             value={phone}
-            onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+            onChange={(e) => setPhone(phoneDigits(e.target.value))}
             placeholder="10-digit number"
           />
         </label>

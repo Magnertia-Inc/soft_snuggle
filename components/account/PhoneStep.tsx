@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
+import { phoneDigits } from "@/lib/store";
 import { FlowerMark } from "../art/FlowerMark";
 import { useAccount } from "../providers/AccountProvider";
 
@@ -71,11 +72,10 @@ export function PhoneStep({ name: googleName, email, next }: { name: string; ema
           <input
             name="phone"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={(e) => setPhone(phoneDigits(e.target.value))}
             placeholder="Mobile number (WhatsApp)"
             inputMode="numeric"
             autoComplete="tel"
-            maxLength={13}
             className="w-full bg-transparent py-3.5 pr-4 outline-none"
             required
             autoFocus

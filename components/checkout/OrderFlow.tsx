@@ -68,6 +68,10 @@ export function OrderFlow({ order, upiUrl, upiId, payee, qrSvg }: Props) {
 
   const steps = isUpi ? (["pay", "utr", "whatsapp"] as Step[]) : (["whatsapp"] as Step[]);
   const stepIndex = steps.indexOf(step);
+  // Once the shop has confirmed or cancelled the order, the pay / UTR / WhatsApp
+  // steps are done with: showing them again could get a cancelled order paid for.
+  const cancelled = order.status === "cancelled";
+  const settled = order.status !== "new";
 
   return (
     <div className="mx-auto max-w-3xl px-4 pb-24 pt-28 sm:px-6 sm:pt-32">
@@ -87,16 +91,20 @@ export function OrderFlow({ order, upiUrl, upiId, payee, qrSvg }: Props) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          Thank you, <em className="text-sage-deep">{firstName}!</em>
+          {cancelled ? "Order cancelled" : <>Thank you, <em className="text-sage-deep">{firstName}!</em></>}
         </motion.h1>
         <p className="mt-3 text-lg text-ink-soft">
-          Order <b className="text-ink">{order.code}</b> is saved.{" "}
-          {isUpi ? "Just pay and send it to us on WhatsApp to confirm." : "Send it to us on WhatsApp to confirm."}
+          Order <b className="text-ink">{order.code}</b>{" "}
+          {cancelled
+            ? "was cancelled."
+            : settled
+              ? "is confirmed."
+              : <>is saved. {isUpi ? "Just pay and send it to us on WhatsApp to confirm." : "Send it to us on WhatsApp to confirm."}</>}
         </p>
       </div>
 
       {/* Progress */}
-      {steps.length > 1 && (
+      {!settled && steps.length > 1 && (
         <div className="mx-auto mt-10 flex max-w-md items-center gap-2">
           {steps.map((s, i) => (
             <div key={s} className="flex flex-1 items-center gap-2">
@@ -121,6 +129,31 @@ export function OrderFlow({ order, upiUrl, upiId, payee, qrSvg }: Props) {
       )}
 
       <div className="mt-8 rounded-[2rem] bg-paper p-6 shadow-[0_30px_60px_-40px_rgba(38,59,54,0.4)] sm:p-10">
+        {cancelled ? (
+          <div>
+            <h2 className="font-display text-3xl">This order won&apos;t be sent</h2>
+            <p className="mt-2 text-ink-soft">
+              Please don&apos;t pay for it. If you already have, or think this is a mistake, message us on WhatsApp and we&apos;ll sort it out.
+            </p>
+            <a
+              href={whatsappLink(`Hi Soft Snuggle! About my cancelled order ${order.code}:`)}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-6 flex w-full items-center justify-center gap-3 rounded-full bg-[#25D366] py-4 text-base font-bold text-white"
+            >
+              <WhatsAppIcon className="h-6 w-6" />
+              Message us on WhatsApp
+            </a>
+          </div>
+        ) : settled ? (
+          <div>
+            <h2 className="font-display text-3xl">We&apos;ve confirmed your order ✓</h2>
+            <p className="mt-2 text-ink-soft">Nothing more to do. We&apos;ll keep you posted on WhatsApp until it reaches you.</p>
+            <Link href={`/track?code=${order.code}`} className="btn-primary mt-6 w-full py-4 text-base">
+              Track this order
+            </Link>
+          </div>
+        ) : (
         <AnimatePresence mode="wait">
           {step === "pay" && (
             <Panel key="pay">
@@ -241,6 +274,7 @@ export function OrderFlow({ order, upiUrl, upiId, payee, qrSvg }: Props) {
             </Panel>
           )}
         </AnimatePresence>
+        )}
       </div>
 
       {/* Summary */}
@@ -280,7 +314,7 @@ export function OrderFlow({ order, upiUrl, upiId, payee, qrSvg }: Props) {
             {order.city}, {order.state} – {order.pincode}
           </p>
           <p className="mt-3 inline-block rounded-full bg-sage px-3 py-1 text-xs font-extrabold">
-            {isUpi ? "UPI · " + (utr ? "UTR submitted" : "awaiting payment") : "Cash on Delivery"}
+            {cancelled ? "Cancelled" : isUpi ? "UPI · " + (settled ? "paid" : utr ? "UTR submitted" : "awaiting payment") : "Cash on Delivery"}
           </p>
         </div>
       </div>

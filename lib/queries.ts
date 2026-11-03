@@ -145,7 +145,7 @@ type OrderRow = {
   address: string; city: string; state: string; pincode: string; items: OrderItem[];
   subtotal: number; shipping: number; total: number; payment_method: PaymentMethod;
   payment_status: string; utr: string | null; created_at: Date | string;
-  discount: number | null; coupon_code: string | null;
+  discount: number | null; coupon_code: string | null; status: string;
 };
 
 export async function getOrder(code: string, accessKey: string): Promise<Order | null> {
@@ -163,7 +163,7 @@ export async function getOrder(code: string, accessKey: string): Promise<Order |
     subtotal: r.subtotal, discount: r.discount ?? 0, couponCode: r.coupon_code,
     shipping: r.shipping, total: r.total,
     paymentMethod: r.payment_method, paymentStatus: r.payment_status, utr: r.utr,
-    createdAt: new Date(r.created_at).toISOString(),
+    status: r.status, createdAt: new Date(r.created_at).toISOString(),
   };
 }
 
@@ -174,12 +174,13 @@ export async function getOrder(code: string, accessKey: string): Promise<Order |
 export async function submitUtr(code: string, accessKey: string, utr: string) {
   const db = await getDb();
   // Only while the payment is still unchecked: once the owner has marked it
-  // paid, sending a UTR again would quietly put it back to "submitted".
+  // paid, sending a UTR again would quietly put it back to "submitted". Nor
+  // on a cancelled order, which nobody should be paying for.
   const { rows } = await db.query<{ id: number; previous: string | null }>(
     `UPDATE orders o SET utr = $3, payment_status = 'submitted', updated_at = now()
      FROM (SELECT id, utr AS previous FROM orders WHERE code = $1) prev
      WHERE o.id = prev.id AND o.access_key = $2 AND o.payment_method = 'upi'
-       AND o.payment_status IN ('pending', 'submitted')
+       AND o.payment_status IN ('pending', 'submitted') AND o.status <> 'cancelled'
      RETURNING o.id, prev.previous`,
     [code, accessKey, utr],
   );

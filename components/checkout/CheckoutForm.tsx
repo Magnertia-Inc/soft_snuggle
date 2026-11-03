@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { inr, shippingFor } from "@/lib/store";
+import { inr, phoneDigits, shippingFor } from "@/lib/store";
 import type { PaymentMethod } from "@/lib/types";
 import { ProductThumb } from "../shop/ProductThumb";
 import { useAccount } from "../providers/AccountProvider";
@@ -180,10 +180,9 @@ export function CheckoutForm() {
                   inputMode="numeric"
                   autoComplete="tel-national"
                   pattern="[6-9][0-9]{9}"
-                  maxLength={10}
                   title="10-digit mobile number"
                   value={details.phone}
-                  onChange={(e) => setDetails((d) => ({ ...d, phone: e.target.value.replace(/\D/g, "") }))}
+                  onChange={(e) => setDetails((d) => ({ ...d, phone: phoneDigits(e.target.value) }))}
                 />
               </div>
             </Field>

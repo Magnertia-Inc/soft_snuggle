@@ -9,7 +9,7 @@ export default function AboutPage() {
   return (
     <div className="speckle">
       <div className="pt-16">
-        <Story photo={storyImage()} />
+        <Story photo={storyImage()} heading="h1" />
       </div>
       <div className="pb-24 text-center">
         <Link href="/shop" className="btn-primary">

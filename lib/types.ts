@@ -88,5 +88,7 @@ export interface Order {
   paymentMethod: PaymentMethod;
   paymentStatus: string;
   utr: string | null;
+  /** new, confirmed, packed, shipped, out_for_delivery, delivered or cancelled */
+  status: string;
   createdAt: string;
 }

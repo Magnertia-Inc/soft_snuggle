@@ -13,7 +13,8 @@ const VALUES = [
   { n: "03", title: "Made to pass along", body: "Thoughtful quality for keeping and sharing.", tint: "#DCE6EE" },
 ];
 
-export function Story({ photo }: { photo?: string }) {
+/** heading: "h1" where the story is the page itself (About); on the home page it's a section, so h2. */
+export function Story({ photo, heading: Heading = "h2" }: { photo?: string; heading?: "h1" | "h2" }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   // A photograph fills its box edge to edge, where the drawing carries its own
@@ -31,9 +32,9 @@ export function Story({ photo }: { photo?: string }) {
         <div className="relative z-10 p-8 sm:p-14 lg:p-20">
           <Reveal>
             <p className="eyebrow">A softer kind of start</p>
-            <h2 className="mt-4 font-display text-5xl leading-[1.02] tracking-tight sm:text-6xl">
+            <Heading className="mt-4 font-display text-5xl leading-[1.02] tracking-tight sm:text-6xl">
               Made with love. <em className="text-sage-deep">Made to be loved.</em>
-            </h2>
+            </Heading>
             <p className="mt-6 max-w-md text-lg leading-relaxed text-ink-soft">
               We believe the first things they wear should feel like a little hug. Thoughtful fabrics, fuss-free details
               and pieces worth keeping close — then passing along to the next little one.

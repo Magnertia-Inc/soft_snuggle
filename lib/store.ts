@@ -68,3 +68,12 @@ export const shippingLine = shippingIsFree
 export function inr(amount: number) {
   return "₹" + amount.toLocaleString("en-IN");
 }
+
+/**
+ * What a mobile-number box keeps as it's typed or pasted: the 10 digits,
+ * so "+91 98765 43210" and "098765 43210" both become 9876543210.
+ */
+export function phoneDigits(raw: string) {
+  const d = raw.replace(/\D/g, "");
+  return (d.length > 10 ? d.replace(/^(91|0)/, "") : d).slice(0, 10);
+}
