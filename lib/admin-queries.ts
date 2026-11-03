@@ -1,6 +1,6 @@
 import { reclaimCoupon, releaseCoupon } from "./coupons";
 import { getDb } from "./db";
-import { logOrderEvent } from "./queries";
+import { claimGuestOrders, logOrderEvent } from "./queries";
 import type { OrderItem, PaymentMethod } from "./types";
 
 // ── Order views ────────────────────────────────────────────────────────────
@@ -159,6 +159,10 @@ export interface AdminOrder extends AdminOrderRow {
   trackingNumber: string | null;
   trackingUrl: string | null;
   hasAccount: boolean;
+  /** The account that placed it has had its number verified. */
+  accountVerified: boolean;
+  /** When the admin saw the customer's WhatsApp message for this order. */
+  whatsappAt: string | null;
   events: OrderEvent[];
 }
 
@@ -168,7 +172,12 @@ export async function getAdminOrder(code: string): Promise<AdminOrder | null> {
     id: number; email: string | null; address: string; state: string; pincode: string; subtotal: number;
     shipping: number; utr: string | null; courier: string | null; tracking_number: string | null;
     tracking_url: string | null; customer_id: number | null; discount: number | null; coupon_code: string | null;
-  }>("SELECT * FROM orders WHERE code = $1", [code]);
+    whatsapp_at: Date | string | null; account_verified: boolean | null;
+  }>(
+    `SELECT o.*, c.phone_verified_at IS NOT NULL AS account_verified
+     FROM orders o LEFT JOIN customers c ON c.id = o.customer_id WHERE o.code = $1`,
+    [code],
+  );
   const r = rows[0];
   if (!r) return null;
 
@@ -192,6 +201,8 @@ export async function getAdminOrder(code: string): Promise<AdminOrder | null> {
     trackingNumber: r.tracking_number,
     trackingUrl: r.tracking_url,
     hasAccount: r.customer_id !== null,
+    accountVerified: r.account_verified === true,
+    whatsappAt: r.whatsapp_at ? new Date(r.whatsapp_at).toISOString() : null,
     events: events.rows.map((e) => ({ kind: e.kind, note: e.note, actor: e.actor, at: new Date(e.created_at).toISOString() })),
   };
 }
@@ -205,9 +216,12 @@ export async function getAdminOrder(code: string): Promise<AdminOrder | null> {
  */
 const STEPS = {
   // Confirming a UPI order is the owner saying the money is in the bank.
+  // Confirming a cash-on-delivery order is the owner saying the customer's
+  // WhatsApp message has arrived, so it is recorded at the same time.
   confirm: {
     from: ["new"], to: "confirmed",
-    set: "confirmed_at = now(), payment_status = CASE WHEN payment_method = 'upi' THEN 'paid' ELSE payment_status END",
+    set: `confirmed_at = now(), payment_status = CASE WHEN payment_method = 'upi' THEN 'paid' ELSE payment_status END,
+      whatsapp_at = CASE WHEN payment_method = 'cod' THEN COALESCE(whatsapp_at, now()) ELSE whatsapp_at END`,
   },
   pack: { from: ["confirmed"], to: "packed", set: "" },
   ship: {
@@ -221,8 +235,8 @@ const STEPS = {
   reopen: { from: ["cancelled"], to: "new", set: "" },
 } as const;
 
-export type OrderAction = keyof typeof STEPS | "tracking" | "note";
-export const ORDER_ACTIONS = [...Object.keys(STEPS), "tracking", "note"] as OrderAction[];
+export type OrderAction = keyof typeof STEPS | "tracking" | "note" | "whatsapp";
+export const ORDER_ACTIONS = [...Object.keys(STEPS), "tracking", "note", "whatsapp"] as OrderAction[];
 
 export class AdminError extends Error {}
 
@@ -247,6 +261,18 @@ export async function updateOrder(code: string, action: OrderAction, input: Acti
     const { rows } = await db.query<{ id: number }>("SELECT id FROM orders WHERE code = $1", [code]);
     if (!rows[0]) throw new AdminError("Order not found.");
     await logOrderEvent(rows[0].id, "note", note, actor);
+    return;
+  }
+
+  if (action === "whatsapp") {
+    const { rows } = await db.query<{ id: number }>(
+      `UPDATE orders SET whatsapp_at = now(), updated_at = now()
+       WHERE code = $1 AND whatsapp_at IS NULL AND status <> 'cancelled' RETURNING id`,
+      [code],
+    );
+    if (!rows[0]) throw new AdminError("This order has moved on since the page loaded. Refresh to see where it is.");
+    await logOrderEvent(rows[0].id, "whatsapp", null, actor);
+    await verifyFromOrder(rows[0].id);
     return;
   }
 
@@ -282,6 +308,28 @@ export async function updateOrder(code: string, action: OrderAction, input: Acti
 
   const detail = action === "ship" ? `${courier} · ${trackingNumber}` : note;
   await logOrderEvent(rows[0].id, action, detail, actor);
+  if (action === "confirm") await verifyFromOrder(rows[0].id);
+}
+
+/**
+ * Once an order's WhatsApp message has reached the shop, the number on it is
+ * real and in the customer's hands. If a signed-in account placed the order
+ * with its own number, that account's number is now verified, and guest
+ * orders from the same number join it.
+ *
+ * Only the account that placed this order is touched. Someone who signed up
+ * with another person's number can't get verified by that person's orders.
+ */
+async function verifyFromOrder(orderId: number) {
+  const db = await getDb();
+  const { rows } = await db.query<{ id: number }>(
+    `UPDATE customers c SET phone_verified_at = COALESCE(c.phone_verified_at, now())
+     FROM orders o
+     WHERE o.id = $1 AND o.whatsapp_at IS NOT NULL AND o.customer_id = c.id AND o.phone = c.phone
+     RETURNING c.id`,
+    [orderId],
+  );
+  if (rows[0]) await claimGuestOrders(rows[0].id);
 }
 
 // ── Stock ──────────────────────────────────────────────────────────────────

@@ -258,33 +258,75 @@ export interface Customer {
   city: string | null;
   state: string | null;
   pincode: string | null;
+  /** Signs in with Google (may also have a password). */
+  google: boolean;
+  /** Has a password, so can also log in with mobile number + password. */
+  hasPassword: boolean;
+  /** An order from this account was confirmed after its WhatsApp came from this number. */
+  phoneVerified: boolean;
 }
 
-type CustomerRow = Customer & { password_hash: string };
+type CustomerRow = Omit<Customer, "google" | "hasPassword" | "phoneVerified"> & {
+  password_hash: string | null;
+  google_sub: string | null;
+  phone_verified_at: string | null;
+};
 
 const toCustomer = (r: CustomerRow): Customer => ({
   id: r.id, phone: r.phone, name: r.name, email: r.email,
   address: r.address, city: r.city, state: r.state, pincode: r.pincode,
+  google: r.google_sub !== null, hasPassword: !!r.password_hash, phoneVerified: r.phone_verified_at !== null,
 });
 
 export class AuthError extends Error {}
 
-/** Creates the account and claims any guest orders already placed from that number. */
+const NUMBER_TAKEN = "An account already uses this number. Try logging in.";
+
+/**
+ * Creates the account. Guest orders from the same number are not added yet:
+ * anyone can type a number, so they wait until the number is verified.
+ */
 export async function createCustomer(input: {
-  phone: string; name: string; email: string | null; passwordHash: string;
+  phone: string; name: string; email: string | null; passwordHash: string | null; googleSub?: string;
 }): Promise<Customer> {
   const db = await getDb();
   const existing = await db.query("SELECT id FROM customers WHERE phone = $1", [input.phone]);
-  if (existing.rows.length) throw new AuthError("An account already uses this number. Try logging in.");
+  if (existing.rows.length) throw new AuthError(NUMBER_TAKEN);
 
-  const { rows } = await db.query<CustomerRow>(
-    `INSERT INTO customers (phone, name, email, password_hash, last_login_at)
-     VALUES ($1, $2, $3, $4, now()) RETURNING *`,
-    [input.phone, input.name, input.email, input.passwordHash],
+  try {
+    const { rows } = await db.query<CustomerRow>(
+      `INSERT INTO customers (phone, name, email, password_hash, google_sub, last_login_at)
+       VALUES ($1, $2, $3, $4, $5, now()) RETURNING *`,
+      [input.phone, input.name, input.email, input.passwordHash, input.googleSub ?? null],
+    );
+    return toCustomer(rows[0]);
+  } catch (err) {
+    // Two sign-ups racing for the same number get past the check above together.
+    if ((err as { code?: string }).code === "23505") throw new AuthError(NUMBER_TAKEN);
+    throw err;
+  }
+}
+
+export async function findCustomerByGoogle(sub: string): Promise<Customer | null> {
+  const db = await getDb();
+  const { rows } = await db.query<CustomerRow>("SELECT * FROM customers WHERE google_sub = $1", [sub]);
+  return rows[0] ? toCustomer(rows[0]) : null;
+}
+
+/**
+ * Connects a Google account to a signed-in customer, so either way of logging
+ * in opens the same account. Fills in the email from Google if there was none.
+ */
+export async function linkGoogle(customerId: number, sub: string, email: string) {
+  const db = await getDb();
+  const { rows } = await db.query<{ id: number }>(
+    `UPDATE customers SET google_sub = $2, email = COALESCE(email, $3)
+     WHERE id = $1 AND google_sub IS NULL
+       AND NOT EXISTS (SELECT 1 FROM customers WHERE google_sub = $2)
+     RETURNING id`,
+    [customerId, sub, email],
   );
-  const customer = rows[0];
-  await db.query("UPDATE orders SET customer_id = $1 WHERE customer_id IS NULL AND phone = $2", [customer.id, input.phone]);
-  return toCustomer(customer);
+  return rows.length > 0;
 }
 
 export async function findCustomerByPhone(phone: string) {
@@ -302,9 +344,17 @@ export async function getCustomer(id: number): Promise<Customer | null> {
 export async function noteLogin(id: number) {
   const db = await getDb();
   await db.query("UPDATE customers SET last_login_at = now() WHERE id = $1", [id]);
+  await claimGuestOrders(id);
+}
+
+/** Adds guest orders placed from the account's number, once that number is verified. */
+export async function claimGuestOrders(customerId: number) {
+  const db = await getDb();
   await db.query(
-    "UPDATE orders SET customer_id = $1 WHERE customer_id IS NULL AND phone = (SELECT phone FROM customers WHERE id = $1)",
-    [id],
+    `UPDATE orders o SET customer_id = c.id FROM customers c
+     WHERE c.id = $1 AND c.phone_verified_at IS NOT NULL
+       AND o.customer_id IS NULL AND o.phone = c.phone`,
+    [customerId],
   );
 }
 

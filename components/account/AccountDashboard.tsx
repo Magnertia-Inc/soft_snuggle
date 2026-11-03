@@ -10,7 +10,8 @@ import { useAccount } from "../providers/AccountProvider";
 const stepLabel = (status: string) =>
   TRACK_STEPS.find((s) => s.key === status)?.label ?? (status === "cancelled" ? "Cancelled" : "Placed");
 
-export function AccountDashboard() {
+/** google: whether Google sign-in is set up. notice: the result of connecting Google, if they just did. */
+export function AccountDashboard({ google = false, notice = null }: { google?: boolean; notice?: string | null }) {
   const router = useRouter();
   const { customer, orders, wishlist, ready, logout } = useAccount();
 
@@ -32,7 +33,15 @@ export function AccountDashboard() {
         <div>
           <p className="eyebrow">Your account</p>
           <h1 className="mt-2 font-display text-5xl tracking-tight">Hello, {customer.name.split(" ")[0]}</h1>
-          <p className="mt-2 text-ink-soft">+91 {customer.phone}{customer.email ? ` · ${customer.email}` : ""}</p>
+          <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-ink-soft">
+            <span>+91 {customer.phone}</span>
+            {customer.phoneVerified ? (
+              <span className="rounded-full bg-sage px-2.5 py-0.5 text-xs font-bold text-ink">✓ Verified</span>
+            ) : (
+              <span className="rounded-full bg-butter px-2.5 py-0.5 text-xs font-bold text-ink">Not verified yet</span>
+            )}
+            {customer.email && <span>· {customer.email}</span>}
+          </p>
         </div>
         <button
           onClick={async () => {
@@ -44,6 +53,26 @@ export function AccountDashboard() {
           Log out
         </button>
       </div>
+
+      {notice && <p role="status" className="mt-6 rounded-2xl bg-sage/70 px-4 py-3 text-sm">{notice}</p>}
+
+      {!customer.phoneVerified && (
+        <p className="mt-6 rounded-2xl bg-butter/60 px-4 py-3 text-sm">
+          Your number is verified when your first order reaches us on WhatsApp from +91 {customer.phone}. Orders you
+          placed earlier without logging in appear here after that.
+        </p>
+      )}
+
+      {google && !customer.google && (
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-paper/70 px-4 py-3">
+          <p className="text-sm">
+            <b>Log in faster with Google.</b> <span className="text-ink-soft">Connect it once, then one tap opens this account.</span>
+          </p>
+          <a href="/api/auth/google?next=/account" className="rounded-full border-[1.5px] border-ink px-4 py-2 text-sm font-bold hover:bg-ink hover:text-paper">
+            Connect Google
+          </a>
+        </div>
+      )}
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         <Link href="/wishlist" className="rounded-[1.75rem] bg-sage p-7 transition-transform hover:-translate-y-1">

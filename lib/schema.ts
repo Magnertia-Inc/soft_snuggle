@@ -176,6 +176,32 @@ CREATE TABLE IF NOT EXISTS coupons (
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS coupon_code TEXT;
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS discount    INTEGER NOT NULL DEFAULT 0;
 
+-- Google sign-in. google_sub is Google's id for the person (it never changes,
+-- unlike their email). A Google-only account has no password.
+ALTER TABLE customers ADD COLUMN IF NOT EXISTS google_sub TEXT;
+CREATE UNIQUE INDEX IF NOT EXISTS customers_google_idx ON customers (google_sub);
+ALTER TABLE customers ALTER COLUMN password_hash DROP NOT NULL;
+
+-- A number is verified once an order the account placed is confirmed after its
+-- WhatsApp message reached the shop: the message came from that phone, so
+-- whoever holds the account holds the number. Only then are guest orders from
+-- the same number added to the account.
+ALTER TABLE customers ADD COLUMN IF NOT EXISTS phone_verified_at TIMESTAMPTZ;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS whatsapp_at TIMESTAMPTZ;
+
+-- Google sign-in. google_sub is Google's id for the person (it never changes,
+-- unlike their email). A Google-only account has no password.
+ALTER TABLE customers ADD COLUMN IF NOT EXISTS google_sub TEXT;
+CREATE UNIQUE INDEX IF NOT EXISTS customers_google_idx ON customers (google_sub);
+ALTER TABLE customers ALTER COLUMN password_hash DROP NOT NULL;
+
+-- A number is verified once an order the account placed is confirmed after
+-- its WhatsApp message reached the shop: the message came from that phone, so
+-- whoever holds the account holds the number. Only then are guest orders from
+-- the same number added to the account.
+ALTER TABLE customers ADD COLUMN IF NOT EXISTS phone_verified_at TIMESTAMPTZ;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS whatsapp_at TIMESTAMPTZ;
+
 CREATE TABLE IF NOT EXISTS subscribers (
   id          SERIAL PRIMARY KEY,
   email       TEXT UNIQUE NOT NULL,

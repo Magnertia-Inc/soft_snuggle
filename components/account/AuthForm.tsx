@@ -6,10 +6,12 @@ import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { FlowerMark } from "../art/FlowerMark";
 import { useAccount } from "../providers/AccountProvider";
+import { GoogleButton } from "./GoogleButton";
 
 type Mode = "login" | "signup";
 
-export function AuthForm() {
+/** google: whether "Continue with Google" is set up. notice: why the last Google sign-in failed. */
+export function AuthForm({ google = false, notice = null }: { google?: boolean; notice?: string | null }) {
   const router = useRouter();
   const params = useSearchParams();
   const next = params.get("next") || "/account";
@@ -22,7 +24,7 @@ export function AuthForm() {
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(notice);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,7 +57,18 @@ export function AuthForm() {
         </p>
       </div>
 
-      <form onSubmit={submit} className="mt-8 space-y-3">
+      {google && (
+        <div className="mt-8">
+          <GoogleButton next={next} />
+          <div className="mt-6 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.14em] text-ink-soft">
+            <span className="h-px flex-1 bg-line" />
+            or with your mobile number
+            <span className="h-px flex-1 bg-line" />
+          </div>
+        </div>
+      )}
+
+      <form onSubmit={submit} className={`${google ? "mt-6" : "mt-8"} space-y-3`}>
         <AnimatePresence initial={false}>
           {mode === "signup" && (
             <motion.div

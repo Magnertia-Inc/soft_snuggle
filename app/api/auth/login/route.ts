@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { normalisePhone, verifyPassword } from "@/lib/auth";
-import { findCustomerByPhone, noteLogin } from "@/lib/queries";
+import { findCustomerByPhone, getCustomer, noteLogin } from "@/lib/queries";
 import { startSession } from "@/lib/session";
 
 export async function POST(req: Request) {
@@ -20,12 +20,12 @@ export async function POST(req: Request) {
 
   try {
     const row = await findCustomerByPhone(phone);
-    if (!row || !(await verifyPassword(password, row.password_hash))) return wrong();
+    // A Google-only account has no password, so the answer is the same "no match".
+    if (!row?.password_hash || !(await verifyPassword(password, row.password_hash))) return wrong();
 
     await noteLogin(row.id);
     await startSession(row.id);
-    const { password_hash: _ignored, ...customer } = row;
-    return NextResponse.json({ customer });
+    return NextResponse.json({ customer: await getCustomer(row.id) });
   } catch (err) {
     // Without this the route throws, the browser gets an empty body, and the
     // only thing the person sees is a JSON parse error with no cause in it.

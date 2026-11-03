@@ -69,6 +69,28 @@ With neither, the shop works as before and simply doesn't email. Every send is l
 
 Customers follow the same steps at `/track` (order ID + mobile number), or from their account.
 
+## Customer accounts
+
+Shoppers can order without an account. With one, checkout is filled in for them and their orders and
+saved pieces are kept together. Two ways in, both opening the same account:
+
+- **Continue with Google** (same `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` as the admin panel). Google
+  gives the name and email; the first time, `/login/phone` asks once for the mobile number.
+- **Mobile number + password.** Someone with a password account can press **Connect Google** on their
+  account page, and from then on either way works.
+
+Accounts are never joined by email, and a Google sign-up can't take a number that already has an account
+(the email on a password account was never checked, so either would let someone set up an account in
+another person's name).
+
+**Verifying the number is free, through WhatsApp.** No SMS OTP (that costs per message and needs DLT
+registration). Every order ends with the customer sending it to the shop on WhatsApp, from their own
+phone. In the admin panel a cash-on-delivery order is confirmed with **Got their WhatsApp · confirm
+order**, and a UPI order has **WhatsApp received from +91 …**. When the order came from a signed-in
+account with that same number, the account's number becomes verified, and only then are guest orders
+from that number added to the account. Someone who signs up with another person's number never sees
+that person's orders.
+
 The code is in `app/admin/`, `app/api/admin/`, `components/admin/` and `lib/admin*.ts`. Admin APIs refuse
 requests from other sites (Origin check), and admin pages are marked noindex.
 

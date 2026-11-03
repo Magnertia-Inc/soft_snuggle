@@ -1,12 +1,14 @@
 /**
  * "Sign in with Google" (OpenID Connect, authorization code flow) without a
- * library. Used by the admin panel; customer sign-in can use the same two calls.
+ * library. Used by the admin panel and by shoppers' "Continue with Google".
  *
  * Needs GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET from a Google Cloud OAuth
  * client (type "Web application"). Its authorised redirect URIs must list
  * every callback address exactly, e.g.
  *   https://soft-snuggle-production.up.railway.app/api/admin/auth/google/callback
+ *   https://soft-snuggle-production.up.railway.app/api/auth/google/callback
  *   http://localhost:3000/api/admin/auth/google/callback
+ *   http://localhost:3000/api/auth/google/callback
  */
 
 const AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth";

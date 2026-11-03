@@ -2,13 +2,16 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { COURIERS } from "@/lib/admin-labels";
+import { COURIERS, when } from "@/lib/admin-labels";
 
 interface Props {
   code: string;
   status: string;
   paymentMethod: string;
   paymentStatus: string;
+  phone: string;
+  /** When their WhatsApp message for this order arrived, if it has. */
+  whatsappAt: string | null;
   utr: string | null;
   courier: string | null;
   trackingNumber: string | null;
@@ -97,10 +100,30 @@ export function OrderActions(o: Props) {
                 : <>Find UTR <b className="font-mono">{o.utr}</b> in your bank or UPI app before confirming.</>}
             </p>
           )}
+          {o.paymentMethod === "cod" && !o.whatsappAt && (
+            <p className="rounded-2xl bg-butter px-4 py-3 text-sm">
+              Confirm once their order message has reached the shop&apos;s WhatsApp from <b>+91 {o.phone}</b>. That
+              proves the number is real. No message, no shipment.
+            </p>
+          )}
           <button disabled={!!busy} onClick={() => run("confirm")} className={btn}>
-            {busy === "confirm" ? "Confirming…" : o.paymentMethod === "upi" ? "Payment received · confirm order" : "Confirm order"}
+            {busy === "confirm"
+              ? "Confirming…"
+              : o.paymentMethod === "upi"
+                ? "Payment received · confirm order"
+                : o.whatsappAt ? "Confirm order" : "Got their WhatsApp · confirm order"}
           </button>
         </>
+      )}
+
+      {o.whatsappAt ? (
+        <p className="text-sm text-ink-soft">✓ WhatsApp received {when(o.whatsappAt)}</p>
+      ) : (
+        o.status !== "cancelled" && !(o.status === "new" && o.paymentMethod === "cod") && (
+          <button disabled={!!busy} onClick={() => run("whatsapp")} className={quiet}>
+            {busy === "whatsapp" ? "Saving…" : `WhatsApp received from +91 ${o.phone}`}
+          </button>
+        )
       )}
 
       {o.status === "confirmed" && (

@@ -9,15 +9,17 @@ export async function currentCustomer(): Promise<Customer | null> {
   return id ? await getCustomer(id) : null;
 }
 
+export const sessionCookieOptions = {
+  httpOnly: true,
+  sameSite: "lax" as const,
+  secure: process.env.NODE_ENV === "production",
+  path: "/",
+  maxAge: SESSION_MAX_AGE,
+};
+
 export async function startSession(customerId: number) {
   const jar = await cookies();
-  jar.set(SESSION_COOKIE, createSession(customerId), {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-    maxAge: SESSION_MAX_AGE,
-  });
+  jar.set(SESSION_COOKIE, createSession(customerId), sessionCookieOptions);
 }
 
 export async function endSession() {

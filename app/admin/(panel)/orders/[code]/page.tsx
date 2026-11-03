@@ -73,7 +73,7 @@ export default async function AdminOrderPage({ params }: { params: Promise<{ cod
               {order.email && <a href={`mailto:${order.email}?subject=${encodeURIComponent(`Your Soft Snuggle order ${order.code}`)}`} className="rounded-full bg-sage px-4 py-2 font-bold">Email</a>}
             </div>
             <p className="mt-3 text-xs text-ink-soft">
-              {order.email ? `${order.email} · ` : ""}{order.hasAccount ? "Has an account" : "Ordered as a guest"}
+              {order.email ? `${order.email} · ` : ""}{order.hasAccount ? (order.accountVerified ? "Has an account · number verified" : "Has an account · number not verified yet") : "Ordered as a guest"}
             </p>
           </section>
 
@@ -120,6 +120,8 @@ export default async function AdminOrderPage({ params }: { params: Promise<{ cod
               status={order.status}
               paymentMethod={order.paymentMethod}
               paymentStatus={order.paymentStatus}
+              phone={order.phone}
+              whatsappAt={order.whatsappAt}
               utr={order.utr}
               courier={order.courier}
               trackingNumber={order.trackingNumber}
