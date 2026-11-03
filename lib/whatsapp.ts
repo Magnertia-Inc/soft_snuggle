@@ -4,7 +4,7 @@ import type { Order } from "./types";
 /** The pre-filled message the customer sends to the owner after ordering. */
 export function orderMessage(order: Order, utr?: string | null, trackUrl?: string) {
   const lines: string[] = [];
-  lines.push("Hi Soft Snuggle! 👋");
+  lines.push(`Hi ${STORE.name}! 👋`);
   if (order.paymentMethod === "upi") {
     lines.push(`I've paid *${inr(order.total)}* for my order *${order.code}*.`);
     if (utr) lines.push(`UPI UTR / Txn ID: *${utr}*`);
@@ -16,6 +16,7 @@ export function orderMessage(order: Order, utr?: string | null, trackUrl?: strin
   lines.push("", `Subtotal: ${inr(order.subtotal)}`);
   if (order.discount > 0) lines.push(`Discount${order.couponCode ? ` (${order.couponCode})` : ""}: −${inr(order.discount)}`);
   lines.push(`Shipping: ${order.shipping === 0 ? "Free" : inr(order.shipping)}`);
+  if (order.codFee > 0) lines.push(`COD fee: ${inr(order.codFee)}`);
   lines.push(`*Total: ${inr(order.total)}* (${order.paymentMethod === "upi" ? "Paid via UPI" : "Cash on Delivery"})`);
   lines.push("", "*Deliver to*", `${order.customerName}, +91 ${order.phone}`, order.address, `${order.city}, ${order.state} – ${order.pincode}`);
   if (trackUrl) lines.push("", `Track: ${trackUrl}`);

@@ -84,6 +84,7 @@ export interface Order {
   discount: number;
   couponCode: string | null;
   shipping: number;
+  codFee: number;
   total: number;
   paymentMethod: PaymentMethod;
   paymentStatus: string;

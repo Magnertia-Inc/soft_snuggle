@@ -2,15 +2,15 @@ interface Props {
   className?: string;
 }
 
-/** The Soft Snuggle wordmark (transparent background). */
+/** The Veviba wordmark (transparent background). */
 export function Logo({ className = "h-9" }: Props) {
   return (
     <img
       src="/logo.webp"
-      alt="Soft Snuggle"
-      width={1165}
-      height={350}
-      className={`w-auto select-none ${className}`}
+      alt="Veviba"
+      width={586}
+      height={156}
+      className={`w-auto select-none object-contain ${className}`}
       draggable={false}
     />
   );

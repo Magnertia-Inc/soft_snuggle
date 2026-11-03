@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { inr } from "@/lib/store";
+import { STORE, inr } from "@/lib/store";
 import type { Order } from "@/lib/types";
 import { orderMessage, whatsappLink } from "@/lib/whatsapp";
 import { FlowerMark } from "../art/FlowerMark";
@@ -136,7 +136,7 @@ export function OrderFlow({ order, upiUrl, upiId, payee, qrSvg }: Props) {
               Please don&apos;t pay for it. If you already have, or think this is a mistake, message us on WhatsApp and we&apos;ll sort it out.
             </p>
             <a
-              href={whatsappLink(`Hi Soft Snuggle! About my cancelled order ${order.code}:`)}
+              href={whatsappLink(`Hi ${STORE.name}! About my cancelled order ${order.code}:`)}
               target="_blank"
               rel="noreferrer"
               className="mt-6 flex w-full items-center justify-center gap-3 rounded-full bg-[#25D366] py-4 text-base font-bold text-white"
@@ -298,6 +298,12 @@ export function OrderFlow({ order, upiUrl, upiId, payee, qrSvg }: Props) {
               <span>Shipping</span>
               <span>{order.shipping === 0 ? "Free" : inr(order.shipping)}</span>
             </li>
+            {order.codFee > 0 && (
+              <li className="flex justify-between text-ink-soft">
+                <span>Cash on Delivery fee</span>
+                <span>{inr(order.codFee)}</span>
+              </li>
+            )}
             <li className="flex justify-between font-display text-xl">
               <span>Total</span>
               <span>{inr(order.total)}</span>

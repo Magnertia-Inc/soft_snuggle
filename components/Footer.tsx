@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { STORE, whatsappDisplay } from "@/lib/store";
-import { Logo } from "./art/Logo";
 import { WhatsAppIcon } from "@/components/art/WhatsAppIcon";
 
 const LINKS = [
@@ -15,9 +14,6 @@ const LINKS = [
   { href: "/contact", label: "Contact" },
 ];
 
-// Grouped headings for the phone footer: a flat list of six links gave no
-// clue which were for buying and which were the small print. Wide screens
-// keep the original centred row.
 const COLUMNS = [
   {
     heading: "Shop",
@@ -38,21 +34,18 @@ const COLUMNS = [
 ];
 
 export function Footer() {
-  // The contact page is a single phone screen by design; a footer under it
-  // would both make it scroll and repeat the same links twice on one screen.
   if (usePathname() === "/contact") return null;
 
   const social = "grid h-9 w-9 place-items-center rounded-full bg-sage text-ink transition-colors hover:bg-sage-deep hover:text-paper";
 
   return (
     <footer className="relative overflow-hidden border-t border-line bg-paper text-ink-soft">
-      <div className="relative z-10 mx-auto flex max-w-6xl flex-col items-center gap-4 px-6 pt-8 text-center sm:gap-5 sm:pt-10">
-        <Logo className="h-10 sm:h-12" />
+      <div className="relative z-10 mx-auto flex max-w-6xl flex-col items-center gap-4 px-6 pt-7 text-center sm:gap-5 sm:pt-8">
         <p className="inline-flex items-center gap-2 rounded-full bg-sage px-4 py-1.5 text-[0.6875rem] font-extrabold uppercase tracking-[0.16em] text-ink">
           <span className="h-2 w-2 animate-pulse rounded-full bg-[#25D366]" /> 24×7 ordering available
         </p>
-        {/* Phones get the two headed columns; wide screens keep the flat
-            centred row this footer has always had. */}
+
+        {/* Phones get the two headed columns; wide screens keep the flat centred row */}
         <div className="grid w-full grid-cols-2 gap-6 px-2 text-left sm:hidden">
           {COLUMNS.map((col) => (
             <nav key={col.heading}>
@@ -69,6 +62,7 @@ export function Footer() {
             </nav>
           ))}
         </div>
+
         <nav className="hidden sm:flex sm:flex-wrap sm:justify-center sm:gap-x-7 sm:gap-y-2">
           {LINKS.map((l) => (
             <Link key={l.href} href={l.href} className="text-[0.6875rem] font-bold uppercase tracking-[0.18em] transition-colors hover:text-ink">
@@ -76,6 +70,7 @@ export function Footer() {
             </Link>
           ))}
         </nav>
+
         <div className="flex gap-2">
           <a href={`https://wa.me/${STORE.whatsappNumber}`} target="_blank" rel="noreferrer" className={social} aria-label="WhatsApp">
             <WhatsAppIcon className="h-4 w-4" />
@@ -93,13 +88,13 @@ export function Footer() {
         </a>
       </div>
 
-      {/* Big soft logo watermark */}
-      <div aria-hidden="true" className="pointer-events-none mt-6 hidden justify-center px-4 opacity-[0.16] sm:flex">
-        <img src="/logo.webp" alt="" className="w-full max-w-4xl" draggable={false} />
+      {/* Soft logo watermark */}
+      <div aria-hidden="true" className="pointer-events-none mt-4 flex justify-center px-4 opacity-[0.2]">
+        <img src="/logo.webp" alt="" className="w-full max-w-2xl sm:max-w-3xl" draggable={false} />
       </div>
 
-      <div className="relative z-10 border-t border-line/70 px-4 py-4 text-center text-xs">
-        © {new Date().getFullYear()} Soft Snuggle · Little clothes, lots of love
+      <div className="relative z-10 border-t border-line/70 px-4 py-3 text-center text-xs">
+        © {new Date().getFullYear()} Veviba · Little clothes, lots of love
       </div>
     </footer>
   );

@@ -52,7 +52,7 @@ export const COLLECTIONS: Collection[] = [
     eyebrow: "New in",
     title: "Butterfly",
     accent: "Flutter",
-    label: "Butterfly Flutter Nappy",
+    label: "Butterfly Print Muslin Baby Nappy Cover",
     blurb: "A tie-up muslin nappy scattered with butterflies and hearts, with long ties for a fit you set yourself.",
     glow: "#F6EFE6",
     look: {
@@ -66,7 +66,7 @@ export const COLLECTIONS: Collection[] = [
     eyebrow: "New in",
     title: "Zebra",
     accent: "Wrap",
-    label: "Zebra Wrap Jabla",
+    label: "Muslin Zebra Wrap Vest",
     blurb: "A crossover wrap jabla in white muslin with braided side ties, so nothing has to go over the head.",
     glow: "#F3F0EA",
     look: {
@@ -80,7 +80,7 @@ export const COLLECTIONS: Collection[] = [
     eyebrow: "New in",
     title: "Tiny",
     accent: "Peaks",
-    label: "Tiny Peaks Frock",
+    label: "Triangle-Print Baby Dress",
     blurb: "Little brown triangles across white muslin, with flutter sleeves and buttons all the way down.",
     glow: "#F4EFE6",
     look: {
@@ -94,7 +94,7 @@ export const COLLECTIONS: Collection[] = [
     eyebrow: "New in",
     title: "Little",
     accent: "Reef",
-    label: "Little Reef Jabla",
+    label: "Colourful Sea Creature Muslin Vest",
     blurb: "Turtles, starfish and a smiling stingray across white muslin, on a strappy top that ties at the shoulders.",
     glow: "#EFEBF4",
     look: {
@@ -122,7 +122,7 @@ export const COLLECTIONS: Collection[] = [
     eyebrow: "New in",
     title: "Panda",
     accent: "Bamboo",
-    label: "Panda Bamboo Jabla",
+    label: "Panda and Bear Muslin Baby Vest",
     blurb: "Pandas and little brown bears nibbling bamboo, on a soft V-neck jabla that buttons down the front.",
     glow: "#EFF3EA",
     look: {
@@ -136,7 +136,7 @@ export const COLLECTIONS: Collection[] = [
     eyebrow: "New in",
     title: "Moonbeam",
     accent: "Summer",
-    label: "Moonbeam Summer Set",
+    label: "Crescent Moon Baby Outfit",
     blurb: "The Moonbeam print on a short-sleeved top and shorts, buttoning down the front for warm days.",
     glow: "#E9EFF7",
     look: {
@@ -150,7 +150,7 @@ export const COLLECTIONS: Collection[] = [
     eyebrow: "New in",
     title: "Moonbeam",
     accent: "Wrap Set",
-    label: "Moonbeam Wrap Set",
+    label: "Moonlit Muslin Babywear Set",
     blurb: "A sleeveless crossover top tying at the side with matching shorts, so nothing goes over the head.",
     glow: "#EAF1F8",
     look: {
@@ -164,7 +164,7 @@ export const COLLECTIONS: Collection[] = [
     eyebrow: "New in",
     title: "Olive",
     accent: "Sprig",
-    label: "Olive Sprig Frock",
+    label: "Ivory Gauze Baby Dress",
     blurb: "A plain butter-yellow frock with a little olive sprig embroidered at the chest and frilled flutter sleeves.",
     glow: "#F7F0D8",
     look: {
@@ -178,7 +178,7 @@ export const COLLECTIONS: Collection[] = [
     eyebrow: "New in",
     title: "Rainbow",
     accent: "Check",
-    label: "Rainbow Check Set",
+    label: "Pastel Plaid Children's Outfit",
     blurb: "A pastel check shirt and shorts with coconut buttons, for days that need no thinking about.",
     glow: "#F6F0E6",
     look: {
@@ -192,7 +192,7 @@ export const COLLECTIONS: Collection[] = [
     eyebrow: "New in",
     title: "Sunbeam",
     accent: "Day",
-    label: "Sunbeam Day Set",
+    label: "Pastel Yellow Linen Shirt and Shorts Set",
     blurb: "A plain butter-yellow shirt and shorts in slubby cotton, with a mandarin collar and an easy waist.",
     glow: "#F8F0CF",
     look: {
@@ -206,7 +206,7 @@ export const COLLECTIONS: Collection[] = [
     eyebrow: "New in",
     title: "Arrow",
     accent: "Trail",
-    label: "Arrow Trail Jabla",
+    label: "White Geometric Print Camisole",
     blurb: "Little orange and plum arrows across white muslin, on a strappy top that ties at the shoulders.",
     glow: "#F6EFE7",
     look: {
@@ -220,7 +220,7 @@ export const COLLECTIONS: Collection[] = [
     eyebrow: "New in",
     title: "Watermelon",
     accent: "Slice",
-    label: "Watermelon Slice Set",
+    label: "Watermelon Print Pink Kids' Outfit",
     blurb: "Watermelon slices on blush muslin, with a peplum top and wide-leg trousers that swish.",
     glow: "#F8E4E2",
     look: {
@@ -234,7 +234,7 @@ export const COLLECTIONS: Collection[] = [
     eyebrow: "New in",
     title: "Tractor",
     accent: "Field",
-    label: "Tractor Field Set",
+    label: "Playful Tractor Print Toddler Outfit",
     blurb: "Little red tractors rolling between the trees, on a shirt that comes with rust shorts.",
     glow: "#F3E6DC",
     look: {

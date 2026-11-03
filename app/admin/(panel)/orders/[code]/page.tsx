@@ -6,7 +6,7 @@ import { StatusBadge } from "@/components/admin/OrderList";
 import { requireAdmin } from "@/lib/admin";
 import { getAdminOrder } from "@/lib/admin-queries";
 import { EVENT_LABELS, paymentLabel, when } from "@/lib/admin-labels";
-import { inr } from "@/lib/store";
+import { STORE, inr } from "@/lib/store";
 
 export async function generateMetadata({ params }: { params: Promise<{ code: string }> }) {
   return { title: (await params).code };
@@ -57,6 +57,9 @@ export default async function AdminOrderPage({ params }: { params: Promise<{ cod
                 </div>
               )}
               <div className="flex justify-between"><dt className="text-ink-soft">Shipping</dt><dd>{order.shipping ? inr(order.shipping) : "Free"}</dd></div>
+              {order.codFee > 0 && (
+                <div className="flex justify-between"><dt className="text-ink-soft">COD fee</dt><dd>{inr(order.codFee)}</dd></div>
+              )}
               <div className="flex justify-between text-base font-bold"><dt>Total</dt><dd>{inr(order.total)}</dd></div>
             </dl>
           </section>
@@ -69,8 +72,8 @@ export default async function AdminOrderPage({ params }: { params: Promise<{ cod
             <p className="mt-3 whitespace-pre-line leading-relaxed">{address}</p>
             <div className="mt-4 flex flex-wrap gap-2 text-sm">
               <a href={`tel:+91${order.phone}`} className="rounded-full bg-sage px-4 py-2 font-bold">Call</a>
-              <a href={`https://wa.me/91${order.phone}?text=${encodeURIComponent(`Hi ${order.customerName.split(" ")[0]}, this is Soft Snuggle about your order ${order.code}.`)}`} target="_blank" rel="noreferrer" className="rounded-full bg-sage px-4 py-2 font-bold">WhatsApp</a>
-              {order.email && <a href={`mailto:${order.email}?subject=${encodeURIComponent(`Your Soft Snuggle order ${order.code}`)}`} className="rounded-full bg-sage px-4 py-2 font-bold">Email</a>}
+              <a href={`https://wa.me/91${order.phone}?text=${encodeURIComponent(`Hi ${order.customerName.split(" ")[0]}, this is ${STORE.name} about your order ${order.code}.`)}`} target="_blank" rel="noreferrer" className="rounded-full bg-sage px-4 py-2 font-bold">WhatsApp</a>
+              {order.email && <a href={`mailto:${order.email}?subject=${encodeURIComponent(`Your ${STORE.name} order ${order.code}`)}`} className="rounded-full bg-sage px-4 py-2 font-bold">Email</a>}
             </div>
             <p className="mt-3 text-xs text-ink-soft">
               {order.email ? `${order.email} · ` : ""}{order.hasAccount ? (order.accountVerified ? "Has an account · number verified" : "Has an account · number not verified yet") : "Ordered as a guest"}

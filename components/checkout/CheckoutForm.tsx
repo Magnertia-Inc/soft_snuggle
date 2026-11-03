@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { inr, phoneDigits, shippingFor } from "@/lib/store";
+import { STORE, inr, phoneDigits, shippingFor } from "@/lib/store";
 import type { PaymentMethod } from "@/lib/types";
 import { ProductThumb } from "../shop/ProductThumb";
 import { useAccount } from "../providers/AccountProvider";
@@ -236,7 +236,7 @@ export function CheckoutForm() {
               active={method === "cod"}
               onClick={() => setMethod("cod")}
               title="Cash on Delivery"
-              body="Pay in cash when your parcel arrives at your door."
+              body={`Pay in cash when your parcel arrives at your door.${STORE.codFee ? ` +${inr(STORE.codFee)} COD charge.` : ""}`}
             />
           </div>
           <p className="mt-4 rounded-2xl bg-sage/60 px-4 py-3 text-sm text-ink-soft">
@@ -326,6 +326,9 @@ export function CheckoutForm() {
               <div className="flex justify-between text-ink-soft"><span>Discount ({coupon?.code})</span><span className="text-sage-deep font-bold">−{inr(discount)}</span></div>
             )}
             <div className="flex justify-between text-ink-soft"><span>Shipping</span><span className="text-ink">{shipping === 0 ? "Free" : inr(shipping)}</span></div>
+            {method === "cod" && STORE.codFee > 0 && (
+              <div className="flex justify-between text-ink-soft"><span>Cash on Delivery fee</span><span className="text-ink">{inr(STORE.codFee)}</span></div>
+            )}
             <div className="flex justify-between pt-2 font-display text-2xl"><span>Total</span><span>{inr(total)}</span></div>
           </div>
 

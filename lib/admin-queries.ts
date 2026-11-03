@@ -154,6 +154,7 @@ export interface AdminOrder extends AdminOrderRow {
   discount: number;
   couponCode: string | null;
   shipping: number;
+  codFee: number;
   utr: string | null;
   courier: string | null;
   trackingNumber: string | null;
@@ -170,7 +171,7 @@ export async function getAdminOrder(code: string): Promise<AdminOrder | null> {
   const db = await getDb();
   const { rows } = await db.query<ListRow & {
     id: number; email: string | null; address: string; state: string; pincode: string; subtotal: number;
-    shipping: number; utr: string | null; courier: string | null; tracking_number: string | null;
+    shipping: number; cod_fee: number | null; utr: string | null; courier: string | null; tracking_number: string | null;
     tracking_url: string | null; customer_id: number | null; discount: number | null; coupon_code: string | null;
     whatsapp_at: Date | string | null; account_verified: boolean | null;
   }>(
@@ -196,6 +197,7 @@ export async function getAdminOrder(code: string): Promise<AdminOrder | null> {
     discount: r.discount ?? 0,
     couponCode: r.coupon_code,
     shipping: r.shipping,
+codFee: r.cod_fee ?? 0,
     utr: r.utr,
     courier: r.courier,
     trackingNumber: r.tracking_number,

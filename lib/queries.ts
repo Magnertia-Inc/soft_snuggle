@@ -3,7 +3,7 @@ import { getDb } from "./db";
 import { coloursFor } from "./colours";
 import { productImages } from "./images";
 import { CouponError, checkCoupon, claimCoupon, releaseCoupon } from "./coupons";
-import { inr, shippingFor } from "./store";
+import { STORE, inr, shippingFor } from "./store";
 import { courierLink, type TrackInfo } from "./tracking";
 import type { Order, OrderItem, PaymentMethod, Product } from "./types";
 
@@ -86,6 +86,7 @@ export async function createOrder(input: NewOrderInput) {
 
   const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
   const shipping = shippingFor(subtotal);
+  const codFee = input.paymentMethod === "cod" ? STORE.codFee : 0;
 
   // The code is checked again here, against the real prices, whatever the
   // checkout page showed: it may have expired or run out since.
@@ -103,7 +104,7 @@ export async function createOrder(input: NewOrderInput) {
     }
   }
 
-  const total = subtotal - discount + shipping;
+  const total = subtotal - discount + shipping + codFee;
   const accessKey = randomBytes(12).toString("hex");
 
   let res;
@@ -111,13 +112,13 @@ export async function createOrder(input: NewOrderInput) {
     res = await db.query<{ id: number; code: string }>(
       `INSERT INTO orders
         (access_key, customer_name, phone, email, address, city, state, pincode,
-         items, subtotal, shipping, total, payment_method, payment_status, customer_id,
+         items, subtotal, shipping, cod_fee, total, payment_method, payment_status, customer_id,
          coupon_code, discount)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)
        RETURNING id, code`,
       [
         accessKey, input.customerName, input.phone, input.email, input.address, input.city,
-        input.state, input.pincode, JSON.stringify(items), subtotal, shipping, total,
+        input.state, input.pincode, JSON.stringify(items), subtotal, shipping, codFee, total,
         input.paymentMethod, input.paymentMethod === "cod" ? "cod" : "pending",
         input.customerId ?? null, couponCode, discount,
       ],
@@ -143,7 +144,7 @@ export async function logOrderEvent(orderId: number, kind: string, note: string 
 type OrderRow = {
   code: string; access_key: string; customer_name: string; phone: string; email: string | null;
   address: string; city: string; state: string; pincode: string; items: OrderItem[];
-  subtotal: number; shipping: number; total: number; payment_method: PaymentMethod;
+  subtotal: number; shipping: number; cod_fee: number | null; total: number; payment_method: PaymentMethod;
   payment_status: string; utr: string | null; created_at: Date | string;
   discount: number | null; coupon_code: string | null; status: string;
 };
@@ -161,7 +162,7 @@ export async function getOrder(code: string, accessKey: string): Promise<Order |
     email: r.email, address: r.address, city: r.city, state: r.state, pincode: r.pincode,
     items: typeof r.items === "string" ? JSON.parse(r.items) : r.items,
     subtotal: r.subtotal, discount: r.discount ?? 0, couponCode: r.coupon_code,
-    shipping: r.shipping, total: r.total,
+    shipping: r.shipping, codFee: r.cod_fee ?? 0, total: r.total,
     paymentMethod: r.payment_method, paymentStatus: r.payment_status, utr: r.utr,
     status: r.status, createdAt: new Date(r.created_at).toISOString(),
   };

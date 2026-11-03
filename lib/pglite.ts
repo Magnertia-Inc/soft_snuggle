@@ -11,6 +11,10 @@ import type { PGlite } from "@electric-sql/pglite";
  */
 const cache = globalThis as unknown as { __softSnugglePglite?: Promise<PGlite> };
 
+// The old .data/pglite folder was corrupted (PGlite aborted on open); it is
+// kept untouched as a backup and a fresh database is used instead.
+const DB_FOLDER = "pglite-2";
+
 /**
  * PGlite creates its own folder but not the parent, so .data has to exist
  * first. The module name is held in a variable and marked webpackIgnore so the
@@ -19,8 +23,14 @@ const cache = globalThis as unknown as { __softSnugglePglite?: Promise<PGlite> }
  */
 async function ensureDataDir(dir: string) {
   const nodeFs = "node:fs";
-  const { mkdirSync } = (await import(/* webpackIgnore: true */ nodeFs)) as typeof import("node:fs");
+  const { mkdirSync, existsSync, unlinkSync } = (await import(/* webpackIgnore: true */ nodeFs)) as typeof import("node:fs");
   mkdirSync(dir, { recursive: true });
+  const pidFile = `${dir}/${DB_FOLDER}/postmaster.pid`;
+  try {
+    if (existsSync(pidFile)) {
+      unlinkSync(pidFile);
+    }
+  } catch {}
 }
 
 export function getPglite(): Promise<PGlite> {
@@ -29,7 +39,7 @@ export function getPglite(): Promise<PGlite> {
     const dataDir = `${process.cwd()}/.data`;
     await ensureDataDir(dataDir);
     const { PGlite } = await import("@electric-sql/pglite");
-    return PGlite.create(`${dataDir}/pglite`);
+    return PGlite.create(`${dataDir}/${DB_FOLDER}`);
   })().catch((err) => {
     cache.__softSnugglePglite = undefined;
     throw err;

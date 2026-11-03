@@ -1,7 +1,7 @@
 // Store settings shared by the browser and the server.
 
 export const STORE = {
-  name: "Soft Snuggle",
+  name: "Veviba",
   whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919585692553",
   // Delivery is free on every order.
   //
@@ -13,8 +13,9 @@ export const STORE = {
   // To charge for delivery again, put the amount here. The wording around the
   // site follows it: 0 reads "free on all orders", anything else goes back to
   // "free over <threshold>" with the cart's countdown and progress bar.
-  shippingFlat: 0,
+  shippingFlat: 29,
   freeShippingAbove: Number(process.env.NEXT_PUBLIC_FREE_SHIPPING_ABOVE ?? 1499),
+  codFee: 7,
   instagram: "https://instagram.com/",
   // No public email address: customers reach the shop on WhatsApp.
 };
@@ -55,6 +56,10 @@ export function isSoldOut(p: { inStock: boolean; sizes: string[]; soldOutSizes: 
 export function shippingFor(subtotal: number) {
   if (subtotal === 0 || subtotal >= STORE.freeShippingAbove) return 0;
   return STORE.shippingFlat;
+}
+
+export function codFeeFor(method: string) {
+  return method === "cod" ? STORE.codFee : 0;
 }
 
 /** True while delivery costs nothing whatever the order comes to. */
