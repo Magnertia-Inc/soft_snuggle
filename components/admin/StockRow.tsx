@@ -53,7 +53,7 @@ export function StockRow({ product }: { product: Product }) {
       <div className="min-w-0 flex-1 basis-48">
         <Link href={`/admin/products/${product.id}`} className="font-bold hover:underline">{product.name}</Link>
         {product.hidden && (
-          <span className="ml-2 rounded-full bg-butter px-2 py-0.5 align-middle text-[11px] font-extrabold">Hidden</span>
+          <span className="ml-2 rounded-full bg-butter px-2 py-0.5 align-middle text-[0.6875rem] font-extrabold">Hidden</span>
         )}
         <p className="text-sm text-ink-soft">
           {inr(product.price)}

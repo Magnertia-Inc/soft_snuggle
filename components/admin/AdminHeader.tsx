@@ -27,7 +27,7 @@ export function AdminHeader({ email }: { email: string }) {
       <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3 sm:px-6">
         <Link href="/admin" className="flex items-center gap-2.5">
           <Logo className="h-8" />
-          <span className="rounded-full bg-ink px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.18em] text-paper">
+          <span className="rounded-full bg-ink px-2.5 py-1 text-[0.625rem] font-extrabold uppercase tracking-[0.18em] text-paper">
             Admin
           </span>
         </Link>

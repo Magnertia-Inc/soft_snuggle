@@ -43,7 +43,7 @@ export function WishlistView() {
       {products === null ? (
         <p className="mt-10 text-ink-soft">One moment…</p>
       ) : products.length === 0 ? (
-        <div className="mt-8 rounded-[28px] border border-line bg-paper/70 p-12 text-center">
+        <div className="mt-8 rounded-[1.75rem] border border-line bg-paper/70 p-12 text-center">
           <p className="font-display text-2xl">Nothing saved yet</p>
           <p className="mt-2 text-ink-soft">Tap the heart on anything you want to come back to.</p>
           <Link href="/shop" className="btn-primary mt-6 inline-block px-7 py-3">Have a look around</Link>

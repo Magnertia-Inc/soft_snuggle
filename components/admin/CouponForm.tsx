@@ -62,7 +62,7 @@ export function CouponForm() {
   const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
 
   return (
-    <form onSubmit={submit} className="rounded-[24px] border border-line bg-paper p-5 sm:p-6">
+    <form onSubmit={submit} className="rounded-[1.5rem] border border-line bg-paper p-5 sm:p-6">
       <h2 className="font-display text-2xl">New code</h2>
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <Field label="Code" hint="What shoppers type, e.g. WELCOME10.">
@@ -80,7 +80,7 @@ export function CouponForm() {
         <fieldset>
           <legend className="mb-1.5 block text-sm font-bold text-ink-soft">Takes off</legend>
           <div className="flex gap-2">
-            <div className="flex shrink-0 overflow-hidden rounded-[14px] border border-line">
+            <div className="flex shrink-0 overflow-hidden rounded-[0.875rem] border border-line">
               {(["percent", "flat"] as const).map((k) => (
                 <button
                   key={k}

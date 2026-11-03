@@ -75,7 +75,7 @@ export function TrackOrder({ initialCode }: { initialCode?: string }) {
     : {};
 
   return (
-    <div className="mx-auto max-w-3xl px-6 pb-24 pt-32">
+    <div className="mx-auto max-w-3xl px-4 pb-24 pt-32 sm:px-6">
       <div className="text-center">
         <p className="eyebrow">Where&apos;s my parcel?</p>
         <h1 className="mt-3 font-display text-5xl tracking-tight sm:text-6xl">
@@ -86,7 +86,7 @@ export function TrackOrder({ initialCode }: { initialCode?: string }) {
         </p>
       </div>
 
-      <form onSubmit={submit} className="mt-10 grid gap-3 rounded-[28px] bg-paper p-5 shadow-[0_30px_60px_-40px_rgba(38,59,54,0.4)] sm:grid-cols-[1fr_1fr_auto] sm:p-6">
+      <form onSubmit={submit} className="mt-10 grid gap-3 rounded-[1.75rem] bg-paper p-5 shadow-[0_30px_60px_-40px_rgba(38,59,54,0.4)] sm:grid-cols-[1fr_1fr_auto] sm:p-6">
         <label className="block">
           <span className="mb-1.5 block text-sm font-bold text-ink-soft">Order ID</span>
           <input className="field uppercase" required value={code} onChange={(e) => setCode(e.target.value)} placeholder="SS-1042" />
@@ -124,7 +124,7 @@ export function TrackOrder({ initialCode }: { initialCode?: string }) {
 
         {order && (
           <motion.div key={order.code} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-8 space-y-4">
-            <div className="rounded-[28px] bg-paper p-6 sm:p-8">
+            <div className="rounded-[1.75rem] bg-paper p-6 sm:p-8">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <h2 className="font-display text-3xl">Order {order.code}</h2>
                 <span className="text-sm text-ink-soft">Last update {fmt(order.updatedAt)}</span>
@@ -142,7 +142,7 @@ export function TrackOrder({ initialCode }: { initialCode?: string }) {
                     return (
                       <li key={s.key} className="relative flex gap-4 pb-7 last:pb-0">
                         {i < TRACK_STEPS.length - 1 && (
-                          <span className="absolute left-[15px] top-8 h-[calc(100%-2rem)] w-0.5 overflow-hidden rounded bg-line">
+                          <span className="absolute left-[0.9375rem] top-8 h-[calc(100%-2rem)] w-0.5 overflow-hidden rounded bg-line">
                             <motion.span
                               className="block w-full bg-sage-deep"
                               initial={{ height: 0 }}
@@ -175,7 +175,7 @@ export function TrackOrder({ initialCode }: { initialCode?: string }) {
             </div>
 
             {(order.courier || order.trackingNumber) && (
-              <div className="rounded-[28px] bg-sage p-6 sm:p-8">
+              <div className="rounded-[1.75rem] bg-sage p-6 sm:p-8">
                 <p className="eyebrow text-ink">Courier details</p>
                 <div className="mt-3 flex flex-wrap items-center justify-between gap-4">
                   <div>
@@ -209,7 +209,7 @@ export function TrackOrder({ initialCode }: { initialCode?: string }) {
             )}
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-[28px] border border-line bg-paper/70 p-6 text-sm">
+              <div className="rounded-[1.75rem] border border-line bg-paper/70 p-6 text-sm">
                 <p className="eyebrow">Items</p>
                 <ul className="mt-3 space-y-1.5">
                   {order.items.map((i) => (
@@ -225,7 +225,7 @@ export function TrackOrder({ initialCode }: { initialCode?: string }) {
                   </span>
                 </p>
               </div>
-              <div className="rounded-[28px] border border-line bg-paper/70 p-6 text-sm">
+              <div className="rounded-[1.75rem] border border-line bg-paper/70 p-6 text-sm">
                 <p className="eyebrow">Delivering to</p>
                 <p className="mt-3 font-semibold">
                   {order.city} – {order.pincode}

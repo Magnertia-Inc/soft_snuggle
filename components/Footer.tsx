@@ -48,7 +48,7 @@ export function Footer() {
     <footer className="relative overflow-hidden border-t border-line bg-paper text-ink-soft">
       <div className="relative z-10 mx-auto flex max-w-6xl flex-col items-center gap-4 px-6 pt-8 text-center sm:gap-5 sm:pt-10">
         <Logo className="h-10 sm:h-12" />
-        <p className="inline-flex items-center gap-2 rounded-full bg-sage px-4 py-1.5 text-[11px] font-extrabold uppercase tracking-[0.16em] text-ink">
+        <p className="inline-flex items-center gap-2 rounded-full bg-sage px-4 py-1.5 text-[0.6875rem] font-extrabold uppercase tracking-[0.16em] text-ink">
           <span className="h-2 w-2 animate-pulse rounded-full bg-[#25D366]" /> 24×7 ordering available
         </p>
         {/* Phones get the two headed columns; wide screens keep the flat
@@ -56,7 +56,7 @@ export function Footer() {
         <div className="grid w-full grid-cols-2 gap-6 px-2 text-left sm:hidden">
           {COLUMNS.map((col) => (
             <nav key={col.heading}>
-              <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-ink">{col.heading}</p>
+              <p className="text-[0.6875rem] font-extrabold uppercase tracking-[0.18em] text-ink">{col.heading}</p>
               <ul className="mt-2.5 space-y-2">
                 {col.links.map((l) => (
                   <li key={l.href}>
@@ -71,7 +71,7 @@ export function Footer() {
         </div>
         <nav className="hidden sm:flex sm:flex-wrap sm:justify-center sm:gap-x-7 sm:gap-y-2">
           {LINKS.map((l) => (
-            <Link key={l.href} href={l.href} className="text-[11px] font-bold uppercase tracking-[0.18em] transition-colors hover:text-ink">
+            <Link key={l.href} href={l.href} className="text-[0.6875rem] font-bold uppercase tracking-[0.18em] transition-colors hover:text-ink">
               {l.label}
             </Link>
           ))}

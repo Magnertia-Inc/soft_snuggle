@@ -31,7 +31,7 @@ export function CartDrawer() {
             onClick={close}
           />
           <motion.aside
-            className="fixed inset-y-0 right-0 z-[61] flex w-full max-w-md flex-col bg-paper shadow-2xl sm:inset-y-3 sm:right-3 sm:rounded-[28px]"
+            className="fixed inset-y-0 right-0 z-[61] flex w-full max-w-md flex-col bg-paper shadow-2xl sm:inset-y-3 sm:right-3 sm:rounded-[1.75rem]"
             initial={{ x: "105%" }}
             animate={{ x: 0 }}
             exit={{ x: "105%" }}

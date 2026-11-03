@@ -30,7 +30,7 @@ export default async function Products() {
         {products.length} pieces · {hidden} hidden · {off} sold out · {sizesOut} {sizesOut === 1 ? "size" : "sizes"} sold out
       </p>
 
-      <ul className="mt-6 divide-y divide-line overflow-hidden rounded-[24px] border border-line bg-paper">
+      <ul className="mt-6 divide-y divide-line overflow-hidden rounded-[1.5rem] border border-line bg-paper">
         {products.map((p) => <StockRow key={p.id} product={p} />)}
       </ul>
     </div>

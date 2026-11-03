@@ -27,11 +27,11 @@ export default async function Coupons() {
       </div>
 
       {coupons.length === 0 ? (
-        <p className="mt-6 rounded-[24px] border border-dashed border-line px-5 py-8 text-center text-ink-soft">
+        <p className="mt-6 rounded-[1.5rem] border border-dashed border-line px-5 py-8 text-center text-ink-soft">
           No codes yet. Create your first one above.
         </p>
       ) : (
-        <ul className="mt-6 divide-y divide-line overflow-hidden rounded-[24px] border border-line bg-paper">
+        <ul className="mt-6 divide-y divide-line overflow-hidden rounded-[1.5rem] border border-line bg-paper">
           {coupons.map((c) => (
             <CouponRow
               key={c.id}

@@ -21,7 +21,7 @@ export default async function AdminLogin({ searchParams }: { searchParams: Promi
 
   return (
     <div className="speckle flex min-h-screen items-center justify-center px-5">
-      <div className="w-full max-w-sm rounded-[28px] border border-line bg-paper p-8 text-center shadow-[0_24px_60px_-30px_rgba(38,59,54,0.35)]">
+      <div className="w-full max-w-sm rounded-[1.75rem] border border-line bg-paper p-8 text-center shadow-[0_24px_60px_-30px_rgba(38,59,54,0.35)]">
         <Logo className="mx-auto h-10" />
         <p className="eyebrow mt-6">Shop admin</p>
         <h1 className="mt-2 font-display text-3xl tracking-tight">Sign in</h1>

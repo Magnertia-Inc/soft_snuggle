@@ -30,7 +30,7 @@ export default function ContactPage() {
     // Sized to one phone screen with no footer below it, so the ways to
     // reach the shop are all in view without scrolling. svh rather than vh so
     // the mobile browser's own chrome is taken into account.
-    <div className="speckle flex min-h-[100svh] flex-col justify-center px-5 pb-8 pt-24 sm:min-h-0 sm:px-6 sm:pb-24 sm:pt-32">
+    <div className="speckle flex min-h-[100svh] flex-col justify-center px-4 pb-8 pt-24 sm:min-h-0 sm:px-6 sm:pb-24 sm:pt-32">
       <section className="mx-auto w-full max-w-5xl">
         <Reveal className="text-center">
           <FlowerMark className="anim-float mx-auto h-9 w-9 sm:h-12 sm:w-12" />
@@ -51,7 +51,7 @@ export default function ContactPage() {
                 href={c.href}
                 target={c.href.startsWith("http") ? "_blank" : undefined}
                 rel="noreferrer"
-                className="group flex h-full items-center gap-4 rounded-[22px] p-4 transition-transform duration-500 hover:-translate-y-1.5 sm:block sm:rounded-[28px] sm:p-7"
+                className="group flex h-full items-center gap-4 rounded-[1.375rem] p-4 transition-transform duration-500 hover:-translate-y-1.5 sm:block sm:rounded-[1.75rem] sm:p-7"
                 style={{ background: c.tint }}
               >
                 <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-paper sm:h-12 sm:w-12">
@@ -59,8 +59,8 @@ export default function ContactPage() {
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block font-display text-xl sm:mt-6 sm:text-2xl">{c.title}</span>
-                  <span className="mt-0.5 block text-[13px] leading-snug text-ink-soft sm:mt-1 sm:text-sm">{c.body}</span>
-                  <span className="mt-1.5 block truncate text-[13px] font-bold underline-offset-4 group-hover:underline sm:mt-5 sm:inline-block sm:text-sm">
+                  <span className="mt-0.5 block text-[0.8125rem] leading-snug text-ink-soft sm:mt-1 sm:text-sm">{c.body}</span>
+                  <span className="mt-1.5 block truncate text-[0.8125rem] font-bold underline-offset-4 group-hover:underline sm:mt-5 sm:inline-block sm:text-sm">
                     {c.cta} →
                   </span>
                 </span>

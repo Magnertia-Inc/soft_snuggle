@@ -24,8 +24,8 @@ export function Newsletter() {
   };
 
   return (
-    <section className="mx-auto max-w-7xl px-4 pb-24 sm:px-6">
-      <div className="relative overflow-hidden rounded-[40px] bg-ink px-8 py-14 text-paper sm:px-14 sm:py-16">
+    <section className="shell pb-24">
+      <div className="relative overflow-hidden rounded-[2.5rem] bg-ink px-8 py-14 text-paper sm:px-14 sm:py-16">
         <motion.div
           className="absolute -right-16 -top-16 opacity-20"
           animate={{ rotate: 360 }}

@@ -83,16 +83,16 @@ export function AgeTiles({
           {AGE_GROUPS.map((g, i) => {
             const { swatches, figure } = card(g, i);
             return (
-              <div key={g.slug} className="overflow-hidden rounded-[28px] p-5" style={{ background: g.tint }}>
+              <div key={g.slug} className="overflow-hidden rounded-[1.75rem] p-5" style={{ background: g.tint }}>
                 <div className="flex items-start gap-4">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <h3 className="font-display text-3xl tracking-tight">{g.title}</h3>
-                      <span className="rounded-full bg-paper/70 px-2.5 py-0.5 text-[11px] font-bold">
+                      <span className="rounded-full bg-paper/70 px-2.5 py-0.5 text-[0.6875rem] font-bold">
                         {counts[g.slug] ?? 0}
                       </span>
                     </div>
-                    <p className="mt-0.5 text-[11px] font-extrabold uppercase tracking-[0.18em] text-ink/60">{g.range}</p>
+                    <p className="mt-0.5 text-[0.6875rem] font-extrabold uppercase tracking-[0.18em] text-ink/60">{g.range}</p>
                     <p className="mt-2 text-sm text-ink-soft">{NOTES[i]}</p>
                     <Link
                       href={`/shop?age=${g.slug}`}
@@ -102,7 +102,7 @@ export function AgeTiles({
                     </Link>
                   </div>
                   {/* The figure keeps its own column so the text never wraps around it */}
-                  <div className={`shrink-0 self-end ${photos[g.slug] ? "w-[40%] max-h-[210px]" : "aspect-[220/320] w-[29%]"}`}>
+                  <div className={`shrink-0 self-end ${photos[g.slug] ? "w-[40%] max-h-[13.125rem]" : "aspect-[220/320] w-[29%]"}`}>
                     {figure}
                   </div>
                 </div>
@@ -134,7 +134,7 @@ export function AgeTiles({
             <Link
               key={g.slug}
               href={`/shop?age=${g.slug}`}
-              className="group relative flex h-[64svh] w-[78vw] lg:h-[72svh] shrink-0 flex-col overflow-hidden rounded-[36px] p-7 sm:w-[46vw] sm:p-9 lg:w-[34vw]"
+              className="group relative flex h-[64svh] w-[78vw] lg:h-[72svh] shrink-0 flex-col overflow-hidden rounded-[2.25rem] p-7 sm:w-[46vw] sm:p-9 lg:w-[34vw]"
               style={{ background: g.tint }}
             >
               <div className="flex items-start justify-between">
@@ -165,7 +165,7 @@ export function AgeTiles({
               <div className="pointer-events-none -mb-4 mt-2 flex min-h-0 flex-1 items-end justify-end">
                 <div
                   className={`h-full transition-transform duration-700 ease-[cubic-bezier(.22,1,.36,1)] group-hover:-translate-y-3 group-hover:rotate-[-4deg] ${
-                    photos[g.slug] ? "max-h-[440px]" : "aspect-[220/320] max-h-[300px]"
+                    photos[g.slug] ? "max-h-[27.5rem]" : "aspect-[220/320] max-h-[18.75rem]"
                   }`}
                 >
                   {photos[g.slug] ? (

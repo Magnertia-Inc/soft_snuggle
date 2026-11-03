@@ -45,7 +45,7 @@ export function CouponRow({ coupon: c, label, expires, expired }: { coupon: Coup
           <span className="rounded-lg border border-dashed border-ink/40 px-2 py-0.5 font-mono text-base font-bold tracking-wide">{c.code}</span>
           <span className="font-bold">{label}</span>
           <span
-            className={`rounded-full px-2 py-0.5 text-[11px] font-extrabold ${
+            className={`rounded-full px-2 py-0.5 text-[0.6875rem] font-extrabold ${
               state === "Live" ? "bg-sage" : state === "Off" ? "bg-line text-ink-soft" : "bg-butter"
             }`}
           >

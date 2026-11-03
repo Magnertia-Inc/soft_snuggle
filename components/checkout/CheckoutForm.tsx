@@ -142,7 +142,7 @@ export function CheckoutForm() {
   }
 
   return (
-    <form onSubmit={submit} className="mx-auto grid max-w-7xl gap-10 px-6 pb-24 pt-28 sm:pt-32 lg:grid-cols-[1.25fr_1fr]">
+    <form onSubmit={submit} className="shell grid gap-10 pb-24 pt-28 sm:pt-32 lg:grid-cols-[1.25fr_1fr]">
       <div>
         <p className="eyebrow">Almost there</p>
         <h1 className="mt-3 font-display text-5xl tracking-tight sm:text-6xl">
@@ -150,7 +150,7 @@ export function CheckoutForm() {
         </h1>
 
         {accountReady && !customer && (
-          <div className="mt-7 flex flex-wrap items-center justify-between gap-3 rounded-[24px] border border-line bg-paper/70 px-5 py-4">
+          <div className="mt-7 flex flex-wrap items-center justify-between gap-3 rounded-[1.5rem] border border-line bg-paper/70 px-5 py-4">
             <p className="text-sm text-ink-soft">
               Have an account? Log in and we&apos;ll fill this in for you.
             </p>
@@ -161,7 +161,7 @@ export function CheckoutForm() {
         )}
 
         {customer && (
-          <p className="mt-7 rounded-[24px] bg-sage/60 px-5 py-4 text-sm font-semibold">
+          <p className="mt-7 rounded-[1.5rem] bg-sage/60 px-5 py-4 text-sm font-semibold">
             Signed in as {customer.name}. This order will be saved to your account.
           </p>
         )}
@@ -173,7 +173,7 @@ export function CheckoutForm() {
             </Field>
             <Field label="Mobile number (WhatsApp)">
               <div className="flex">
-                <span className="grid place-items-center rounded-l-[14px] border border-r-0 border-line bg-cream px-3 text-sm font-bold">+91</span>
+                <span className="grid place-items-center rounded-l-[0.875rem] border border-r-0 border-line bg-cream px-3 text-sm font-bold">+91</span>
                 <input
                   className="field rounded-l-none"
                   required
@@ -248,7 +248,7 @@ export function CheckoutForm() {
 
       {/* Summary */}
       <aside className="lg:sticky lg:top-28 lg:self-start">
-        <div className="rounded-[32px] bg-paper p-6 shadow-[0_30px_60px_-40px_rgba(38,59,54,0.4)] sm:p-8">
+        <div className="rounded-[2rem] bg-paper p-6 shadow-[0_30px_60px_-40px_rgba(38,59,54,0.4)] sm:p-8">
           <h2 className="font-display text-2xl">Your order</h2>
           <ul className="mt-5 space-y-4">
             {items.map((i) => (
@@ -388,7 +388,7 @@ function PayOption({ active, onClick, title, body, tag }: { active: boolean; onC
     <button
       type="button"
       onClick={onClick}
-      className={`relative rounded-[22px] border-2 p-5 text-left transition-all ${
+      className={`relative rounded-[1.375rem] border-2 p-5 text-left transition-all ${
         active ? "border-ink bg-paper shadow-[0_16px_40px_-24px_rgba(38,59,54,0.5)]" : "border-line bg-paper/60 hover:border-ink/30"
       }`}
       aria-pressed={active}

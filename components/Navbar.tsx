@@ -58,7 +58,7 @@ export function Navbar() {
     <Link
       key={href}
       href={href}
-      className={`relative py-1 text-[12px] font-bold uppercase tracking-[0.18em] transition-colors ${
+      className={`relative py-1 text-[0.75rem] font-bold uppercase tracking-[0.18em] transition-colors ${
         isActive(href) ? "text-ink" : "text-ink-soft hover:text-ink"
       }`}
     >
@@ -78,7 +78,7 @@ export function Navbar() {
       <header ref={headerRef} className="fixed inset-x-0 top-0 z-50">
         {/* Offer strip */}
         {/* One line on every screen: phones get the short version so it never wraps */}
-        <div className="relative truncate bg-sage-deep px-4 py-1.5 text-center text-[10.5px] font-bold uppercase tracking-[0.12em] text-paper sm:text-[11px] sm:tracking-[0.14em]">
+        <div className="relative truncate bg-sage-deep px-4 py-1.5 text-center text-[0.6563rem] font-bold uppercase tracking-[0.12em] text-paper sm:text-[0.6875rem] sm:tracking-[0.14em]">
           <span className="hidden sm:inline">24×7 ordering available · </span>
           {shippingLine}
           <span className="sm:hidden"> · COD available</span>
@@ -93,7 +93,7 @@ export function Navbar() {
 
         {/* Main bar: links split around a centred logo */}
         <nav className="border-b border-line/80 bg-cream/85 backdrop-blur-md">
-          <div className="mx-auto grid h-14 max-w-6xl grid-cols-[1fr_auto_1fr] items-center px-4 sm:px-8">
+          <div className="shell grid h-14 grid-cols-[1fr_auto_1fr] items-center">
             <LayoutGroup id="nav">
               <div className="flex items-center gap-7">
                 <button
@@ -125,9 +125,9 @@ export function Navbar() {
                   className="relative hidden h-9 w-9 place-items-center rounded-full text-ink transition-colors hover:bg-sage/70 sm:grid"
                   aria-label={`Saved pieces, ${wishlist.length} saved`}
                 >
-                  <HeartIcon className="h-[18px] w-[18px]" />
+                  <HeartIcon className="h-[1.125rem] w-[1.125rem]" />
                   {wishlist.length > 0 && (
-                    <span className="absolute right-0.5 top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-rose px-1 text-[10px] font-bold text-paper">
+                    <span className="absolute right-0.5 top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-rose px-1 text-[0.625rem] font-bold text-paper">
                       {wishlist.length}
                     </span>
                   )}
@@ -140,11 +140,11 @@ export function Navbar() {
                   title={customer ? customer.name : "Log in"}
                 >
                   {customer ? (
-                    <span className="grid h-7 w-7 place-items-center rounded-full bg-sage-deep text-[11px] font-extrabold uppercase text-paper">
+                    <span className="grid h-7 w-7 place-items-center rounded-full bg-sage-deep text-[0.6875rem] font-extrabold uppercase text-paper">
                       {customer.name.trim().charAt(0)}
                     </span>
                   ) : (
-                    <UserIcon className="h-[18px] w-[18px]" />
+                    <UserIcon className="h-[1.125rem] w-[1.125rem]" />
                   )}
                 </Link>
 
@@ -153,14 +153,14 @@ export function Navbar() {
                   className="-mr-1.5 flex h-10 items-center gap-1.5 rounded-full pl-2.5 pr-1.5 text-ink transition-colors hover:bg-sage/70"
                   aria-label={`Open bag, ${count} items`}
                 >
-                  <BagIcon className="h-[18px] w-[18px]" />
+                  <BagIcon className="h-[1.125rem] w-[1.125rem]" />
                   <AnimatePresence mode="popLayout">
                     <motion.span
                       key={count}
                       initial={{ scale: 0.3, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       exit={{ scale: 0.3, opacity: 0 }}
-                      className="grid h-5 min-w-5 place-items-center rounded-full bg-butter px-1 text-[11px] font-bold"
+                      className="grid h-5 min-w-5 place-items-center rounded-full bg-butter px-1 text-[0.6875rem] font-bold"
                     >
                       {count}
                     </motion.span>
@@ -184,7 +184,7 @@ export function Navbar() {
               onClick={() => setMenuOpen(false)}
             />
             <motion.div
-              className="fixed inset-x-3 z-40 max-h-[calc(100svh-7rem)] overflow-y-auto rounded-[28px] border border-line bg-paper p-3 shadow-2xl md:hidden"
+              className="fixed inset-x-3 z-40 max-h-[calc(100svh-7rem)] overflow-y-auto rounded-[1.75rem] border border-line bg-paper p-3 shadow-2xl md:hidden"
               style={{ top: headerHeight + 8 }}
               initial={{ opacity: 0, y: -12, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}

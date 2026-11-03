@@ -107,7 +107,7 @@ export function ShopBanner({ tab, age, photos = [] }: { tab: string; age: string
 
   return (
     <motion.div
-      className="relative mb-8 overflow-hidden rounded-[28px] px-5 py-7 sm:mb-10 sm:rounded-[36px] sm:px-12 sm:py-14"
+      className="relative mb-8 overflow-hidden rounded-[1.75rem] px-5 py-7 sm:mb-10 sm:rounded-[2.25rem] sm:px-12 sm:py-14"
       animate={{ backgroundColor: group?.tint ?? b.tint }}
       transition={{ duration: 0.6 }}
     >
@@ -143,7 +143,7 @@ export function ShopBanner({ tab, age, photos = [] }: { tab: string; age: string
             <p className="mt-2.5 max-w-md text-sm text-ink-soft sm:mt-4 sm:text-base">{b.body}</p>
             <div className="mt-4 flex flex-wrap gap-1.5 sm:mt-6 sm:gap-2">
               {b.perks.map((p) => (
-                <span key={p} className="rounded-full bg-paper/80 px-3 py-1 text-[11px] font-bold sm:px-3.5 sm:py-1.5 sm:text-xs">
+                <span key={p} className="rounded-full bg-paper/80 px-3 py-1 text-[0.6875rem] font-bold sm:px-3.5 sm:py-1.5 sm:text-xs">
                   ✿ {p}
                 </span>
               ))}
@@ -160,7 +160,7 @@ export function ShopBanner({ tab, age, photos = [] }: { tab: string; age: string
             <svg
               viewBox="0 0 400 60"
               preserveAspectRatio="none"
-              className="pointer-events-none absolute inset-x-0 top-0 h-[60px] w-full overflow-visible"
+              className="pointer-events-none absolute inset-x-0 top-0 h-[3.75rem] w-full overflow-visible"
               aria-hidden="true"
             >
               <motion.path
@@ -205,7 +205,7 @@ export function ShopBanner({ tab, age, photos = [] }: { tab: string; age: string
               >
                 {typeof a === "string" ? (
                   <div className="anim-float origin-top" style={{ animationDelay: `${i * 0.7}s` }}>
-                    <span className="mx-auto block h-4 w-[7px] -translate-y-2 rounded-sm bg-[#C9A27A] shadow-[inset_-1px_0_0_rgba(0,0,0,0.15)]" />
+                    <span className="mx-auto block h-4 w-[0.4375rem] -translate-y-2 rounded-sm bg-[#C9A27A] shadow-[inset_-1px_0_0_rgba(0,0,0,0.15)]" />
                     <img
                       src={a}
                       alt=""

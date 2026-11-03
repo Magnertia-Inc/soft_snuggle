@@ -70,7 +70,7 @@ export function OrderFlow({ order, upiUrl, upiId, payee, qrSvg }: Props) {
   const stepIndex = steps.indexOf(step);
 
   return (
-    <div className="mx-auto max-w-3xl px-6 pb-24 pt-28 sm:pt-32">
+    <div className="mx-auto max-w-3xl px-4 pb-24 pt-28 sm:px-6 sm:pt-32">
       {/* Header */}
       <div className="text-center">
         <motion.div
@@ -120,7 +120,7 @@ export function OrderFlow({ order, upiUrl, upiId, payee, qrSvg }: Props) {
         </div>
       )}
 
-      <div className="mt-8 rounded-[32px] bg-paper p-6 shadow-[0_30px_60px_-40px_rgba(38,59,54,0.4)] sm:p-10">
+      <div className="mt-8 rounded-[2rem] bg-paper p-6 shadow-[0_30px_60px_-40px_rgba(38,59,54,0.4)] sm:p-10">
         <AnimatePresence mode="wait">
           {step === "pay" && (
             <Panel key="pay">
@@ -130,13 +130,13 @@ export function OrderFlow({ order, upiUrl, upiId, payee, qrSvg }: Props) {
               </h2>
               <p className="mt-2 text-ink-soft">The amount and order number are already filled in for you.</p>
 
-              <div className="mt-6 grid items-center gap-6 sm:grid-cols-[220px_1fr]">
+              <div className="mt-6 grid items-center gap-6 sm:grid-cols-[13.75rem_1fr]">
                 <AnimatePresence>
                   {(!isMobile || showQr) && (
                     <motion.div
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      className="mx-auto w-[220px] rounded-3xl border border-line bg-paper p-3"
+                      className="mx-auto w-[13.75rem] rounded-3xl border border-line bg-paper p-3"
                     >
                       <div className="aspect-square [&>svg]:h-full [&>svg]:w-full" dangerouslySetInnerHTML={{ __html: qrSvg }} />
                       <p className="mt-2 text-center text-xs font-bold text-ink-soft">Scan with any UPI app</p>
@@ -245,7 +245,7 @@ export function OrderFlow({ order, upiUrl, upiId, payee, qrSvg }: Props) {
 
       {/* Summary */}
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
-        <div className="rounded-[28px] border border-line bg-paper/70 p-6">
+        <div className="rounded-[1.75rem] border border-line bg-paper/70 p-6">
           <p className="eyebrow">Items</p>
           <ul className="mt-3 space-y-2 text-sm">
             {order.items.map((i) => (
@@ -270,7 +270,7 @@ export function OrderFlow({ order, upiUrl, upiId, payee, qrSvg }: Props) {
             </li>
           </ul>
         </div>
-        <div className="rounded-[28px] border border-line bg-paper/70 p-6 text-sm">
+        <div className="rounded-[1.75rem] border border-line bg-paper/70 p-6 text-sm">
           <p className="eyebrow">Delivering to</p>
           <p className="mt-3 font-bold">{order.customerName}</p>
           <p className="text-ink-soft">+91 {order.phone}</p>

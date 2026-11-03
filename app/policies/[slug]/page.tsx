@@ -65,12 +65,12 @@ export default async function PolicyPage({ params }: Params) {
   if (!policy) notFound();
   return (
     <article className="speckle min-h-screen">
-      <div className="mx-auto max-w-3xl px-6 pb-24 pt-32 sm:pt-40">
+      <div className="mx-auto max-w-3xl px-4 pb-24 pt-32 sm:px-6 sm:pt-40">
         <p className="eyebrow">Policies</p>
         <h1 className="mt-3 font-display text-5xl tracking-tight sm:text-6xl">{policy.title}</h1>
         <div className="mt-10 space-y-8">
           {policy.sections.map(([h, body]) => (
-            <section key={h} className="rounded-[24px] bg-paper p-6 sm:p-8">
+            <section key={h} className="rounded-[1.5rem] bg-paper p-6 sm:p-8">
               <h2 className="font-display text-2xl">{h}</h2>
               <p className="mt-2 leading-relaxed text-ink-soft">{body}</p>
             </section>

@@ -58,7 +58,7 @@ export function SizeChart({ highlight, initial = "frock" }: { highlight?: string
         </div>
       </LayoutGroup>
       <div className="overflow-x-auto" data-lenis-prevent>
-        <table className="w-full min-w-[420px] text-sm">
+        <table className="w-full min-w-[26.25rem] text-sm">
           <thead>
             <tr className="text-left">
               <th className="px-4 py-2.5 font-extrabold">Measurement</th>

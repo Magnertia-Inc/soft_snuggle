@@ -27,7 +27,7 @@ export default async function ProductPage({ params }: Params) {
   return (
     <div className="speckle">
       <ProductDetail product={product} />
-      <section className="mx-auto max-w-7xl px-4 pb-24 sm:px-6">
+      <section className="shell pb-24">
         <Reveal>
           <h2 className="mb-6 font-display text-3xl tracking-tight sm:mb-8 sm:text-4xl">
             You might <em className="text-sage-deep">also love</em>

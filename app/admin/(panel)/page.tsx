@@ -31,7 +31,7 @@ export default async function Dashboard() {
           { label: "Last 7 days", value: inr(sales.week_sales), sub: `${sales.week_orders} orders` },
           { label: "Last 30 days", value: inr(sales.month_sales) },
         ].map((s) => (
-          <div key={s.label} className="rounded-[24px] border border-line bg-paper p-5">
+          <div key={s.label} className="rounded-[1.5rem] border border-line bg-paper p-5">
             <dt className="text-xs font-extrabold uppercase tracking-[0.14em] text-ink-soft">{s.label}</dt>
             <dd className="mt-2 font-display text-3xl">{s.value}</dd>
             {s.sub && <dd className="text-sm text-ink-soft">{s.sub}</dd>}
@@ -46,7 +46,7 @@ export default async function Dashboard() {
           <Link
             key={t.label}
             href={t.href}
-            className={`rounded-[24px] p-5 transition-transform hover:-translate-y-0.5 ${t.n ? t.tone : "border border-line bg-paper/60 text-ink-soft"}`}
+            className={`rounded-[1.5rem] p-5 transition-transform hover:-translate-y-0.5 ${t.n ? t.tone : "border border-line bg-paper/60 text-ink-soft"}`}
           >
             <p className="font-display text-4xl">{t.n}</p>
             <p className="mt-1 font-bold text-ink">{t.label}</p>

@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Your account" };
 export default function AccountPage() {
   return (
     <div className="speckle min-h-[80vh]">
-      <section className="mx-auto max-w-3xl px-6 pb-24 pt-32">
+      <section className="mx-auto max-w-3xl px-4 pb-24 pt-32 sm:px-6">
         <AccountDashboard />
       </section>
     </div>

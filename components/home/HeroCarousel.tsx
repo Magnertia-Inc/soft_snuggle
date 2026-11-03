@@ -138,7 +138,7 @@ export function HeroCarousel({ heroImages }: { heroImages: Record<string, string
   return (
     <section
       ref={sectionRef}
-      className="speckle relative h-[100svh] min-h-[640px] overflow-hidden bg-cream"
+      className="speckle relative h-[100svh] min-h-[40rem] overflow-hidden bg-cream"
       onPointerMove={(e) => {
         mx.set(e.clientX / window.innerWidth - 0.5);
         my.set(e.clientY / window.innerHeight - 0.5);

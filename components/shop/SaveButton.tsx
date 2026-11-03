@@ -39,7 +39,7 @@ export function SaveButton({ productId, className = "", label = false }: {
         transition={{ duration: 0.4 }}
         className="grid place-items-center"
       >
-        <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" aria-hidden>
+        <svg viewBox="0 0 24 24" className="h-[1.125rem] w-[1.125rem]" aria-hidden>
           <path
             d="M12 20.5s-7.5-4.7-7.5-9.7a4.3 4.3 0 0 1 7.5-2.9 4.3 4.3 0 0 1 7.5 2.9c0 5-7.5 9.7-7.5 9.7Z"
             fill={on ? "#E6A99D" : "none"}

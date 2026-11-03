@@ -64,7 +64,7 @@ export function OrderActions(o: Props) {
         e.preventDefault();
         run(action, { courier, trackingNumber, trackingUrl });
       }}
-      className="space-y-2.5 rounded-[20px] bg-cream p-4"
+      className="space-y-2.5 rounded-[1.25rem] bg-cream p-4"
     >
       <label className="block text-sm font-bold">
         Courier
@@ -142,7 +142,7 @@ export function OrderActions(o: Props) {
               e.preventDefault();
               run("cancel", { note: reason });
             }}
-            className="space-y-2.5 rounded-[20px] bg-cream p-4"
+            className="space-y-2.5 rounded-[1.25rem] bg-cream p-4"
           >
             <label className="block text-sm font-bold">
               Why is it being cancelled?

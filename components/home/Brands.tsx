@@ -18,7 +18,7 @@ const BRANDS = [
 
 export function Brands() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20">
+    <section className="shell py-16 sm:py-20">
       <Reveal className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
         <div>
           <p className="eyebrow">Our brands</p>
@@ -36,7 +36,7 @@ export function Brands() {
           <Reveal key={b.name} delay={i * 0.08}>
             <Link
               href={b.href}
-              className="group flex h-full items-center gap-5 rounded-[28px] p-7 transition-transform duration-500 hover:-translate-y-1.5"
+              className="group flex h-full items-center gap-5 rounded-[1.75rem] p-7 transition-transform duration-500 hover:-translate-y-1.5"
               style={{ background: b.tint }}
             >
               <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-paper">

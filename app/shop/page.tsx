@@ -16,7 +16,7 @@ export default async function ShopPage({
 
   return (
     <div className="speckle min-h-screen">
-      <section className="mx-auto max-w-7xl px-4 pb-24 pt-32 sm:px-6">
+      <section className="shell pb-24 pt-32">
         {/* key resets the filters when the URL changes */}
         <ProductGrid
           key={`${category}-${age}`}

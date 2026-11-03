@@ -171,7 +171,7 @@ export function ProductForm({ product, folderPhotos = [] }: { product: Product |
 
   const missingFolderPhotos = folderPhotos.filter((u) => !f.images.includes(u));
   const price = Number(f.price);
-  const card = "rounded-[24px] border border-line bg-paper p-5 sm:p-6";
+  const card = "rounded-[1.5rem] border border-line bg-paper p-5 sm:p-6";
 
   return (
     <form
@@ -328,7 +328,7 @@ export function ProductForm({ product, folderPhotos = [] }: { product: Product |
                       <img src={src} alt="" className="h-full w-full object-cover" />
                     </div>
                     {i === 0 && (
-                      <span className="absolute left-1.5 top-1.5 rounded-full bg-ink px-2 py-0.5 text-[10px] font-extrabold text-paper">Cover</span>
+                      <span className="absolute left-1.5 top-1.5 rounded-full bg-ink px-2 py-0.5 text-[0.625rem] font-extrabold text-paper">Cover</span>
                     )}
                     <div className="mt-1 flex justify-between text-xs font-bold">
                       <button type="button" disabled={i === 0} onClick={() => move(i, -1)} aria-label="Move earlier" className="px-1.5 disabled:opacity-30">←</button>
@@ -357,7 +357,7 @@ export function ProductForm({ product, folderPhotos = [] }: { product: Product |
                         style={{ background: f.tint }}
                       >
                         <img src={src} alt="" className="h-full w-full object-cover" />
-                        <span className="absolute inset-x-0 bottom-0 bg-ink/80 text-[10px] font-bold text-paper">+ Add</span>
+                        <span className="absolute inset-x-0 bottom-0 bg-ink/80 text-[0.625rem] font-bold text-paper">+ Add</span>
                       </button>
                     </li>
                   ))}

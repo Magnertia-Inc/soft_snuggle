@@ -56,7 +56,7 @@ export default async function Orders({
             }`}
           >
             {ORDER_VIEWS[v].label}
-            <span className={`rounded-full px-2 py-0.5 text-[11px] ${v === view ? "bg-paper/20" : "bg-cream"}`}>{counts[v]}</span>
+            <span className={`rounded-full px-2 py-0.5 text-[0.6875rem] ${v === view ? "bg-paper/20" : "bg-cream"}`}>{counts[v]}</span>
           </Link>
         ))}
       </nav>

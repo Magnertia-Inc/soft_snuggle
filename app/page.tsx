@@ -28,7 +28,7 @@ export default async function HomePage() {
       <Statement />
       <AgeTiles counts={counts} photos={ageImages()} />
 
-      <section id="favourites" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-32">
+      <section id="favourites" className="shell py-20 sm:py-32">
         <Reveal className="mb-10 flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
           <div>
             <p className="eyebrow">The soft stuff</p>

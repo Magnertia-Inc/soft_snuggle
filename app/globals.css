@@ -22,6 +22,11 @@
 }
 
 html {
+  /* Everything is sized in rem, so on a big screen (or zoomed out) the whole
+     site grows with the window instead of sitting in a narrow strip. It keeps
+     the proportions of a 1600×900 window and never goes below the reader's
+     own font size; the height cap stops ultrawide screens getting too tall. */
+  font-size: max(100%, min(1vw, 1.78vh));
   background: var(--color-cream);
   color: var(--color-ink);
   -webkit-tap-highlight-color: transparent;
@@ -39,6 +44,17 @@ body {
 }
 
 @layer components {
+/* The one page width: the navbar, every page and every home section line up
+   on the same left and right edges. */
+.shell {
+  width: 100%;
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+@media (min-width: 40rem) { .shell { padding-inline: 1.5rem; } }
+@media (min-width: 64rem) { .shell { padding-inline: 2rem; } }
+
 /* Paper speckle, like the reel's backdrop */
 .speckle {
   background-image:
@@ -143,7 +159,7 @@ body {
 
 .field {
   width: 100%;
-  border-radius: 14px;
+  border-radius: 0.875rem;
   border: 1.5px solid var(--color-line);
   background: var(--color-paper);
   padding: 0.85rem 1rem;

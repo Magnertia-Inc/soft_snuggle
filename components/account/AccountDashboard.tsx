@@ -46,12 +46,12 @@ export function AccountDashboard() {
       </div>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
-        <Link href="/wishlist" className="rounded-[28px] bg-sage p-7 transition-transform hover:-translate-y-1">
+        <Link href="/wishlist" className="rounded-[1.75rem] bg-sage p-7 transition-transform hover:-translate-y-1">
           <p className="font-display text-3xl">{wishlist.length}</p>
           <p className="mt-1 font-bold">Saved {wishlist.length === 1 ? "piece" : "pieces"}</p>
           <p className="mt-1 text-sm text-ink-soft">The ones you came back to.</p>
         </Link>
-        <div className="rounded-[28px] bg-peach p-7">
+        <div className="rounded-[1.75rem] bg-peach p-7">
           <p className="font-display text-3xl">{orders.length}</p>
           <p className="mt-1 font-bold">{orders.length === 1 ? "Order" : "Orders"}</p>
           <p className="mt-1 text-sm text-ink-soft">Everything you&apos;ve sent our way.</p>
@@ -61,7 +61,7 @@ export function AccountDashboard() {
       <h2 className="mt-14 font-display text-3xl tracking-tight">Your orders</h2>
 
       {orders.length === 0 ? (
-        <div className="mt-5 rounded-[28px] border border-line bg-paper/70 p-10 text-center">
+        <div className="mt-5 rounded-[1.75rem] border border-line bg-paper/70 p-10 text-center">
           <p className="text-ink-soft">Nothing here yet.</p>
           <Link href="/shop" className="btn-primary mt-5 inline-block px-7 py-3">Have a look around</Link>
         </div>
@@ -73,7 +73,7 @@ export function AccountDashboard() {
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="rounded-[28px] border border-line bg-paper/70 p-6"
+              className="rounded-[1.75rem] border border-line bg-paper/70 p-6"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>

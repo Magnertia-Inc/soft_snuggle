@@ -27,7 +27,7 @@ export function ProductCard({ product, wide = false }: { product: Product; wide?
 
   return (
     <div className="group">
-      <div className="relative overflow-hidden rounded-[24px]" style={{ background: product.tint }}>
+      <div className="relative overflow-hidden rounded-[1.5rem]" style={{ background: product.tint }}>
         <Link href={`/product/${product.slug}`} className={`relative block ${wide ? "aspect-[3/2]" : "aspect-[4/5]"}`} aria-label={product.name}>
           {front ? (
             <>
@@ -78,7 +78,7 @@ export function ProductCard({ product, wide = false }: { product: Product; wide?
                 className="glass-light rounded-2xl p-2.5 sm:p-3"
               >
                 <div className="mb-2 flex items-center justify-between">
-                  <span className="text-[11px] font-extrabold uppercase tracking-widest text-ink-soft">Pick a size</span>
+                  <span className="text-[0.6875rem] font-extrabold uppercase tracking-widest text-ink-soft">Pick a size</span>
                   <button onClick={() => setPicking(false)} className="text-xs font-bold" aria-label="Close sizes">
                     ✕
                   </button>
@@ -106,16 +106,16 @@ export function ProductCard({ product, wide = false }: { product: Product; wide?
                 onClick={() => setPicking(true)}
                 disabled={!available}
                 aria-label={available ? `Add ${product.name} to bag` : "Sold out"}
-                className={`ml-auto flex items-center justify-center rounded-full bg-ink text-[13px] font-bold text-paper shadow-md disabled:bg-ink/40 sm:w-full sm:rounded-2xl sm:py-2.5 sm:shadow-none ${
-                  available ? "h-10 w-10 sm:h-auto" : "h-8 px-3 text-[11px] sm:h-auto sm:text-[13px]"
+                className={`ml-auto flex items-center justify-center rounded-full bg-ink text-[0.8125rem] font-bold text-paper shadow-md disabled:bg-ink/40 sm:w-full sm:rounded-2xl sm:py-2.5 sm:shadow-none ${
+                  available ? "h-10 w-10 sm:h-auto" : "h-8 px-3 text-[0.6875rem] sm:h-auto sm:text-[0.8125rem]"
                 }`}
               >
                 {available ? (
                   <>
                     {/* Phones: a small round button, so the photo stays visible */}
                     <span className="relative sm:hidden" aria-hidden>
-                      <BagIcon className="h-[18px] w-[18px]" />
-                      <span className="absolute -right-1.5 -top-1.5 grid h-3.5 w-3.5 place-items-center rounded-full bg-butter text-[10px] font-extrabold leading-none text-ink">+</span>
+                      <BagIcon className="h-[1.125rem] w-[1.125rem]" />
+                      <span className="absolute -right-1.5 -top-1.5 grid h-3.5 w-3.5 place-items-center rounded-full bg-butter text-[0.625rem] font-extrabold leading-none text-ink">+</span>
                     </span>
                     <span className="hidden sm:inline">Add to bag +</span>
                   </>
@@ -130,7 +130,7 @@ export function ProductCard({ product, wide = false }: { product: Product; wide?
 
       <Link href={`/product/${product.slug}`} className="mt-3 block px-1">
         <h3 className="font-display text-base leading-tight tracking-tight sm:text-lg">{product.name}</h3>
-        <p className="mt-0.5 line-clamp-2 text-xs text-ink-soft sm:text-[13px]">
+        <p className="mt-0.5 line-clamp-2 text-xs text-ink-soft sm:text-[0.8125rem]">
           {product.fabric} · {product.colour}
         </p>
         <p className="mt-1.5 font-bold">

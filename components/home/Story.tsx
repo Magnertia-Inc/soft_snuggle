@@ -26,8 +26,8 @@ export function Story({ photo }: { photo?: string }) {
   const rotate = useTransform(scrollYProgress, [0, 1], photo ? [-2, 2] : [-6, 6]);
 
   return (
-    <section id="story" className="mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-32">
-      <div ref={ref} className="relative grid overflow-hidden rounded-[40px] bg-sage lg:grid-cols-2">
+    <section id="story" className="shell py-24 sm:py-32">
+      <div ref={ref} className="relative grid overflow-hidden rounded-[2.5rem] bg-sage lg:grid-cols-2">
         <div className="relative z-10 p-8 sm:p-14 lg:p-20">
           <Reveal>
             <p className="eyebrow">A softer kind of start</p>
@@ -41,7 +41,7 @@ export function Story({ photo }: { photo?: string }) {
           </Reveal>
         </div>
 
-        <div className="relative h-[420px] lg:h-auto lg:min-h-[560px]">
+        <div className="relative h-[26.25rem] lg:h-auto lg:min-h-[35rem]">
           <motion.div className="absolute bottom-10 left-1/2 h-[46%] w-[78%] -translate-x-1/2 rounded-[50%] bg-[#C5D4C3]" style={{ y: cloudY }} />
           <motion.div
             className={`absolute left-1/2 aspect-[220/320] -translate-x-1/2 ${
@@ -67,7 +67,7 @@ export function Story({ photo }: { photo?: string }) {
       <Reveal className="mx-auto mt-24 max-w-4xl text-center sm:mt-32">
         <p className="eyebrow">A little love from another mum</p>
         <blockquote className="relative mt-6 font-display text-2xl leading-snug tracking-tight sm:text-[2.6rem]">
-          <span className="absolute -left-1 -top-7 font-display text-6xl text-peach sm:-left-10 sm:-top-10 sm:text-8xl">“</span>
+          <span className="absolute -left-1 -top-7 font-display text-6xl text-peach sm:-left-4 sm:-top-10 sm:text-8xl lg:-left-10">“</span>
           The softest little things. My daughter practically lives in her romper, and I love knowing it&apos;s{" "}
           <em className="text-sage-deep">gentle on her skin.</em>
         </blockquote>
@@ -81,7 +81,7 @@ export function Story({ photo }: { photo?: string }) {
             <motion.div
               whileHover={{ y: -8 }}
               transition={{ type: "spring", stiffness: 260, damping: 18 }}
-              className="h-full rounded-[28px] border border-line bg-paper p-5 sm:p-8"
+              className="h-full rounded-[1.75rem] border border-line bg-paper p-5 sm:p-8"
             >
               <div className="flex items-center gap-3 md:block">
                 <span

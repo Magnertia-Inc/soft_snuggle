@@ -18,7 +18,7 @@ export default async function AdminOrderPage({ params }: { params: Promise<{ cod
   if (!order) notFound();
 
   const address = `${order.customerName}\n${order.address}\n${order.city}, ${order.state} – ${order.pincode}\n+91 ${order.phone}`;
-  const card = "rounded-[24px] border border-line bg-paper p-5 sm:p-6";
+  const card = "rounded-[1.5rem] border border-line bg-paper p-5 sm:p-6";
 
   return (
     <div>

@@ -113,15 +113,15 @@ export function ProductDetail({ product }: { product: Product }) {
   ];
 
   return (
-    <section className="mx-auto grid max-w-6xl gap-8 px-4 pb-24 pt-28 sm:gap-10 sm:px-6 sm:pt-32 lg:grid-cols-[minmax(0,420px)_1fr] lg:gap-14">
+    <section className="shell grid gap-8 pb-24 pt-28 sm:gap-10 sm:pt-32 lg:grid-cols-[minmax(0,30rem)_1fr] lg:gap-16">
       {/* Visual */}
       {/* Capped so the photo stays a product shot rather than growing to fill
           whatever width the screen offers. Full width on a phone, where the
           cap is wider than the screen anyway. */}
-      <div className="mx-auto w-full max-w-[440px] lg:sticky lg:top-28 lg:self-start">
+      <div className="mx-auto w-full max-w-[30rem] lg:sticky lg:top-28 lg:self-start">
         <div>
           <motion.div
-            className={`relative overflow-hidden rounded-[32px] ${photos.length > 0 ? "cursor-zoom-in" : "aspect-square"}`}
+            className={`relative overflow-hidden rounded-[2rem] ${photos.length > 0 ? "cursor-zoom-in" : "aspect-square"}`}
             style={{
               background: product.tint,
               ...(photos.length > 0 ? { aspectRatio: frameRatio } : {}),
@@ -186,7 +186,7 @@ export function ProductDetail({ product }: { product: Product }) {
                 </>
             )}
             {photos.length > 0 && !lens && (
-              <span className="pointer-events-none absolute bottom-4 right-4 flex items-center gap-1.5 rounded-full bg-paper/90 px-3 py-1.5 text-[11px] font-bold text-ink shadow-sm backdrop-blur">
+              <span className="pointer-events-none absolute bottom-4 right-4 flex items-center gap-1.5 rounded-full bg-paper/90 px-3 py-1.5 text-[0.6875rem] font-bold text-ink shadow-sm backdrop-blur">
                 <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
                   <circle cx="11" cy="11" r="7" />
                   <path d="m20 20-3.5-3.5M11 8.5v5M8.5 11h5" />
@@ -350,7 +350,7 @@ export function ProductDetail({ product }: { product: Product }) {
             onClick={addToBag}
             disabled={!available}
             whileTap={{ scale: 0.97 }}
-            className={`btn-primary flex-1 py-3.5 text-[15px] sm:py-4 sm:text-base ${added ? "!bg-sage-deep" : ""}`}
+            className={`btn-primary flex-1 py-3.5 text-[0.9375rem] sm:py-4 sm:text-base ${added ? "!bg-sage-deep" : ""}`}
           >
             <AnimatePresence mode="wait" initial={false}>
               <motion.span
