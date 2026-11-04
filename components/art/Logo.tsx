@@ -8,8 +8,8 @@ export function Logo({ className = "h-9" }: Props) {
     <img
       src="/logo.webp"
       alt="Veviba"
-      width={586}
-      height={156}
+      width={1111}
+      height={543}
       className={`w-auto select-none object-contain ${className}`}
       draggable={false}
     />

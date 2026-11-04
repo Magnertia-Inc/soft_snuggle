@@ -113,7 +113,7 @@ export function Navbar() {
               </div>
 
               <Link href="/" className="flex items-center" aria-label="Veviba home">
-                <Logo className="h-10 sm:h-11" />
+                <Logo className="h-14 sm:h-16" />
               </Link>
 
               <div className="flex items-center justify-end gap-0.5 sm:gap-2 md:gap-5 lg:gap-7">
