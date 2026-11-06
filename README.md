@@ -15,7 +15,7 @@ npm run dev                  # http://localhost:3000
 - **No `DATABASE_URL` set** → uses an embedded Postgres (PGlite) stored in `./.data`. Good for development only.
 - **`DATABASE_URL` set** → connects to real PostgreSQL (Neon, Supabase, your own server).
 
-Tables (`products`, `orders`, `subscribers`) are created automatically on first start (`lib/schema.ts`),
+Tables (`products`, `orders`) are created automatically on first start (`lib/schema.ts`),
 and the 8 catalogue products from the PDF are seeded if `products` is empty (`lib/seed.ts`).
 Orders get IDs like `SS-1001` automatically.
 
