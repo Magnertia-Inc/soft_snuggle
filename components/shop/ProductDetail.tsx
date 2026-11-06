@@ -4,7 +4,7 @@ import Link from "next/link";
 import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import { useLenis } from "lenis/react";
 import { useEffect, useRef, useState } from "react";
-import { defaultColour, RAINBOW, shadePicksFor } from "@/lib/colours";
+import { defaultColour } from "@/lib/colours";
 import { isStudioShot } from "@/lib/photo";
 import { CATEGORY_LABELS, STORE, inr, isSoldOut, shippingIsFree } from "@/lib/store";
 import type { Product } from "@/lib/types";
@@ -27,12 +27,6 @@ export function ProductDetail({ product }: { product: Product }) {
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
   const [needSize, setNeedSize] = useState(false);
-  // Packs like the Day Pack: the customer picks which rainbow shades go inside
-  const picks = shadePicksFor(product.slug);
-  const [shades, setShades] = useState<string[]>([]);
-  const [needShades, setNeedShades] = useState(false);
-  const toggleShade = (name: string) =>
-    setShades((s) => (s.includes(name) ? s.filter((x) => x !== name) : s.length < picks ? [...s, name] : s));
   const [openPanel, setOpenPanel] = useState<string | null>("details");
   // Phones: once the main "Add to bag" row scrolls away, a slim bar keeps it in reach
   const buyRef = useRef<HTMLDivElement>(null);
@@ -90,11 +84,6 @@ export function ProductDetail({ product }: { product: Product }) {
   };
 
   const addToBag = () => {
-    if (picks && shades.length !== picks) {
-      setNeedShades(true);
-      setTimeout(() => setNeedShades(false), 600);
-      return;
-    }
     if (!size) {
       setNeedSize(true);
       setTimeout(() => setNeedSize(false), 600);
@@ -102,7 +91,7 @@ export function ProductDetail({ product }: { product: Product }) {
     }
     add({
       productId: product.id, slug: product.slug, name: product.name, category: product.category,
-      price: product.price, size, colour: picks ? shades.join(", ") : colour?.name, qty, tint: product.tint, garment: product.garment,
+      price: product.price, size, colour: colour?.name, qty, tint: product.tint, garment: product.garment,
       image: colour?.image ?? photos[0],
     });
     setAdded(true);
@@ -278,50 +267,7 @@ export function ProductDetail({ product }: { product: Product }) {
           {product.compareAt && <s className="ml-3 text-xl text-ink-soft">{inr(product.compareAt)}</s>}
         </p>
 
-        {picks > 0 && (
-          <div className="mt-6 sm:mt-8">
-            <p className="text-sm font-extrabold uppercase tracking-[0.18em]">
-              Pick {picks} shades{" "}
-              <span className={`ml-2 font-bold normal-case tracking-normal ${needShades ? "text-rose" : "text-ink-soft"}`}>
-                {shades.length ? `${shades.join(", ")} (${shades.length} of ${picks})` : `0 of ${picks} chosen`}
-              </span>
-            </p>
-            <motion.div
-              className="mt-3 flex flex-wrap gap-1"
-              role="group"
-              aria-label={`Choose ${picks} shades`}
-              animate={needShades ? { x: [0, -10, 10, -6, 6, 0] } : {}}
-              transition={{ duration: 0.45 }}
-            >
-              {RAINBOW.map((c) => {
-                const on = shades.includes(c.name);
-                const full = !on && shades.length >= picks;
-                return (
-                  <button
-                    key={c.name}
-                    type="button"
-                    aria-pressed={on}
-                    aria-label={c.name}
-                    title={c.name}
-                    onClick={() => toggleShade(c.name)}
-                    className={`grid h-9 w-9 place-items-center rounded-full outline-none transition-transform hover:scale-110 focus-visible:ring-2 focus-visible:ring-ink/40 sm:h-11 sm:w-11 ${full ? "opacity-40" : ""}`}
-                  >
-                    <span
-                      className={`grid h-9 w-9 place-items-center rounded-full border border-ink/15 text-sm font-extrabold text-ink transition-shadow ${
-                        on ? "ring-2 ring-ink ring-offset-2 ring-offset-cream" : ""
-                      }`}
-                      style={{ background: c.hex }}
-                    >
-                      {on ? "✓" : ""}
-                    </span>
-                  </button>
-                );
-              })}
-            </motion.div>
-          </div>
-        )}
-
-        {product.colours.length > 1 && colour && (
+        {product.colours.length > 1 && (
           <div className="mt-6 sm:mt-8">
             <p className="text-sm font-extrabold uppercase tracking-[0.18em]">
               Colour <span className="ml-2 font-bold normal-case tracking-normal text-ink-soft">{colour.name}</span>

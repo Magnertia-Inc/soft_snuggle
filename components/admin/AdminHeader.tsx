@@ -9,7 +9,6 @@ const NAV = [
   { href: "/admin/orders", label: "Orders" },
   { href: "/admin/products", label: "Products" },
   { href: "/admin/coupons", label: "Coupons" },
-  { href: "/admin/subscribers", label: "Newsletter" },
 ];
 
 export function AdminHeader({ email }: { email: string }) {

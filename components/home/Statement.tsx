@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useScroll, useTransform, type MotionValue } from "motion/react";
-import { Fragment, useRef } from "react";
+import { useRef } from "react";
 import { Reveal } from "../Reveal";
 
 const TEXT =
@@ -23,14 +23,10 @@ export function Statement() {
       </Reveal>
       <div className="mx-auto mb-12 h-px w-24 bg-line" />
       <div ref={ref} className="text-center font-display text-3xl leading-[1.18] tracking-tight sm:text-5xl lg:text-6xl">
-        {/* Real spaces between the words (not just margins), so search engines,
-            screen readers and copy-paste read a normal sentence. */}
         {words.map((w, i) => (
-          <Fragment key={i}>
-            <Word progress={scrollYProgress} range={[i / words.length, (i + 1) / words.length]}>
-              {w}
-            </Word>{" "}
-          </Fragment>
+          <Word key={i} progress={scrollYProgress} range={[i / words.length, (i + 1) / words.length]}>
+            {w}
+          </Word>
         ))}
       </div>
     </section>
@@ -41,7 +37,7 @@ function Word({ children, progress, range }: { children: string; progress: Motio
   const opacity = useTransform(progress, range, [0.14, 1]);
   const italic = ["milk-drunk", "wiggles", "cuddle", "Always."].includes(children);
   return (
-    <motion.span style={{ opacity }} className={`inline-block ${italic ? "italic text-sage-deep" : ""}`}>
+    <motion.span style={{ opacity }} className={`mr-[0.25em] inline-block ${italic ? "italic text-sage-deep" : ""}`}>
       {children}
     </motion.span>
   );

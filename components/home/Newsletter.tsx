@@ -7,8 +7,6 @@ import { FlowerMark } from "../art/FlowerMark";
 export function Newsletter() {
   const [email, setEmail] = useState("");
   const [state, setState] = useState<"idle" | "sending" | "done" | "error">("idle");
-  // The welcome code is shown here as well as emailed, so nobody misses it
-  const [code, setCode] = useState<string | null>(null);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,11 +17,7 @@ export function Newsletter() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
-      if (res.ok) {
-        const data = await res.json().catch(() => ({}));
-        setCode(typeof data.code === "string" ? data.code : null);
-        setState("done");
-      } else setState("error");
+      setState(res.ok ? "done" : "error");
     } catch {
       setState("error");
     }
@@ -48,23 +42,14 @@ export function Newsletter() {
           </div>
           <AnimatePresence mode="wait">
             {state === "done" ? (
-              <motion.div
+              <motion.p
                 key="done"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="rounded-[1.75rem] bg-paper/10 px-6 py-4"
+                className="rounded-full bg-paper/10 px-6 py-4 font-display text-xl"
               >
-                <p className="font-display text-xl">You&apos;re in! 💌</p>
-                {code && (
-                  <p className="mt-2 text-paper/80">
-                    Your 10% off code for your first order:{" "}
-                    <span className="ml-1 inline-block rounded-lg border border-dashed border-paper/60 px-2.5 py-1 font-extrabold tracking-widest text-paper">
-                      {code}
-                    </span>
-                    <span className="mt-1 block text-sm text-paper/60">We&apos;ve emailed it to you too. Use it at checkout.</span>
-                  </p>
-                )}
-              </motion.div>
+                You&apos;re in! Look out for a hello in your inbox 💌
+              </motion.p>
             ) : (
               <motion.form key="form" onSubmit={submit} className="flex flex-col gap-3 sm:flex-row" exit={{ opacity: 0 }}>
                 <input

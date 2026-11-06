@@ -1,8 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { shadePicksFor } from "@/lib/colours";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { isStudioShot } from "@/lib/photo";
@@ -16,9 +14,6 @@ import { SaveButton } from "./SaveButton";
 export function ProductCard({ product, wide = false }: { product: Product; wide?: boolean }) {
   const { add } = useCart();
   const [picking, setPicking] = useState(false);
-  const router = useRouter();
-  // A pack whose shades the customer chooses is filled in on its own page
-  const choosesShades = shadePicksFor(product.slug) > 0;
   const [front] = product.images;
   const available = !isSoldOut(product);
 
@@ -108,7 +103,7 @@ export function ProductCard({ product, wide = false }: { product: Product; wide?
                 initial={{ y: 24, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: 24, opacity: 0 }}
-                onClick={() => (choosesShades ? router.push(`/product/${product.slug}`) : setPicking(true))}
+                onClick={() => setPicking(true)}
                 disabled={!available}
                 aria-label={available ? `Add ${product.name} to bag` : "Sold out"}
                 className={`ml-auto flex items-center justify-center rounded-full bg-ink text-[0.8125rem] font-bold text-paper shadow-md disabled:bg-ink/40 sm:w-full sm:rounded-2xl sm:py-2.5 sm:shadow-none ${
