@@ -2,6 +2,7 @@ import Link from "next/link";
 import { AgeTiles } from "@/components/home/AgeTiles";
 import { Brands } from "@/components/home/Brands";
 import { HeroCarousel } from "@/components/home/HeroCarousel";
+import { Journey } from "@/components/home/Journey";
 import { Marquee } from "@/components/home/Marquee";
 import { Statement } from "@/components/home/Statement";
 import { Story } from "@/components/home/Story";
@@ -24,6 +25,7 @@ export default async function HomePage() {
       <HeroCarousel heroImages={heroImages()} />
       <Marquee />
       <Brands />
+      <Journey />
       <Statement />
       <AgeTiles counts={counts} photos={ageImages()} />
 
