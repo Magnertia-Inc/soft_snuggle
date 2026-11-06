@@ -33,8 +33,10 @@ export function Loader() {
       setReady(true);
       return;
     }
-    // About 4 s on screen: 3.5 s of loading plus a short pause before it lifts
-    const duration = 3500;
+    // About 1.7 s on screen: 1.4 s of loading plus a short pause before it lifts.
+    // (globals.css also hides it after 3 s on its own, in case this script is
+    // slow to start or never runs, so nobody is ever left on a blank screen.)
+    const duration = 1400;
     const start = performance.now();
     let raf = 0;
     const tick = (now: number) => {
@@ -48,9 +50,9 @@ export function Loader() {
       setTimeout(() => {
         setProgress(100);
         setVisible(false);
-      }, duration + 500),
+      }, duration + 300),
       // Fallback in case the exit animation never reports back (e.g. hidden tab)
-      setTimeout(() => setReady(true), duration + 1700),
+      setTimeout(() => setReady(true), duration + 1500),
     ];
     return () => {
       cancelAnimationFrame(raf);
@@ -69,7 +71,7 @@ export function Loader() {
       {visible && (
         <motion.div
           key="loader"
-          className="speckle fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden bg-cream"
+          className="loader-failsafe speckle fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden bg-cream"
           exit={{ y: "-100%", borderBottomLeftRadius: "50% 120px", borderBottomRightRadius: "50% 120px" }}
           transition={{ duration: 1, ease: [0.76, 0, 0.24, 1] }}
         >
@@ -96,8 +98,8 @@ export function Loader() {
                 animate={{ y: 0, rotate: [-25, 14, -8, 5, -2, 0] }}
                 exit={{ y: -120, opacity: 0, transition: { delay: i * 0.04, duration: 0.4 } }}
                 transition={{
-                  y: { type: "spring", stiffness: 120, damping: 13, delay: 0.5 + i * 0.16 },
-                  rotate: { duration: 1.8, ease: "easeOut", delay: 0.5 + i * 0.16 },
+                  y: { type: "spring", stiffness: 140, damping: 13, delay: 0.25 + i * 0.08 },
+                  rotate: { duration: 1.2, ease: "easeOut", delay: 0.25 + i * 0.08 },
                 }}
               >
                 <motion.div
@@ -117,7 +119,7 @@ export function Loader() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            transition={{ delay: 1.1, duration: 0.7 }}
+            transition={{ delay: 0.5, duration: 0.5 }}
           >
             <Logo className="mx-auto h-16 sm:h-20" />
             <p className="eyebrow mt-2">Little clothes, lots of love</p>

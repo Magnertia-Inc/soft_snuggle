@@ -180,3 +180,16 @@ body {
   color: var(--color-sage-deep);
 }
 }
+
+/* Safety net for the opening animation: whatever happens to the page's
+   scripts, the loader fades out and stops blocking the page after 3 s. */
+.loader-failsafe {
+  animation: loader-failsafe 0.4s ease 3s forwards;
+}
+@keyframes loader-failsafe {
+  to {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}

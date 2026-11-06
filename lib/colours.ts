@@ -29,18 +29,35 @@ const OVERRIDES: Record<string, ColourOption[]> = {
   // ],
 };
 
-// Every garment is sold in the seven colours. Gift packs are the exception:
-// a pack holds several pieces and already names the shades inside, so one
-// colour choice there would be a promise the pack cannot keep.
-const WITHOUT_COLOURS: Product["category"][] = ["gift-set"];
-
+// Each printed piece is made in one colourway only, so by default a product
+// offers no colour choice and the picker stays hidden. A product that really
+// is made in several shades gets its own list in OVERRIDES above (ideally with
+// a photo per shade), and only then does the picker appear.
 export function coloursFor(p: Pick<Product, "slug" | "colour" | "garment" | "category">): ColourOption[] {
-  if (OVERRIDES[p.slug]) return OVERRIDES[p.slug];
-  return WITHOUT_COLOURS.includes(p.category) ? [] : RAINBOW;
+  return OVERRIDES[p.slug] ?? [];
+}
+
+// Packs where the customer chooses which rainbow shades go in the box, and
+// how many. The choice is saved on the order as "Cherry Red, Sky Blue, ...".
+const SHADE_PICKS: Record<string, number> = { "day-pack": 3 };
+
+/** How many rainbow shades the customer picks for this product (0 = none). */
+export function shadePicksFor(slug: string): number {
+  return SHADE_PICKS[slug] ?? 0;
+}
+
+/** Checks a saved shade choice ("A, B, C") for a pack; returns it tidied, or null if invalid. */
+export function checkShadePicks(slug: string, value: string | undefined): string | null {
+  const need = shadePicksFor(slug);
+  if (!need || !value) return null;
+  const names = value.split(",").map((s) => s.trim()).filter(Boolean);
+  const valid = new Set(RAINBOW.map((c) => c.name));
+  if (names.length !== need || new Set(names).size !== need || names.some((n) => !valid.has(n))) return null;
+  return names.join(", ");
 }
 
 /** The swatch a product opens on: its own colour when that is one of the seven. */
-export function defaultColour(p: Pick<Product, "colour">, colours: ColourOption[]): ColourOption {
+export function defaultColour(p: Pick<Product, "colour">, colours: ColourOption[]): ColourOption | undefined {
   const own = p.colour.toLowerCase();
   return colours.find((c) => own.startsWith(c.name.toLowerCase())) ?? colours[0];
 }

@@ -209,4 +209,12 @@ CREATE TABLE IF NOT EXISTS subscribers (
   email       TEXT UNIQUE NOT NULL,
   created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+ALTER TABLE subscribers ADD COLUMN IF NOT EXISTS welcomed_at TIMESTAMPTZ;
+
+-- The code the newsletter promises ("10% off your first order"). It is made
+-- once and then managed like any other code in Admin -> Coupons: switch it
+-- off there to stop it (deleting it only brings it back on the next restart).
+INSERT INTO coupons (code, kind, value, once_per_phone, created_by)
+VALUES ('WELCOME10', 'percent', 10, TRUE, 'newsletter')
+ON CONFLICT (code) DO NOTHING;
 `;

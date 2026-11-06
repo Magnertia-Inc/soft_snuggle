@@ -23,14 +23,14 @@ export function emailSiteUrl(fallback: string) {
   return configuredSiteUrl() ?? fallback;
 }
 
-const esc = (s: string) =>
+export const esc = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 
 const INK = "#263B36";
 const SOFT = "#5E6F69";
 const LINE = "#E6E0D4";
 
-function layout(title: string, body: string) {
+export function layout(title: string, body: string) {
   return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body style="margin:0;background:#F6F1E8;font-family:Arial,Helvetica,sans-serif;color:${INK}">
 <div style="max-width:560px;margin:0 auto;padding:24px 16px">
 <div style="background:#FDFBF6;border-radius:20px;padding:28px 24px;border:1px solid ${LINE}">
@@ -42,7 +42,7 @@ ${body}
 </div></body></html>`;
 }
 
-const button = (href: string, label: string) =>
+export const button = (href: string, label: string) =>
   `<p style="margin:20px 0 0"><a href="${esc(href)}" style="display:inline-block;background:${INK};color:#FDFBF6;text-decoration:none;font-weight:bold;padding:12px 22px;border-radius:999px">${esc(label)}</a></p>`;
 
 function itemsTable(order: Order) {

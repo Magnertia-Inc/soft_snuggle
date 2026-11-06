@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 import { getDb } from "./db";
-import { coloursFor } from "./colours";
+import { checkShadePicks, coloursFor, shadePicksFor } from "./colours";
 import { productImages } from "./images";
 import { CouponError, checkCoupon, claimCoupon, releaseCoupon } from "./coupons";
 import { STORE, inr, shippingFor } from "./store";
@@ -79,8 +79,16 @@ export async function createOrder(input: NewOrderInput) {
       throw new OrderError(`Size ${i.size} of ${p.name} has just sold out. Please remove it from your bag.`);
     }
     const options = coloursFor({ slug: p.slug, colour: p.colour, garment: p.garment, category: p.category });
-    const colour = i.colour ? options.find((c) => c.name === i.colour)?.name : undefined;
-    if (i.colour && !colour) throw new OrderError(`Colour ${i.colour} is not available for ${p.name}.`);
+    // A pack the customer fills with chosen shades must arrive with a full,
+    // valid choice. Otherwise a colour the product is not made in (e.g. one
+    // saved in an old bag before the colour list changed) is simply dropped.
+    let colour: string | undefined;
+    if (shadePicksFor(p.slug)) {
+      colour = checkShadePicks(p.slug, i.colour) ?? undefined;
+      if (!colour) throw new OrderError(`Please choose ${shadePicksFor(p.slug)} shades for ${p.name}.`);
+    } else {
+      colour = i.colour ? options.find((c) => c.name === i.colour)?.name : undefined;
+    }
     return { productId: p.id, name: p.name, size: i.size, ...(colour ? { colour } : {}), qty: i.qty, price: p.price };
   });
 
@@ -190,9 +198,11 @@ export async function submitUtr(code: string, accessKey: string, utr: string) {
   return { previousUtr: rows[0].previous };
 }
 
-export async function addSubscriber(email: string) {
+/** Saves a newsletter sign-up. True when the address is new to the list. */
+export async function addSubscriber(email: string): Promise<boolean> {
   const db = await getDb();
-  await db.query("INSERT INTO subscribers (email) VALUES ($1) ON CONFLICT (email) DO NOTHING", [email]);
+  const { rows } = await db.query("INSERT INTO subscribers (email) VALUES ($1) ON CONFLICT (email) DO NOTHING RETURNING id", [email]);
+  return rows.length > 0;
 }
 
 type TrackRow = {

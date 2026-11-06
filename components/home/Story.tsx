@@ -64,15 +64,14 @@ export function Story({ photo, heading: Heading = "h2" }: { photo?: string; head
         </div>
       </div>
 
-      {/* Testimonial */}
+      {/* Our promise. This spot held a customer quote; put one back only when
+          it is a real review shared with the customer's permission. */}
       <Reveal className="mx-auto mt-24 max-w-4xl text-center sm:mt-32">
-        <p className="eyebrow">A little love from another mum</p>
-        <blockquote className="relative mt-6 font-display text-2xl leading-snug tracking-tight sm:text-[2.6rem]">
-          <span className="absolute -left-1 -top-7 font-display text-6xl text-peach sm:-left-4 sm:-top-10 sm:text-8xl lg:-left-10">“</span>
-          The softest little things. My daughter practically lives in her romper, and I love knowing it&apos;s{" "}
-          <em className="text-sage-deep">gentle on her skin.</em>
-        </blockquote>
-        <p className="mt-6 text-sm font-extrabold uppercase tracking-[0.2em] text-ink-soft">Meera S. · Mum to Anaya, 8 months</p>
+        <p className="eyebrow">Our little promise</p>
+        <p className="relative mt-6 font-display text-2xl leading-snug tracking-tight sm:text-[2.6rem]">
+          Every piece is chosen by hand for how it feels against brand-new skin, and if the size isn&apos;t right,
+          we&apos;ll <em className="text-sage-deep">happily exchange it within 7 days.</em>
+        </p>
       </Reveal>
 
       {/* Values */}
