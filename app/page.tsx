@@ -3,7 +3,6 @@ import { AgeTiles } from "@/components/home/AgeTiles";
 import { Brands } from "@/components/home/Brands";
 import { HeroCarousel } from "@/components/home/HeroCarousel";
 import { Marquee } from "@/components/home/Marquee";
-import { Newsletter } from "@/components/home/Newsletter";
 import { Statement } from "@/components/home/Statement";
 import { Story } from "@/components/home/Story";
 import { Reveal } from "@/components/Reveal";
@@ -45,7 +44,6 @@ export default async function HomePage() {
       </section>
 
       <Story photo={storyImage()} />
-      <Newsletter />
     </>
   );
 }

@@ -19,7 +19,12 @@ const LINE: { x: number; y: number; category: Category; color: string }[] = [
   { x: 650, y: 96, category: "bodysuit", color: "#C9D8C5" },
 ];
 
-const NOTES = ["Washing tiny socks", "Pegging the onesies", "Fluffing the cotton", "Almost dry"];
+// Loading messages: each one shows from its `at` percentage onwards.
+const steps = [
+  { at: 0, text: "Stitching tiny dresses…" },
+  { at: 50, text: "Adding a little love…" },
+  { at: 90, text: "Ready for cuddles!" },
+];
 
 export function Loader() {
   const { setReady } = useIntro();
@@ -127,7 +132,7 @@ export function Loader() {
 
           <div className="absolute bottom-10 left-1/2 w-[min(280px,70vw)] -translate-x-1/2 text-center">
             <p className="mb-2 font-display text-sm italic text-ink-soft">
-              {NOTES[Math.min(NOTES.length - 1, Math.floor(progress / 26))]}…
+              {[...steps].reverse().find((s) => progress >= s.at)?.text}
             </p>
             <div className="h-[3px] overflow-hidden rounded-full bg-line">
               <div className="h-full rounded-full bg-sage-deep" style={{ width: `${progress}%` }} />
