@@ -25,6 +25,13 @@ export const STORE = {
   email: "veviba2026@gmail.com",
 };
 
+/**
+ * The thank-you for leaving feedback on an order: this code takes `percent`
+ * off the items of a later order, once per mobile number, within `days` of
+ * the feedback. The coupon row itself is created in lib/schema.ts.
+ */
+export const FEEDBACK_REWARD = { code: "FBK5", percent: 5, days: 30 } as const;
+
 /** Shown beside shipping wherever it appears: prices already include all taxes. */
 export const SHIPPING_LABEL = "Shipping (incl. all taxes)";
 

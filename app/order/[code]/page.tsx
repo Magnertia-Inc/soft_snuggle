@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import QRCode from "qrcode";
 import { OrderFlow } from "@/components/checkout/OrderFlow";
+import { getFeedback, rewardIsOn } from "@/lib/feedback";
 import { getOrder } from "@/lib/queries";
 import { STORE } from "@/lib/store";
 
@@ -19,6 +20,7 @@ export default async function OrderPage({
   const { k } = await searchParams;
   const order = k ? await getOrder(code, k) : null;
   if (!order) notFound();
+  const [feedback, rewardOn] = await Promise.all([getFeedback(order.code, order.accessKey), rewardIsOn()]);
 
   const upiId = process.env.UPI_ID || "softsnuggle@okaxis";
   const payee = process.env.UPI_PAYEE_NAME || STORE.name;
@@ -33,7 +35,7 @@ export default async function OrderPage({
 
   return (
     <div className="speckle min-h-screen">
-      <OrderFlow order={order} upiUrl={upiUrl} upiId={upiId} payee={payee} qrSvg={qrSvg} />
+      <OrderFlow order={order} upiUrl={upiUrl} upiId={upiId} payee={payee} qrSvg={qrSvg} feedback={feedback} rewardOn={rewardOn} />
     </div>
   );
 }
