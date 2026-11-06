@@ -190,11 +190,6 @@ export async function submitUtr(code: string, accessKey: string, utr: string) {
   return { previousUtr: rows[0].previous };
 }
 
-export async function addSubscriber(email: string) {
-  const db = await getDb();
-  await db.query("INSERT INTO subscribers (email) VALUES ($1) ON CONFLICT (email) DO NOTHING", [email]);
-}
-
 type TrackRow = {
   code: string; phone: string; status: string; payment_method: "upi" | "cod"; payment_status: string;
   total: number; items: OrderItem[] | string; city: string; pincode: string; created_at: Date | string;
