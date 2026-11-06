@@ -3,15 +3,10 @@
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { lookFor } from "@/lib/collections";
+import { Testimonials } from "@/components/Testimonials";
 import { Baby } from "../art/Baby";
 import { FlowerMark } from "../art/FlowerMark";
 import { Reveal } from "../Reveal";
-
-const VALUES = [
-  { n: "01", title: "Gentle fabrics", body: "Soft cotton selected with delicate skin in mind.", tint: "#DFE7DD" },
-  { n: "02", title: "Easy little details", body: "Comfy fits that make getting dressed simpler.", tint: "#F3D8C8" },
-  { n: "03", title: "Freshly stitched", body: "Made to order: once you place your order, we stitch your piece fresh, just for your little one.", tint: "#DCE6EE" },
-];
 
 /** heading: "h1" where the story is the page itself (About); on the home page it's a section, so h2. */
 export function Story({ photo, heading: Heading = "h2" }: { photo?: string; heading?: "h1" | "h2" }) {
@@ -74,29 +69,8 @@ export function Story({ photo, heading: Heading = "h2" }: { photo?: string; head
         </p>
       </Reveal>
 
-      {/* Values */}
-      <div className="mt-14 grid gap-3 sm:mt-32 sm:gap-5 md:grid-cols-3">
-        {VALUES.map((v, i) => (
-          <Reveal key={v.n} delay={i * 0.12}>
-            <motion.div
-              whileHover={{ y: -8 }}
-              transition={{ type: "spring", stiffness: 260, damping: 18 }}
-              className="h-full rounded-[1.75rem] border border-line bg-paper p-5 sm:p-8"
-            >
-              <div className="flex items-center gap-3 md:block">
-                <span
-                  className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl font-display text-lg sm:h-14 sm:w-14 sm:text-xl"
-                  style={{ background: v.tint }}
-                >
-                  {v.n}
-                </span>
-                <h3 className="font-display text-xl tracking-tight sm:text-2xl md:mt-6">{v.title}</h3>
-              </div>
-              <p className="mt-2 text-sm text-ink-soft sm:text-base">{v.body}</p>
-            </motion.div>
-          </Reveal>
-        ))}
-      </div>
+      {/* What parents say (replaces the old 01-02-03 value cards) */}
+      <Testimonials inline />
     </section>
   );
 }

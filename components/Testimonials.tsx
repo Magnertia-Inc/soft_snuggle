@@ -51,13 +51,13 @@ const SAMPLES: Review[] = [
 
 const TINTS = ["#DFE7DD", "#F3D8C8", "#DCE6EE"];
 
-export function Testimonials() {
+export function Testimonials({ inline = false }: { inline?: boolean }) {
   const isSample = REVIEWS.length === 0;
   if (isSample && process.env.NODE_ENV === "production") return null;
   const cards = isSample ? SAMPLES : REVIEWS;
 
   return (
-    <section className="shell pb-20 sm:pb-28">
+    <section className={inline ? "mt-16 sm:mt-28" : "shell pb-20 sm:pb-28"}>
       <Reveal className="text-center">
         <p className="eyebrow">From our parents</p>
         <h2 className="mt-3 font-display text-4xl tracking-tight sm:text-5xl">
