@@ -1,4 +1,3 @@
-import { adminEmails } from "./admin";
 import { sendMail } from "./mail";
 import { configuredSiteUrl } from "./site";
 import { SHIPPING_LABEL, STORE, inr, whatsappDisplay } from "./store";
@@ -117,7 +116,7 @@ ${button(adminLink, "Open the order")}`,
     `Open the order: ${adminLink}`,
   ].join("\n");
 
-  return { to: adminEmails(), subject, html, text };
+  return { to: [STORE.email], subject, html, text };
 }
 
 function customerMail(order: Order, site: string) {

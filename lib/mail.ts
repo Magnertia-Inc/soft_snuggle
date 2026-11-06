@@ -93,6 +93,7 @@ export async function sendMail(mail: Mail): Promise<boolean> {
     } else {
       await (await transport()).sendMail({
         from: { name: STORE.name, address: process.env.GMAIL_USER! },
+        replyTo: STORE.email,
         to,
         subject: mail.subject,
         html: mail.html,

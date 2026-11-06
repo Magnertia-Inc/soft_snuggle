@@ -20,7 +20,9 @@ export const STORE = {
   freeShippingAbove: Number(process.env.NEXT_PUBLIC_FREE_SHIPPING_ABOVE ?? 1499),
   codFee: 7,
   instagram: "https://instagram.com/",
-  // No public email address: customers reach the shop on WhatsApp.
+  // The shop's one email address, used everywhere on the site: shown to
+  // customers, and where every new-order email is sent.
+  email: "veviba2026@gmail.com",
 };
 
 /** Shown beside shipping wherever it appears: prices already include all taxes. */

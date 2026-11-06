@@ -17,6 +17,14 @@ export default function ContactPage() {
       icon: <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />,
     },
     {
+      title: "Email",
+      body: "Write to us any time about orders, returns or anything else.",
+      cta: STORE.email,
+      href: `mailto:${STORE.email}`,
+      tint: "#F3D8C8",
+      icon: <span className="text-lg">✉️</span>,
+    },
+    {
       title: "Instagram",
       body: "New arrivals, little moments and offers first.",
       cta: "Follow us",
@@ -44,7 +52,7 @@ export default function ContactPage() {
 
         {/* A row per channel on a phone, so they all fit in a screen; the old
             stacked cards ran to nearly twice the height of one. */}
-        <div className="mx-auto mt-6 grid max-w-3xl gap-3 sm:mt-12 sm:gap-4 md:grid-cols-2">
+        <div className="mx-auto mt-6 grid max-w-5xl gap-3 sm:mt-12 sm:gap-4 md:grid-cols-3">
           {cards.map((c, i) => (
             <Reveal key={c.title} delay={i * 0.08}>
               <a

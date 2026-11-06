@@ -88,6 +88,9 @@ export function Footer() {
         <a href={`https://wa.me/${STORE.whatsappNumber}`} target="_blank" rel="noreferrer" className="text-sm hover:text-ink">
           WhatsApp {whatsappDisplay}
         </a>
+        <a href={`mailto:${STORE.email}`} className="text-sm hover:text-ink">
+          {STORE.email}
+        </a>
       </div>
 
       {/* Soft logo watermark */}

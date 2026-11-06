@@ -8,7 +8,7 @@
  * account it belongs to. Free; Gmail allows about 100 recipients a day.
  *
  * Set up once (signed in to Google as the account that should send, e.g.
- * magnertia@gmail.com):
+ * veviba2026@gmail.com, the shop's only email address):
  *   1. Open https://script.google.com → New project. Name it "Soft Snuggle email".
  *   2. Delete what's in Code.gs and paste this whole file in. Save (Ctrl+S).
  *   3. In the function menu next to "Run", pick setup → Run. Allow access when
