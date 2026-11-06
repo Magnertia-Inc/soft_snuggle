@@ -14,6 +14,7 @@ const NOTES = [
   "Easy snaps for the many, many changes.",
   "Comfy fits for rolling over and sitting up tall.",
   "Stretchy pieces for crawling, cruising and first steps.",
+  "Room to run, climb and grow, all the way to three.",
 ];
 
 /** Vertical scroll drives a horizontal ride through the age groups. */
@@ -59,14 +60,14 @@ export function AgeTiles({
     swatches: !photos[g.slug] && (
       <OutfitSwatches
         className="relative z-20 mt-4"
-        value={outfits[i] ?? LOOKS[i].outfit}
+        value={outfits[i] ?? LOOKS[i % LOOKS.length].outfit}
         onPick={(hex) => setOutfits((o) => ({ ...o, [i]: hex }))}
       />
     ),
     figure: photos[g.slug] ? (
       <img src={photos[g.slug]} alt="" className="h-full w-auto object-contain object-bottom" draggable={false} />
     ) : (
-      <Baby look={{ ...LOOKS[i], outfit: outfits[i] ?? LOOKS[i].outfit }} className="h-full w-full" />
+      <Baby look={{ ...LOOKS[i % LOOKS.length], outfit: outfits[i] ?? LOOKS[i % LOOKS.length].outfit }} className="h-full w-full" />
     ),
   });
 
@@ -151,7 +152,7 @@ export function AgeTiles({
               {!photos[g.slug] && (
                 <OutfitSwatches
                   className="relative z-20 mt-4"
-                  value={outfits[i] ?? LOOKS[i].outfit}
+                  value={outfits[i] ?? LOOKS[i % LOOKS.length].outfit}
                   onPick={(hex) => setOutfits((o) => ({ ...o, [i]: hex }))}
                 />
               )}
@@ -170,7 +171,7 @@ export function AgeTiles({
                       draggable={false}
                     />
                   ) : (
-                    <Baby look={{ ...LOOKS[i], outfit: outfits[i] ?? LOOKS[i].outfit }} className="h-full w-full" />
+                    <Baby look={{ ...LOOKS[i % LOOKS.length], outfit: outfits[i] ?? LOOKS[i % LOOKS.length].outfit }} className="h-full w-full" />
                   )}
                 </div>
               </div>

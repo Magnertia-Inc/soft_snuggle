@@ -20,9 +20,9 @@ interface SeedProduct {
 }
 
 // Matches the Frock / Jabla size charts (components/shop/SizeChart.tsx)
-const BODYSUIT_SIZES = ["0–3M", "3–6M", "6–9M", "9–12M"];
-const ROMPER_SIZES = ["3–6M", "6–9M", "9–12M"];
-const CHART_SIZES = ["0–3M", "3–6M", "6–9M", "9–12M"];
+const BODYSUIT_SIZES = ["0–3M", "3–6M", "6–9M", "9–12M", "12–18M", "18–24M", "2–3Y"];
+const ROMPER_SIZES = ["3–6M", "6–9M", "9–12M", "12–18M", "18–24M", "2–3Y"];
+const CHART_SIZES = ["0–3M", "3–6M", "6–9M", "9–12M", "12–18M", "18–24M", "2–3Y"];
 const SET_SIZES = ["0–3M", "3–6M"];
 const CARE = "Machine wash cold, inside out, with similar colours. Tumble dry low. No bleach, no fuss.";
 
@@ -298,7 +298,7 @@ const RAW: Omit<SeedProduct, "ageGroups">[] = [
     category: "gift-set",
     fabric: "100% cotton",
     colour: "Pink, mint and sky blue, panda print",
-    price: 999,
+    price: 599,
     badge: "Gift ready",
     organic: false,
     sizes: CHART_SIZES,
@@ -314,7 +314,7 @@ const RAW: Omit<SeedProduct, "ageGroups">[] = [
     category: "gift-set",
     fabric: "100% cotton",
     colour: "7 rainbow shades, little arrow print",
-    price: 1999,
+    price: 1299,
     badge: "Best value",
     organic: false,
     sizes: CHART_SIZES,
@@ -330,7 +330,7 @@ const RAW: Omit<SeedProduct, "ageGroups">[] = [
     category: "gift-set",
     fabric: "100% cotton",
     colour: "7 rainbow shades, zebra motif",
-    price: 1999,
+    price: 1299,
     badge: "Gift ready",
     organic: false,
     sizes: CHART_SIZES,

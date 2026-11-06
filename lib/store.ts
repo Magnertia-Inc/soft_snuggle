@@ -36,6 +36,7 @@ export const AGE_GROUPS = [
   { slug: "little-one", title: "Little One", range: "3–6 months", tint: "#F3D8C8", sizes: ["3–6M"] },
   { slug: "sitting-up", title: "Sitting Up", range: "6–9 months", tint: "#DCE6EE", sizes: ["6–9M"] },
   { slug: "on-the-move", title: "On the Move", range: "9–12 months", tint: "#F1E7BC", sizes: ["9–12M"] },
+  { slug: "toddler", title: "Toddler", range: "1–3 years", tint: "#E8E3EF", sizes: ["12–18M", "18–24M", "2–3Y"] },
 ] as const;
 
 /** The standard sizes, youngest first, offered as tick boxes in the product editor. */

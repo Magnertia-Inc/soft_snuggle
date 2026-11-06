@@ -3,7 +3,7 @@
 import { LayoutGroup, motion } from "motion/react";
 import { useState } from "react";
 
-const SIZES = ["0–3M", "3–6M", "6–9M", "9–12M"];
+const SIZES = ["0–3M", "3–6M", "6–9M", "9–12M", "12–18M", "18–24M", "2–3Y"];
 
 // Measurements from the Soft Snuggle size sheets. null = not measured for that size.
 const CHARTS = {
@@ -11,23 +11,24 @@ const CHARTS = {
     label: "Frock",
     unit: "inches",
     rows: [
-      ["Total length", 12, 13.5, 15, 16.5],
-      ["Chest", 8.5, 9, 10, 10.5],
-      ["Bottom", 13.5, 14, 17, 17],
-      ["Neck", 4.38, 4.5, 4.62, 4.75],
-      ["Across shoulder", null, null, null, "7¾"],
-      ["Across front", null, null, null, 7],
-      ["Across back", null, null, null, "7¼"],
+      // 12–18M, 18–24M and 2–3Y: measurements to be added from the size sheet
+      ["Total length", 12, 13.5, 15, 16.5, null, null, null],
+      ["Chest", 8.5, 9, 10, 10.5, null, null, null],
+      ["Bottom", 13.5, 14, 17, 17, null, null, null],
+      ["Neck", 4.38, 4.5, 4.62, 4.75, null, null, null],
+      ["Across shoulder", null, null, null, "7¾", null, null, null],
+      ["Across front", null, null, null, 7, null, null, null],
+      ["Across back", null, null, null, "7¼", null, null, null],
     ],
   },
   jabla: {
     label: "Jabla",
     unit: "cm",
     rows: [
-      ["Total length", 28, 30, 32, 33.5],
-      ["Chest", 26, 27, 27.5, 28.5],
-      ["Bottom", 26, 27, 27.5, 28.5],
-      ["Armhole", 9.5, 10.5, 11.5, 12.5],
+      ["Total length", 28, 30, 32, 33.5, null, null, null],
+      ["Chest", 26, 27, 27.5, 28.5, null, null, null],
+      ["Bottom", 26, 27, 27.5, 28.5, null, null, null],
+      ["Armhole", 9.5, 10.5, 11.5, 12.5, null, null, null],
     ],
   },
 } as const;
@@ -58,7 +59,7 @@ export function SizeChart({ highlight, initial = "frock" }: { highlight?: string
         </div>
       </LayoutGroup>
       <div className="overflow-x-auto" data-lenis-prevent>
-        <table className="w-full min-w-[26.25rem] text-sm">
+        <table className="w-full min-w-[38rem] text-sm">
           <thead>
             <tr className="text-left">
               <th className="px-4 py-2.5 font-extrabold">Measurement</th>
