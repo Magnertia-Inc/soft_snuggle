@@ -48,8 +48,19 @@ export function Journey() {
 
       {/* ── Wide screens: the stitched-thread roadmap ── */}
       <div className="relative mx-auto mt-10 hidden h-[19rem] max-w-6xl lg:block">
-        <svg viewBox={`0 0 ${W} 300`} preserveAspectRatio="none" className="absolute inset-0 h-full w-full" aria-hidden>
-          <motion.path
+        {/* The whole thread is always drawn end to end; it's revealed left to
+            right as the section scrolls in, so it can never stop part-way. */}
+        <motion.svg
+          viewBox={`0 0 ${W} 300`}
+          preserveAspectRatio="none"
+          className="absolute inset-0 h-full w-full"
+          aria-hidden
+          initial={{ clipPath: "inset(0 100% 0 0)" }}
+          whileInView={{ clipPath: "inset(0 0% 0 0)" }}
+          viewport={{ once: true, margin: "-10% 0px" }}
+          transition={{ duration: 2.2, ease }}
+        >
+          <path
             d={thread}
             fill="none"
             stroke="#7F9C88"
@@ -57,12 +68,8 @@ export function Journey() {
             strokeDasharray="7 7"
             strokeLinecap="round"
             vectorEffect="non-scaling-stroke"
-            initial={{ pathLength: 0 }}
-            whileInView={{ pathLength: 1 }}
-            viewport={{ once: true, margin: "-10% 0px" }}
-            transition={{ duration: 2.2, ease }}
           />
-        </svg>
+        </motion.svg>
 
         {STEPS.map((s, i) => {
           const p = pts[i];
