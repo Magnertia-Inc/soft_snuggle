@@ -96,7 +96,7 @@ export function AgeTiles({
                       href={`/shop?age=${g.slug}`}
                       className="mt-4 inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-sm font-bold text-paper"
                     >
-                      Shop {g.title} <span aria-hidden>→</span>
+                      {g.slug === "toddler" ? "Clothes for toddlers" : `Shop ${g.title}`} <span aria-hidden>→</span>
                     </Link>
                   </div>
                   {/* The figure keeps its own column so the text never wraps around it */}
@@ -144,7 +144,7 @@ export function AgeTiles({
                 <p className="mt-3 max-w-[16rem] text-ink-soft">{NOTES[i]}</p>
               </div>
               <span className="relative z-10 mt-5 inline-flex w-fit items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-sm font-bold text-paper transition-all group-hover:gap-4">
-                Shop {g.title} <span aria-hidden>→</span>
+                {g.slug === "toddler" ? "Clothes for toddlers" : `Shop ${g.title}`} <span aria-hidden>→</span>
               </span>
 
               {/* Only the drawn babies can be dressed: recolouring a photo of
