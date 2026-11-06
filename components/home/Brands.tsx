@@ -9,8 +9,8 @@ import { FlowerMark } from "../art/FlowerMark";
  */
 const BRANDS = [
   {
-    name: "Bubblio",
-    blurb: "Soft bamboo-cotton muslin, made for brand-new skin.",
+    name: "Veviba",
+    blurb: "Soft cotton muslin, made for brand-new skin.",
     tint: "#F3E9DF",
     href: "/shop",
   },

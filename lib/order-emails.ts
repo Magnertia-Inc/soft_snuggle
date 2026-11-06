@@ -1,7 +1,7 @@
 import { adminEmails } from "./admin";
 import { sendMail } from "./mail";
 import { configuredSiteUrl } from "./site";
-import { STORE, inr, whatsappDisplay } from "./store";
+import { SHIPPING_LABEL, STORE, inr, whatsappDisplay } from "./store";
 import type { Order } from "./types";
 
 // One email per order, to the admins and (when they gave an address) the
@@ -56,7 +56,7 @@ ${items}
 <tr><td colspan="2" style="border-top:1px solid ${LINE}"></td></tr>
 ${row(`<span style="color:${SOFT}">Subtotal</span>`, inr(order.subtotal))}
 ${order.discount > 0 ? row(`<span style="color:${SOFT}">Discount${order.couponCode ? ` (${esc(order.couponCode)})` : ""}</span>`, `−${inr(order.discount)}`) : ""}
-${row(`<span style="color:${SOFT}">Delivery</span>`, order.shipping === 0 ? "Free" : inr(order.shipping))}
+${row(`<span style="color:${SOFT}">${SHIPPING_LABEL}</span>`, order.shipping === 0 ? "Free" : inr(order.shipping))}
 ${order.codFee > 0 ? row(`<span style="color:${SOFT}">Cash on Delivery fee</span>`, inr(order.codFee)) : ""}
 ${row("Total", inr(order.total), true)}
 </table>`;
@@ -67,7 +67,7 @@ function itemsText(order: Order) {
     ...order.items.map((i) => `- ${i.name} (${i.colour ? `${i.colour}, ` : ""}${i.size}) × ${i.qty}: ${inr(i.price * i.qty)}`),
     `Subtotal: ${inr(order.subtotal)}`,
     ...(order.discount > 0 ? [`Discount${order.couponCode ? ` (${order.couponCode})` : ""}: −${inr(order.discount)}`] : []),
-    `Delivery: ${order.shipping === 0 ? "Free" : inr(order.shipping)}`,
+    `${SHIPPING_LABEL}: ${order.shipping === 0 ? "Free" : inr(order.shipping)}`,
     ...(order.codFee > 0 ? [`Cash on Delivery fee: ${inr(order.codFee)}`] : []),
     `Total: ${inr(order.total)}`,
   ].join("\n");

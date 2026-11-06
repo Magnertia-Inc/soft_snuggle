@@ -88,9 +88,6 @@ export function AgeTiles({
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <h3 className="font-display text-3xl tracking-tight">{g.title}</h3>
-                      <span className="rounded-full bg-paper/70 px-2.5 py-0.5 text-[0.6875rem] font-bold">
-                        {counts[g.slug] ?? 0}
-                      </span>
                     </div>
                     <p className="mt-0.5 text-[0.6875rem] font-extrabold uppercase tracking-[0.18em] text-ink/60">{g.range}</p>
                     <p className="mt-2 text-sm text-ink-soft">{NOTES[i]}</p>
@@ -139,9 +136,6 @@ export function AgeTiles({
             >
               <div className="flex items-start justify-between">
                 <span className="font-display text-lg text-ink/50">0{i + 1}</span>
-                <span className="rounded-full bg-paper/70 px-3 py-1 text-xs font-bold">
-                  {counts[g.slug] ?? 0} pieces
-                </span>
               </div>
               <div className="relative z-10 mt-2">
                 <h3 className="font-display text-5xl tracking-tight sm:text-6xl lg:text-5xl xl:text-6xl">{g.title}</h3>

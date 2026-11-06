@@ -6,7 +6,7 @@ import { StatusBadge } from "@/components/admin/OrderList";
 import { requireAdmin } from "@/lib/admin";
 import { getAdminOrder } from "@/lib/admin-queries";
 import { EVENT_LABELS, paymentLabel, when } from "@/lib/admin-labels";
-import { STORE, inr } from "@/lib/store";
+import { SHIPPING_LABEL, STORE, inr } from "@/lib/store";
 
 export async function generateMetadata({ params }: { params: Promise<{ code: string }> }) {
   return { title: (await params).code };
@@ -56,7 +56,7 @@ export default async function AdminOrderPage({ params }: { params: Promise<{ cod
                   <dd>−{inr(order.discount)}</dd>
                 </div>
               )}
-              <div className="flex justify-between"><dt className="text-ink-soft">Shipping</dt><dd>{order.shipping ? inr(order.shipping) : "Free"}</dd></div>
+              <div className="flex justify-between"><dt className="text-ink-soft">{SHIPPING_LABEL}</dt><dd>{order.shipping ? inr(order.shipping) : "Free"}</dd></div>
               {order.codFee > 0 && (
                 <div className="flex justify-between"><dt className="text-ink-soft">COD fee</dt><dd>{inr(order.codFee)}</dd></div>
               )}

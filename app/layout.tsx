@@ -17,7 +17,7 @@ const fraunces = Fraunces({
 const nunito = Nunito({ subsets: ["latin"], variable: "--font-nunito" });
 
 const description =
-  "Soft, thoughtful baby essentials made for milk-drunk mornings, first wiggles and every cuddle in between. Bamboo-cotton muslin frocks, jablas, nappy covers, sets and gift packs for 0–12 months.";
+  "Soft, thoughtful baby essentials made for milk-drunk mornings, first wiggles and every cuddle in between. Pure cotton muslin frocks, jablas, nappy covers, sets and gift packs for 0–12 months.";
 
 export const metadata: Metadata = {
   // Link previews (WhatsApp, Instagram, Google) need absolute image addresses.

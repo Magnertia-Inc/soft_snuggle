@@ -10,7 +10,7 @@ import { Reveal } from "../Reveal";
 const VALUES = [
   { n: "01", title: "Gentle fabrics", body: "Soft cotton selected with delicate skin in mind.", tint: "#DFE7DD" },
   { n: "02", title: "Easy little details", body: "Comfy fits that make getting dressed simpler.", tint: "#F3D8C8" },
-  { n: "03", title: "Made to pass along", body: "Thoughtful quality for keeping and sharing.", tint: "#DCE6EE" },
+  { n: "03", title: "Freshly stitched", body: "Made to order: once you place your order, we stitch your piece fresh, just for your little one.", tint: "#DCE6EE" },
 ];
 
 /** heading: "h1" where the story is the page itself (About); on the home page it's a section, so h2. */

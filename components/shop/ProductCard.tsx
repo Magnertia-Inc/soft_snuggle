@@ -130,9 +130,6 @@ export function ProductCard({ product, wide = false }: { product: Product; wide?
 
       <Link href={`/product/${product.slug}`} className="mt-3 block px-1">
         <h3 className="font-display text-base leading-tight tracking-tight sm:text-lg">{product.name}</h3>
-        <p className="mt-0.5 line-clamp-2 text-xs text-ink-soft sm:text-[0.8125rem]">
-          {product.fabric} · {product.colour}
-        </p>
         <p className="mt-1.5 font-bold">
           {inr(product.price)}
           {product.compareAt && <s className="ml-1.5 text-sm font-normal text-ink-soft">{inr(product.compareAt)}</s>}

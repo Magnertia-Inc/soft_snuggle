@@ -6,7 +6,7 @@ import { useLenis } from "lenis/react";
 import { useEffect, useRef, useState } from "react";
 import { defaultColour } from "@/lib/colours";
 import { isStudioShot } from "@/lib/photo";
-import { CATEGORY_LABELS, STORE, inr, isSoldOut, shippingIsFree } from "@/lib/store";
+import { CATEGORY_LABELS, DELIVERY_DAYS, STORE, deliveryBy, inr, isSoldOut, shippingIsFree } from "@/lib/store";
 import type { Product } from "@/lib/types";
 import { FlowerMark } from "../art/FlowerMark";
 import { Garment } from "../art/Garment";
@@ -108,7 +108,7 @@ export function ProductDetail({ product }: { product: Product }) {
         shippingIsFree
           ? "Free shipping on every order."
           : `Free shipping on orders over ${inr(STORE.freeShippingAbove)}, otherwise ${inr(STORE.shippingFlat)}.`
-      } Ships in 1–2 days, arrives in 3–7 days across India. Wrong size? Easy size exchange within 7 days.`,
+      } Every piece is made to order: we stitch it fresh once you order, and it reaches you within ${DELIVERY_DAYS} days of ordering, anywhere in India. Returns and size exchanges within 7 days of delivery. We refund the cost of the clothes only; the Cash on Delivery charge and shipping are not refunded.`,
     },
   ];
 
@@ -258,10 +258,11 @@ export function ProductDetail({ product }: { product: Product }) {
           </Link>
         </nav>
         <h1 className="mt-3 font-display text-4xl leading-[1.04] tracking-tight sm:text-6xl">{product.name}</h1>
-        <p className="mt-3 text-base text-ink-soft sm:text-lg">
-          {product.fabric} · {product.colour}
-          {product.organic && <span className="ml-2 rounded-full bg-sage px-2.5 py-0.5 text-xs font-extrabold text-ink">✿ Organic</span>}
-        </p>
+        {product.organic && (
+          <p className="mt-3">
+            <span className="rounded-full bg-sage px-2.5 py-0.5 text-xs font-extrabold text-ink">✿ Organic</span>
+          </p>
+        )}
         <p className="mt-3 font-display text-[1.75rem] sm:mt-5 sm:text-4xl">
           {inr(product.price)}
           {product.compareAt && <s className="ml-3 text-xl text-ink-soft">{inr(product.compareAt)}</s>}
@@ -372,8 +373,16 @@ export function ProductDetail({ product }: { product: Product }) {
           className="mt-4 w-full rounded-2xl border border-line bg-paper py-3.5 text-ink hover:border-ink/40"
         />
 
-        <ul className="mt-5 grid grid-cols-2 gap-2 text-xs text-ink-soft sm:mt-6 sm:text-sm">
-          {["🕒 24×7 ordering", shippingIsFree ? "🚚 Free delivery" : "🚚 Free over " + inr(STORE.freeShippingAbove), "💵 Cash on Delivery", "🔁 Easy size exchange"].map((t) => (
+        <div className="mt-5 rounded-2xl bg-sage/60 px-4 py-3 text-sm sm:mt-6">
+          <p className="font-semibold">✂️ Made to order, freshly stitched for you</p>
+          <p className="mt-0.5 text-ink-soft">Once you place your order, we stitch your piece fresh.</p>
+          <p className="mt-2 font-semibold" suppressHydrationWarning>
+            📦 Order today, get it by <b>{deliveryBy()}</b>
+          </p>
+        </div>
+
+        <ul className="mt-2 grid grid-cols-2 gap-2 text-xs text-ink-soft sm:text-sm">
+          {["🕒 24×7 ordering", shippingIsFree ? "🚚 Free delivery" : "🚚 Free over " + inr(STORE.freeShippingAbove), "💵 Cash on Delivery", "🔁 7-day returns"].map((t) => (
             <li key={t} className="rounded-2xl bg-paper px-2.5 py-2.5 font-semibold sm:px-4 sm:py-3">{t}</li>
           ))}
         </ul>

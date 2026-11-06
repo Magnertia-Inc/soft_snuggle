@@ -123,7 +123,7 @@ export const COLLECTIONS: Collection[] = [
     title: "Panda",
     accent: "& Bear",
     label: "Panda and Bear Muslin Baby Vest",
-    blurb: "Pandas and little brown bears nibbling bamboo, on a soft V-neck jabla that buttons down the front.",
+    blurb: "Pandas and little brown bears at play, on a soft V-neck jabla that buttons down the front.",
     glow: "#EFF3EA",
     look: {
       skin: "#D9A47F", hair: "#24190F", hairStyle: "curls", outfit: "#FBFBF8",

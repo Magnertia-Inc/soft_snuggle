@@ -6,7 +6,7 @@ import { Marquee } from "@/components/home/Marquee";
 import { Statement } from "@/components/home/Statement";
 import { Story } from "@/components/home/Story";
 import { Reveal } from "@/components/Reveal";
-import { ProductGrid } from "@/components/shop/ProductGrid";
+import { ProductCard } from "@/components/shop/ProductCard";
 import { AGE_GROUPS } from "@/lib/store";
 import { ageImages, heroImages, storyImage } from "@/lib/images";
 import { getProducts } from "@/lib/queries";
@@ -40,7 +40,20 @@ export default async function HomePage() {
             View all →
           </Link>
         </Reveal>
-        <ProductGrid products={products} />
+        {/* A taste of the shop: six dresses and pieces, then the button to see everything */}
+        <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:grid-cols-3">
+          {products
+            .filter((p) => p.category !== "gift-set")
+            .slice(0, 6)
+            .map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+        </div>
+        <div className="mt-12 flex justify-center">
+          <Link href="/shop" className="btn-primary">
+            Shop all →
+          </Link>
+        </div>
       </section>
 
       <Story photo={storyImage()} />

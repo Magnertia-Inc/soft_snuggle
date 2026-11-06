@@ -39,8 +39,14 @@ export function coloursFor(p: Pick<Product, "slug" | "colour" | "garment" | "cat
   return WITHOUT_COLOURS.includes(p.category) ? [] : RAINBOW;
 }
 
+// The swatch a product opens on when its own colour text doesn't name one of
+// the seven (e.g. "Ivory, lemon print").
+const OPENS_ON: Record<string, string> = { "lemon-frock": "Butter Yellow" };
+
 /** The swatch a product opens on: its own colour when that is one of the seven. */
-export function defaultColour(p: Pick<Product, "colour">, colours: ColourOption[]): ColourOption {
+export function defaultColour(p: Pick<Product, "colour" | "slug">, colours: ColourOption[]): ColourOption {
+  const set = OPENS_ON[p.slug] && colours.find((c) => c.name === OPENS_ON[p.slug]);
+  if (set) return set;
   const own = p.colour.toLowerCase();
   return colours.find((c) => own.startsWith(c.name.toLowerCase())) ?? colours[0];
 }

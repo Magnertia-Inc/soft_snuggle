@@ -14,7 +14,8 @@ const POLICIES: Record<string, { title: string; sections: [string, string][] }> 
           ? "Delivery is free on every order, whatever it comes to. No minimum."
           : `Free shipping on orders over ${inr(STORE.freeShippingAbove)}. Below that, a flat ${inr(STORE.shippingFlat)} applies.`,
       ],
-      ["Dispatch & delivery", "Orders are packed and dispatched within 1–2 working days after confirmation on WhatsApp. Delivery usually takes 3–7 working days depending on your pincode."],
+      ["Made to order", "Every Veviba piece is made to order. Once your order is placed, we stitch it fresh, just for your little one, then pack it and send it out."],
+      ["Dispatch & delivery", "Every order reaches you within 7 days of ordering. For example, an order placed on 6 November arrives by 13 November."],
       [
         "Cash on Delivery",
         `COD is available on most pincodes${STORE.codFee ? `, with a ${inr(STORE.codFee)} cash-handling fee added to the order` : ""}. Please keep the exact amount ready when your parcel arrives.`,
@@ -26,10 +27,11 @@ const POLICIES: Record<string, { title: string; sections: [string, string][] }> 
   returns: {
     title: "Returns & exchanges",
     sections: [
+      ["7-day returns", "You can return or exchange an order within 7 days of delivery. Message us on WhatsApp with your order number within those 7 days. After 7 days we can't accept returns."],
       ["Size exchanges", "Little ones grow fast! If the size isn't right, message us on WhatsApp within 7 days of delivery and we'll arrange an exchange."],
       ["Condition", "Items must be unworn and unwashed, with tags attached and in their original packaging."],
       ["Damaged or wrong item", "If something arrives damaged or isn't what you ordered, send us a photo on WhatsApp within 48 hours and we'll make it right."],
-      ["Refunds", "Refunds for prepaid orders go back to the original UPI account within 5–7 working days of us receiving the return."],
+      ["Refunds", "We refund the cost of the clothes only. The ₹7 Cash on Delivery charge and any shipping charge are not refunded. Prepaid orders are refunded to the original UPI account, and Cash on Delivery orders to a UPI ID you share with us, within 5–7 working days of us receiving the return."],
       ["Cancellations", "Orders can be cancelled before they are dispatched. Just message us on WhatsApp with your order number."],
     ],
   },

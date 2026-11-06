@@ -2,7 +2,10 @@
 
 export const STORE = {
   name: "Veviba",
-  whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919585692553",
+  // The shop's one phone number, used everywhere on the site. Fixed here on
+  // purpose (not read from an env variable) so an old value in a .env or on
+  // the host can't bring back a different number.
+  whatsappNumber: "917708100362",
   // Delivery is free on every order.
   //
   // This deliberately ignores NEXT_PUBLIC_SHIPPING_FLAT. That variable is
@@ -20,7 +23,10 @@ export const STORE = {
   // No public email address: customers reach the shop on WhatsApp.
 };
 
-/** The WhatsApp number as people read it, e.g. "+91 95856 92553". */
+/** Shown beside shipping wherever it appears: prices already include all taxes. */
+export const SHIPPING_LABEL = "Shipping (incl. all taxes)";
+
+/** The WhatsApp number as people read it, e.g. "+91 77081 00362". */
 export const whatsappDisplay = STORE.whatsappNumber.replace(/^(\d{2})(\d{5})(\d+)$/, "+$1 $2 $3");
 
 export const AGE_GROUPS = [
@@ -81,4 +87,21 @@ export function inr(amount: number) {
 export function phoneDigits(raw: string) {
   const d = raw.replace(/\D/g, "");
   return (d.length > 10 ? d.replace(/^(91|0)/, "") : d).slice(0, 10);
+}
+
+/** The struck-out price shown beside every product: 10% above the selling
+ *  price, rounded up to end in 9 (₹349 -> ₹389, ₹199 -> ₹219).
+ *  A product with its own "compare at" price set in the admin panel uses that. */
+export function listPrice(price: number): number {
+  return Math.ceil((price * 1.1) / 10) * 10 - 1;
+}
+
+/** Every order reaches the customer within this many days of being placed. */
+export const DELIVERY_DAYS = 7;
+
+/** The date an order placed on `from` arrives by, e.g. "Fri, 13 Nov" (India time). */
+export function deliveryBy(from: Date | string = new Date()): string {
+  const d = new Date(from);
+  d.setDate(d.getDate() + DELIVERY_DAYS);
+  return d.toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", weekday: "short", day: "numeric", month: "short" });
 }

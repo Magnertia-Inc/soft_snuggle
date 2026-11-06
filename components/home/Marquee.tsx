@@ -2,8 +2,10 @@ import { FlowerMark } from "../art/FlowerMark";
 import { STORE, inr, shippingLine } from "@/lib/store";
 
 const ITEMS = [
+  "Made to order by Veviba",
+  "Freshly stitched for your baby",
   "24×7 ordering available",
-  "Cloud-soft cotton",
+  "100% cotton",
   "Kind to tiny skin",
   "Made to pass along",
   shippingLine,

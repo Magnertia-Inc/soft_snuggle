@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { STORE, inr } from "@/lib/store";
+import { SHIPPING_LABEL, STORE, deliveryBy, inr } from "@/lib/store";
 import type { Order } from "@/lib/types";
 import { orderMessage, whatsappLink } from "@/lib/whatsapp";
 import { FlowerMark } from "../art/FlowerMark";
@@ -295,7 +295,7 @@ export function OrderFlow({ order, upiUrl, upiId, payee, qrSvg }: Props) {
               </li>
             )}
             <li className={`flex justify-between text-ink-soft ${order.discount > 0 ? "" : "border-t border-line pt-2"}`}>
-              <span>Shipping</span>
+              <span>{SHIPPING_LABEL}</span>
               <span>{order.shipping === 0 ? "Free" : inr(order.shipping)}</span>
             </li>
             {order.codFee > 0 && (
@@ -308,6 +308,9 @@ export function OrderFlow({ order, upiUrl, upiId, payee, qrSvg }: Props) {
               <span>Total</span>
               <span>{inr(order.total)}</span>
             </li>
+            {order.status !== "cancelled" && order.status !== "delivered" && (
+              <li className="text-sm font-semibold text-sage-deep">📦 Arriving by {deliveryBy(order.createdAt)}</li>
+            )}
           </ul>
         </div>
         <div className="rounded-[1.75rem] border border-line bg-paper/70 p-6 text-sm">

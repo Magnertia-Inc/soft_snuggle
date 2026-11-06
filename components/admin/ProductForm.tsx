@@ -30,7 +30,7 @@ const BLANK: Fields = {
   price: "",
   compareAt: "",
   badge: "New",
-  fabric: "50% bamboo, 50% cotton",
+  fabric: "100% cotton",
   colour: "",
   sizes: [...STANDARD_SIZES],
   description: "",

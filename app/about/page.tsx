@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Story } from "@/components/home/Story";
+import { Testimonials } from "@/components/Testimonials";
 import { storyImage } from "@/lib/images";
 
 export const metadata: Metadata = { title: "About" };
@@ -11,6 +12,7 @@ export default function AboutPage() {
       <div className="pt-16">
         <Story photo={storyImage()} heading="h1" />
       </div>
+      <Testimonials />
       <div className="pb-24 text-center">
         <Link href="/shop" className="btn-primary">
           Shop the collection →

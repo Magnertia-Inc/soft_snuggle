@@ -3,7 +3,7 @@ import { getDb } from "./db";
 import { coloursFor } from "./colours";
 import { productImages } from "./images";
 import { CouponError, checkCoupon, claimCoupon, releaseCoupon } from "./coupons";
-import { STORE, inr, shippingFor } from "./store";
+import { STORE, inr, listPrice, shippingFor } from "./store";
 import { courierLink, type TrackInfo } from "./tracking";
 import type { Order, OrderItem, PaymentMethod, Product } from "./types";
 
@@ -18,15 +18,26 @@ export type ProductRow = {
 /** What shoppers may see: not hidden by the owner and not deleted. */
 const LISTED = "NOT hidden AND deleted_at IS NULL";
 
+// Every Veviba piece is 100% cotton. Whatever an older database row or an
+// admin edit says, "bamboo" never reaches the page.
+const cottonOnly = (s: string) =>
+  s
+    .replace(/nibbling bamboo/gi, "at play")
+    .replace(/50% bamboo,? 50% cotton/gi, "100% cotton")
+    .replace(/bamboo[- ]cotton/gi, "100% cotton")
+    .replace(/\s*bamboo\s*/gi, " ")
+    .trim();
+
 export function toProduct(r: ProductRow): Product {
   // The owner's own photo list once they have edited the photos in the admin
   // panel (an empty list there means "no photos"), the public/ folder until then.
   const images = r.images ?? productImages(r.slug);
   return {
-    id: r.id, slug: r.slug, name: r.name, category: r.category, fabric: r.fabric,
-    colour: r.colour, price: r.price, compareAt: r.compare_at, badge: r.badge,
-    organic: r.organic, sizes: r.sizes, ageGroups: r.age_groups, description: r.description,
-    care: r.care, tint: r.tint, garment: r.garment, inStock: r.in_stock,
+    id: r.id, slug: r.slug, name: r.name, category: r.category,
+    fabric: /bamboo/i.test(r.fabric) ? "100% cotton" : r.fabric,
+    colour: r.colour, price: r.price, compareAt: r.compare_at ?? listPrice(r.price), badge: r.badge,
+    organic: r.organic, sizes: r.sizes, ageGroups: r.age_groups, description: cottonOnly(r.description),
+    care: cottonOnly(r.care), tint: r.tint, garment: r.garment, inStock: r.in_stock,
     soldOutSizes: r.sold_out_sizes ?? [],
     images,
     hidden: r.hidden ?? false,
