@@ -334,6 +334,9 @@ export function CheckoutForm() {
             <p className="pt-1 text-sm font-semibold text-sage-deep" suppressHydrationWarning>
               ✂️ Freshly stitched once you order · 📦 Delivered by {deliveryBy()} (within {DELIVERY_DAYS} days)
             </p>
+            <p className="text-sm font-semibold text-sage-deep">
+              🔁 7-day returns: we refund the cost of the clothes (COD charge and shipping not refunded)
+            </p>
           </div>
 
           <AnimatePresence>
