@@ -38,7 +38,7 @@ export default function ContactPage() {
             Say <em className="text-sage-deep">hello</em>
           </h1>
           <p className="mx-auto mt-2 max-w-md text-sm text-ink-soft sm:mt-3 sm:text-base">
-            You can order from us 24×7, any day, any time. Message us whenever you need us.
+            You can order from us 24×7.
           </p>
         </Reveal>
 
