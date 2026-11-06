@@ -303,7 +303,6 @@ function GlideItem({
   const opacity = useTransform(pos, (p) =>
     lerp(Math.abs(distance(index, p, count)), compact ? [0, 0.4, 0.8] : [0, 1.6, 2.4], [1, 0.3, 0]),
   );
-  const labelOpacity = useTransform(pos, (p) => lerp(Math.abs(distance(index, p, count)), [0, 1.15, 1.6], [1, 1, 0]));
   const zIndex = useTransform(pos, (p) => Math.round(100 - Math.abs(distance(index, p, count)) * 10));
 
   return (
@@ -322,12 +321,6 @@ function GlideItem({
             <Baby look={collection.look} className="h-full w-full" />
           )}
         </motion.button>
-        <motion.span
-          className="absolute left-1/2 top-full mt-3 hidden -translate-x-1/2 whitespace-nowrap md:block rounded-full border border-line bg-paper/90 px-4 py-1.5 font-display text-sm italic shadow-sm"
-          style={{ opacity: labelOpacity }}
-        >
-          {collection.label}
-        </motion.span>
       </div>
     </motion.div>
   );
