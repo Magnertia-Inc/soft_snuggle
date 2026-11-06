@@ -26,9 +26,13 @@ export function AuthForm({ google = false, notice = null }: { google?: boolean; 
   const [show, setShow] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(notice);
+  // Consent to the Terms & Conditions and Privacy policy, needed for every way in
+  const [agreed, setAgreed] = useState(false);
+  const needConsent = () => setError("Please agree to the Terms & Conditions to continue.");
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!agreed) return needConsent();
     setBusy(true);
     setError(null);
     const message =
@@ -58,9 +62,32 @@ export function AuthForm({ google = false, notice = null }: { google?: boolean; 
         </p>
       </div>
 
+      <label className="mt-8 flex cursor-pointer items-start gap-3 rounded-2xl border border-line bg-paper px-4 py-3.5 text-sm">
+        <input
+          type="checkbox"
+          checked={agreed}
+          onChange={(e) => {
+            setAgreed(e.target.checked);
+            if (e.target.checked) setError(null);
+          }}
+          className="mt-0.5 h-4 w-4 shrink-0 accent-[#263B36]"
+        />
+        <span className="text-ink-soft">
+          I agree to Veviba&apos;s{" "}
+          <a href="/policies/terms" target="_blank" className="font-bold text-ink underline underline-offset-2">
+            Terms &amp; Conditions
+          </a>{" "}
+          and{" "}
+          <a href="/policies/privacy" target="_blank" className="font-bold text-ink underline underline-offset-2">
+            Privacy policy
+          </a>
+          .
+        </span>
+      </label>
+
       {google && (
-        <div className="mt-8">
-          <GoogleButton next={next} />
+        <div className="mt-4">
+          <GoogleButton next={next} disabled={!agreed} onBlocked={needConsent} />
           <div className="mt-6 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.14em] text-ink-soft">
             <span className="h-px flex-1 bg-line" />
             or with your mobile number
@@ -69,7 +96,7 @@ export function AuthForm({ google = false, notice = null }: { google?: boolean; 
         </div>
       )}
 
-      <form onSubmit={submit} className={`${google ? "mt-6" : "mt-8"} space-y-3`}>
+      <form onSubmit={submit} className={`${google ? "mt-6" : "mt-4"} space-y-3`}>
         <AnimatePresence initial={false}>
           {mode === "signup" && (
             <motion.div
