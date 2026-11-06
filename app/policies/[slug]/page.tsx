@@ -15,7 +15,10 @@ const POLICIES: Record<string, { title: string; sections: [string, string][] }> 
           : `Free shipping on orders over ${inr(STORE.freeShippingAbove)}. Below that, a flat ${inr(STORE.shippingFlat)} applies.`,
       ],
       ["Dispatch & delivery", "Orders are packed and dispatched within 1–2 working days after confirmation on WhatsApp. Delivery usually takes 3–7 working days depending on your pincode."],
-      ["Cash on Delivery", "COD is available on most pincodes. Please keep the exact amount ready when your parcel arrives."],
+      [
+        "Cash on Delivery",
+        `COD is available on most pincodes${STORE.codFee ? `, with a ${inr(STORE.codFee)} cash-handling fee added to the order` : ""}. Please keep the exact amount ready when your parcel arrives.`,
+      ],
       ["Tracking your order", "Once your parcel ships, we share the courier name and tracking number on WhatsApp. You can also see every step anytime on the Track order page with your order ID and mobile number."],
       ["Ordering hours", "You can place orders anytime, 24×7. Orders placed on Sundays or holidays are packed on the next working day."],
     ],

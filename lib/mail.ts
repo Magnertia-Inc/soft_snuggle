@@ -1,6 +1,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { Transporter } from "nodemailer";
+import { STORE } from "./store";
 
 // Sends the shop's email from its Gmail account, one of two ways:
 //
@@ -50,7 +51,7 @@ async function viaRelay(mail: Mail, to: string[]) {
     method: "POST",
     // text/plain keeps Apps Script from rejecting the request before doPost runs.
     headers: { "content-type": "text/plain;charset=utf-8" },
-    body: JSON.stringify({ secret: process.env.MAIL_RELAY_SECRET, to, subject: mail.subject, html: mail.html, text: mail.text, fromName: "Soft Snuggle" }),
+    body: JSON.stringify({ secret: process.env.MAIL_RELAY_SECRET, to, subject: mail.subject, html: mail.html, text: mail.text, fromName: STORE.name }),
     redirect: "follow",
     signal: AbortSignal.timeout(20_000),
   });
@@ -91,7 +92,7 @@ export async function sendMail(mail: Mail): Promise<boolean> {
       console.info(`email sent: "${mail.subject}" to ${to.length} (Gmail allows ${remaining ?? "?"} more today)`);
     } else {
       await (await transport()).sendMail({
-        from: { name: "Soft Snuggle", address: process.env.GMAIL_USER! },
+        from: { name: STORE.name, address: process.env.GMAIL_USER! },
         to,
         subject: mail.subject,
         html: mail.html,

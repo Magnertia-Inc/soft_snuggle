@@ -11,6 +11,7 @@ const LINKS = [
   { href: "/policies/shipping", label: "Shipping" },
   { href: "/policies/returns", label: "Returns" },
   { href: "/policies/privacy", label: "Privacy" },
+  { href: "/policies/terms", label: "Terms" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -29,6 +30,7 @@ const COLUMNS = [
       { href: "/policies/shipping", label: "Shipping" },
       { href: "/policies/returns", label: "Returns & exchanges" },
       { href: "/policies/privacy", label: "Privacy" },
+      { href: "/policies/terms", label: "Terms" },
     ],
   },
 ];

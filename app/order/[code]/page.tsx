@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import QRCode from "qrcode";
 import { OrderFlow } from "@/components/checkout/OrderFlow";
 import { getOrder } from "@/lib/queries";
+import { STORE } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Your order", robots: { index: false } };
@@ -20,7 +21,7 @@ export default async function OrderPage({
   if (!order) notFound();
 
   const upiId = process.env.UPI_ID || "softsnuggle@okaxis";
-  const payee = process.env.UPI_PAYEE_NAME || "Soft Snuggle";
+  const payee = process.env.UPI_PAYEE_NAME || STORE.name;
   const upiUrl =
     `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(payee)}` +
     `&am=${order.total.toFixed(2)}&cu=INR&tn=${encodeURIComponent(`Order ${order.code}`)}&tr=${order.code}`;

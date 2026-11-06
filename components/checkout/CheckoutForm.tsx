@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { STORE, inr, phoneDigits, shippingFor } from "@/lib/store";
+import { STORE, codFeeFor, inr, phoneDigits, shippingFor } from "@/lib/store";
 import type { PaymentMethod } from "@/lib/types";
 import { ProductThumb } from "../shop/ProductThumb";
 import { useAccount } from "../providers/AccountProvider";
@@ -47,7 +47,8 @@ export function CheckoutForm() {
   const [checkingCoupon, setCheckingCoupon] = useState(false);
   const shipping = shippingFor(subtotal);
   const discount = coupon?.discount ?? 0;
-  const total = subtotal - discount + shipping;
+  // The same sum the server saves the order with (lib/queries.ts createOrder).
+  const total = subtotal - discount + shipping + codFeeFor(method);
 
   const applyCoupon = async (code: string) => {
     if (!code.trim()) return;

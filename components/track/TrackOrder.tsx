@@ -231,7 +231,7 @@ export function TrackOrder({ initialCode }: { initialCode?: string }) {
                 </p>
                 <p className="mt-1 text-ink-soft">Placed {fmt(order.placedAt)}</p>
                 <a
-                  href={`https://wa.me/${STORE.whatsappNumber}?text=${encodeURIComponent(`Hi Soft Snuggle! I have a question about my order ${order.code}.`)}`}
+                  href={`https://wa.me/${STORE.whatsappNumber}?text=${encodeURIComponent(`Hi ${STORE.name}! I have a question about my order ${order.code}.`)}`}
                   target="_blank"
                   rel="noreferrer"
                   className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#25D366] px-4 py-2 text-sm font-bold text-white"

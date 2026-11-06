@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import { STORE } from "@/lib/store";
 
 export const metadata: Metadata = {
-  title: { default: "Admin", template: "%s · Soft Snuggle admin" },
+  title: { default: "Admin", template: `%s · ${STORE.name} admin` },
   // Keep every admin page out of search results.
   robots: { index: false, follow: false },
 };

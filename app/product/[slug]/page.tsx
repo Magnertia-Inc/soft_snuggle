@@ -4,6 +4,7 @@ import { ProductDetail } from "@/components/shop/ProductDetail";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { Reveal } from "@/components/Reveal";
 import { getProduct, getProducts } from "@/lib/queries";
+import { STORE, inr } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +12,14 @@ type Params = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const product = await getProduct((await params).slug);
-  return product ? { title: product.name, description: product.description } : {};
+  if (!product) return {};
+  // The preview photo comes from ./opengraph-image.ts.
+  const title = `${product.name} · ${inr(product.price)}`;
+  return {
+    title: product.name,
+    description: product.description,
+    openGraph: { siteName: STORE.name, type: "website", locale: "en_IN", title, description: product.description },
+  };
 }
 
 export default async function ProductPage({ params }: Params) {

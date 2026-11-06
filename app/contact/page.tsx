@@ -12,7 +12,7 @@ export default function ContactPage() {
       title: "WhatsApp",
       body: "Order any hour, ask about sizes and delivery, bulk orders or collaborations.",
       cta: `Chat on ${whatsappDisplay}`,
-      href: `https://wa.me/${STORE.whatsappNumber}?text=${encodeURIComponent("Hi Soft Snuggle! ")}`,
+      href: `https://wa.me/${STORE.whatsappNumber}?text=${encodeURIComponent(`Hi ${STORE.name}! `)}`,
       tint: "#DFE7DD",
       icon: <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />,
     },

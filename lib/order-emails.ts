@@ -1,5 +1,6 @@
 import { adminEmails } from "./admin";
 import { sendMail } from "./mail";
+import { configuredSiteUrl } from "./site";
 import { STORE, inr, whatsappDisplay } from "./store";
 import type { Order } from "./types";
 
@@ -19,10 +20,7 @@ export type OrderMoment = "cod_placed" | "utr_submitted" | "utr_changed";
  * link into an email.
  */
 export function emailSiteUrl(fallback: string) {
-  const configured = process.env.SITE_URL?.replace(/\/+$/, "");
-  if (configured) return configured;
-  if (process.env.RAILWAY_PUBLIC_DOMAIN) return `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`;
-  return fallback;
+  return configuredSiteUrl() ?? fallback;
 }
 
 const esc = (s: string) =>
@@ -36,11 +34,11 @@ function layout(title: string, body: string) {
   return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body style="margin:0;background:#F6F1E8;font-family:Arial,Helvetica,sans-serif;color:${INK}">
 <div style="max-width:560px;margin:0 auto;padding:24px 16px">
 <div style="background:#FDFBF6;border-radius:20px;padding:28px 24px;border:1px solid ${LINE}">
-<p style="margin:0 0 4px;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:${SOFT}">Soft Snuggle</p>
+<p style="margin:0 0 4px;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:${SOFT}">${esc(STORE.name)}</p>
 <h1 style="margin:0 0 16px;font-size:22px;line-height:1.3">${title}</h1>
 ${body}
 </div>
-<p style="margin:16px 0 0;text-align:center;font-size:12px;color:${SOFT}">Soft Snuggle · Little clothes, lots of love</p>
+<p style="margin:16px 0 0;text-align:center;font-size:12px;color:${SOFT}">${esc(STORE.name)} · Little clothes, lots of love</p>
 </div></body></html>`;
 }
 
@@ -59,6 +57,7 @@ ${items}
 ${row(`<span style="color:${SOFT}">Subtotal</span>`, inr(order.subtotal))}
 ${order.discount > 0 ? row(`<span style="color:${SOFT}">Discount${order.couponCode ? ` (${esc(order.couponCode)})` : ""}</span>`, `−${inr(order.discount)}`) : ""}
 ${row(`<span style="color:${SOFT}">Delivery</span>`, order.shipping === 0 ? "Free" : inr(order.shipping))}
+${order.codFee > 0 ? row(`<span style="color:${SOFT}">Cash on Delivery fee</span>`, inr(order.codFee)) : ""}
 ${row("Total", inr(order.total), true)}
 </table>`;
 }
@@ -69,6 +68,7 @@ function itemsText(order: Order) {
     `Subtotal: ${inr(order.subtotal)}`,
     ...(order.discount > 0 ? [`Discount${order.couponCode ? ` (${order.couponCode})` : ""}: −${inr(order.discount)}`] : []),
     `Delivery: ${order.shipping === 0 ? "Free" : inr(order.shipping)}`,
+    ...(order.codFee > 0 ? [`Cash on Delivery fee: ${inr(order.codFee)}`] : []),
     `Total: ${inr(order.total)}`,
   ].join("\n");
 }
@@ -122,7 +122,7 @@ ${button(adminLink, "Open the order")}`,
 
 function customerMail(order: Order, site: string) {
   const orderLink = `${site}/order/${order.code}?k=${order.accessKey}`;
-  const wa = `https://wa.me/${STORE.whatsappNumber}?text=${encodeURIComponent(`Hi Soft Snuggle! About my order ${order.code}`)}`;
+  const wa = `https://wa.me/${STORE.whatsappNumber}?text=${encodeURIComponent(`Hi ${STORE.name}! About my order ${order.code}`)}`;
   const subject = `Thank you! We've got your order ${order.code}`;
   const upi = order.paymentMethod === "upi";
   const payment = upi

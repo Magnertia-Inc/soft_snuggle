@@ -10,6 +10,25 @@
 export function siteOrigin(req: Request) {
   const configured = process.env.SITE_URL?.replace(/\/+$/, "");
   if (configured) return configured;
+  return requestOrigin(req);
+}
+
+/**
+ * The public address when there's no request to read it from (link previews,
+ * the sitemap, emails sent later): SITE_URL, else the domain Railway gives the
+ * service. Null when neither is set, as on a laptop.
+ */
+export function configuredSiteUrl(): string | null {
+  const configured = process.env.SITE_URL?.replace(/\/+$/, "");
+  if (configured) return configured;
+  if (process.env.RAILWAY_PUBLIC_DOMAIN) return `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`;
+  return null;
+}
+
+/** configuredSiteUrl, falling back to a local address so absolute URLs can still be built. */
+export const publicSiteUrl = () => configuredSiteUrl() ?? `http://localhost:${process.env.PORT ?? 3000}`;
+
+function requestOrigin(req: Request) {
   const url = new URL(req.url);
   const host = req.headers.get("x-forwarded-host") ?? req.headers.get("host") ?? url.host;
   const proto = req.headers.get("x-forwarded-proto")?.split(",")[0] ?? url.protocol.replace(":", "");

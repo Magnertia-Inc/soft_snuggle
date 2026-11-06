@@ -4,6 +4,8 @@ import { ShopChrome } from "@/components/ShopChrome";
 import { AccountProvider } from "@/components/providers/AccountProvider";
 import { CartProvider } from "@/components/providers/CartProvider";
 import { IntroProvider } from "@/components/providers/IntroProvider";
+import { publicSiteUrl } from "@/lib/site";
+import { STORE } from "@/lib/store";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -14,10 +16,17 @@ const fraunces = Fraunces({
 });
 const nunito = Nunito({ subsets: ["latin"], variable: "--font-nunito" });
 
+const description =
+  "Soft, thoughtful baby essentials made for milk-drunk mornings, first wiggles and every cuddle in between. Bamboo-cotton muslin frocks, jablas, nappy covers, sets and gift packs for 0–12 months.";
+
 export const metadata: Metadata = {
-  title: { default: "Veviba · Little clothes, lots of love", template: "%s · Veviba" },
-  description:
-    "Soft, thoughtful baby essentials made for milk-drunk mornings, first wiggles and every cuddle in between. Organic cotton bodysuits, rompers and gift sets.",
+  // Link previews (WhatsApp, Instagram, Google) need absolute image addresses.
+  metadataBase: new URL(publicSiteUrl()),
+  title: { default: `${STORE.name} · Little clothes, lots of love`, template: `%s · ${STORE.name}` },
+  description,
+  // The preview image itself is app/opengraph-image.png (products have their own).
+  openGraph: { siteName: STORE.name, type: "website", locale: "en_IN", title: `${STORE.name} · Little clothes, lots of love`, description },
+  twitter: { card: "summary_large_image" },
 };
 
 export const viewport: Viewport = { themeColor: "#F7F4EC" };

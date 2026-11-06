@@ -44,7 +44,7 @@ function doPost(e) {
       subject: mail.subject,
       body: mail.text || "",
       htmlBody: mail.html || undefined,
-      name: mail.fromName || "Soft Snuggle",
+      name: mail.fromName || "Veviba",
     });
   } catch (err) {
     return reply({ ok: false, error: String(err && err.message ? err.message : err) });

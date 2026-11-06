@@ -2,7 +2,7 @@ import Link from "next/link";
 import { OrderList } from "@/components/admin/OrderList";
 import { requireAdmin } from "@/lib/admin";
 import { getDashboard } from "@/lib/admin-queries";
-import { inr } from "@/lib/store";
+import { STORE, inr } from "@/lib/store";
 
 export const metadata = { title: "Dashboard" };
 
@@ -22,7 +22,7 @@ export default async function Dashboard() {
   return (
     <div>
       <p className="eyebrow">Dashboard</p>
-      <h1 className="mt-2 font-display text-4xl tracking-tight sm:text-5xl">Today at Soft Snuggle</h1>
+      <h1 className="mt-2 font-display text-4xl tracking-tight sm:text-5xl">Today at {STORE.name}</h1>
 
       <dl className="mt-7 grid grid-cols-2 gap-3 lg:grid-cols-4">
         {[
