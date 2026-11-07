@@ -1,7 +1,7 @@
 import { sendMail } from "./mail";
 import { configuredSiteUrl } from "./site";
 import { rewardIsOn } from "./feedback";
-import { FEEDBACK_REWARD, SHIPPING_LABEL, STORE, inr, whatsappDisplay } from "./store";
+import { FEEDBACK_REWARD, SELLING_LABEL, SHIPPING_LABEL, STORE, TOTAL_LABEL, inr, whatsappDisplay } from "./store";
 import type { Order } from "./types";
 
 // One email per order, to the admins and (when they gave an address) the
@@ -54,22 +54,22 @@ function itemsTable(order: Order) {
   return `<table style="width:100%;border-collapse:collapse;font-size:14px;border-top:1px solid ${LINE};border-bottom:1px solid ${LINE};margin:12px 0">
 ${items}
 <tr><td colspan="2" style="border-top:1px solid ${LINE}"></td></tr>
-${row(`<span style="color:${SOFT}">Subtotal</span>`, inr(order.subtotal))}
+${row(`<span style="color:${SOFT}">${SELLING_LABEL}</span>`, inr(order.subtotal))}
 ${order.discount > 0 ? row(`<span style="color:${SOFT}">Discount${order.couponCode ? ` (${esc(order.couponCode)})` : ""}</span>`, `−${inr(order.discount)}`) : ""}
 ${row(`<span style="color:${SOFT}">${SHIPPING_LABEL}</span>`, order.shipping === 0 ? "Free" : inr(order.shipping))}
 ${order.codFee > 0 ? row(`<span style="color:${SOFT}">Cash on Delivery fee</span>`, inr(order.codFee)) : ""}
-${row("Total", inr(order.total), true)}
+${row(TOTAL_LABEL, inr(order.total), true)}
 </table>`;
 }
 
 function itemsText(order: Order) {
   return [
     ...order.items.map((i) => `- ${i.name} (${i.colour ? `${i.colour}, ` : ""}${i.size}) × ${i.qty}: ${inr(i.price * i.qty)}`),
-    `Subtotal: ${inr(order.subtotal)}`,
+    `${SELLING_LABEL}: ${inr(order.subtotal)}`,
     ...(order.discount > 0 ? [`Discount${order.couponCode ? ` (${order.couponCode})` : ""}: −${inr(order.discount)}`] : []),
     `${SHIPPING_LABEL}: ${order.shipping === 0 ? "Free" : inr(order.shipping)}`,
     ...(order.codFee > 0 ? [`Cash on Delivery fee: ${inr(order.codFee)}`] : []),
-    `Total: ${inr(order.total)}`,
+    `${TOTAL_LABEL}: ${inr(order.total)}`,
   ].join("\n");
 }
 

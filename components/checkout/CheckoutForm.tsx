@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { DELIVERY_DAYS, SHIPPING_LABEL, STORE, codFeeFor, deliveryBy, inr, phoneDigits, shippingFor } from "@/lib/store";
+import { DELIVERY_DAYS, SELLING_LABEL, SHIPPING_LABEL, STORE, codFeeFor, deliveryBy, inr, phoneDigits, shippingFor } from "@/lib/store";
 import type { PaymentMethod } from "@/lib/types";
 import { ProductThumb } from "../shop/ProductThumb";
 import { useAccount } from "../providers/AccountProvider";
@@ -48,7 +48,7 @@ export function CheckoutForm() {
   const shipping = shippingFor(subtotal);
   const discount = coupon?.discount ?? 0;
   // The same sum the server saves the order with (lib/queries.ts createOrder).
-  const total = subtotal - discount + shipping + codFeeFor(method);
+  const total = Math.round((subtotal - discount + shipping + codFeeFor(method)) * 100) / 100;
 
   const applyCoupon = async (code: string) => {
     if (!code.trim()) return;
@@ -322,7 +322,7 @@ export function CheckoutForm() {
           </div>
 
           <div className="mt-5 space-y-2 border-t border-line pt-5 text-sm">
-            <div className="flex justify-between text-ink-soft"><span>Subtotal</span><span className="text-ink">{inr(subtotal)}</span></div>
+            <div className="flex justify-between text-ink-soft"><span>{SELLING_LABEL}</span><span className="text-ink">{inr(subtotal)}</span></div>
             {discount > 0 && (
               <div className="flex justify-between text-ink-soft"><span>Discount ({coupon?.code})</span><span className="text-sage-deep font-bold">−{inr(discount)}</span></div>
             )}
@@ -330,7 +330,15 @@ export function CheckoutForm() {
             {method === "cod" && STORE.codFee > 0 && (
               <div className="flex justify-between text-ink-soft"><span>Cash on Delivery fee</span><span className="text-ink">{inr(STORE.codFee)}</span></div>
             )}
-            <div className="flex justify-between pt-2 font-display text-2xl"><span>Total</span><span>{inr(total)}</span></div>
+            <div className="flex items-baseline justify-between pt-2 font-display text-2xl">
+              <span>
+                Total <span className="font-sans text-xs font-semibold text-ink-soft">(incl. all taxes)</span>
+              </span>
+              <span>{inr(total)}</span>
+            </div>
+            {discount > 0 && (
+              <p className="rounded-xl bg-sage/70 px-3 py-2 text-center text-sm font-bold text-ink">🎉 You saved {inr(discount)} on this order</p>
+            )}
             <p className="pt-1 text-sm font-semibold text-sage-deep" suppressHydrationWarning>
               ✂️ Freshly stitched once you order · 📦 Delivered by {deliveryBy()} (within {DELIVERY_DAYS} days)
             </p>
@@ -353,9 +361,19 @@ export function CheckoutForm() {
             )}
           </AnimatePresence>
 
-          <button type="submit" disabled={submitting || !hydrated} className="btn-primary mt-6 w-full py-4 text-base">
-            {submitting ? "Placing your order…" : method === "upi" ? `Continue to pay · ${inr(total)}` : `Place COD order · ${inr(total)}`}
-          </button>
+          {/* Orders can only be placed from an account */}
+          {accountReady && !customer ? (
+            <Link href="/login?next=/checkout" className="btn-primary mt-6 flex w-full justify-center py-4 text-base">
+              Log in to place your order
+            </Link>
+          ) : (
+            <button type="submit" disabled={submitting || !hydrated || !accountReady} className="btn-primary mt-6 w-full py-4 text-base">
+              {submitting ? "Placing your order…" : method === "upi" ? `Continue to pay · ${inr(total)}` : `Place COD order · ${inr(total)}`}
+            </button>
+          )}
+          {accountReady && !customer && (
+            <p className="mt-2 text-center text-xs text-ink-soft">Please log in or create an account to place your order. Your bag is saved.</p>
+          )}
           <p className="mt-3 text-center text-xs text-ink-soft">
             By placing an order you agree to our <Link href="/policies/terms" className="underline">terms</Link> and{" "}
             <Link href="/policies/returns" className="underline">exchange policy</Link>.

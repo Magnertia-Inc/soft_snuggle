@@ -45,7 +45,8 @@ export class CouponError extends Error {}
 
 /** What the code takes off this subtotal. Never more than the items cost. */
 export function discountFor(c: Pick<Coupon, "kind" | "value" | "maxDiscount">, subtotal: number) {
-  const raw = c.kind === "percent" ? Math.floor((subtotal * c.value) / 100) : c.value;
+  // Percent codes are exact to the paisa: 10% of ₹398 is ₹39.80
+  const raw = c.kind === "percent" ? Math.round(subtotal * c.value) / 100 : c.value;
   const capped = c.maxDiscount != null ? Math.min(raw, c.maxDiscount) : raw;
   return Math.max(0, Math.min(capped, subtotal));
 }

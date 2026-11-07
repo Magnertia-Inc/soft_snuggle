@@ -49,7 +49,7 @@ export default async function AdminOrderPage({ params }: { params: Promise<{ cod
               ))}
             </ul>
             <dl className="mt-3 space-y-1 border-t border-line pt-3 text-sm">
-              <div className="flex justify-between"><dt className="text-ink-soft">Subtotal</dt><dd>{inr(order.subtotal)}</dd></div>
+              <div className="flex justify-between"><dt className="text-ink-soft">Selling price</dt><dd>{inr(order.subtotal)}</dd></div>
               {order.discount > 0 && (
                 <div className="flex justify-between">
                   <dt className="text-ink-soft">Discount{order.couponCode ? ` · ${order.couponCode}` : ""}</dt>
@@ -60,7 +60,7 @@ export default async function AdminOrderPage({ params }: { params: Promise<{ cod
               {order.codFee > 0 && (
                 <div className="flex justify-between"><dt className="text-ink-soft">COD fee</dt><dd>{inr(order.codFee)}</dd></div>
               )}
-              <div className="flex justify-between text-base font-bold"><dt>Total</dt><dd>{inr(order.total)}</dd></div>
+              <div className="flex justify-between text-base font-bold"><dt>Total (incl. all taxes)</dt><dd>{inr(order.total)}</dd></div>
             </dl>
           </section>
 

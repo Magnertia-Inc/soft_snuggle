@@ -49,10 +49,14 @@ export async function POST(req: Request) {
 
   if (errors.length) return NextResponse.json({ error: errors[0], errors }, { status: 422 });
 
+  // Orders can only be placed by someone who is logged in.
+  const customer = await currentCustomer();
+  if (!customer) {
+    return NextResponse.json({ error: "Please log in to place your order." }, { status: 401 });
+  }
+
   try {
-    // Guests order without an account; when someone is signed in the order is
-    // filed under them and their address is kept for next time.
-    const customer = await currentCustomer();
+    // The order is filed under the customer and their address kept for next time.
     const order = await createOrder({
       customerName, phone, email, address, city, state, pincode,
       paymentMethod: paymentMethod!, items, customerId: customer?.id ?? null, couponCode,

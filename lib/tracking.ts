@@ -2,7 +2,7 @@
 
 export const TRACK_STEPS = [
   { key: "new", label: "Order placed", note: "We've received your order." },
-  { key: "confirmed", label: "Confirmed", note: "Payment checked and order confirmed." },
+  { key: "confirmed", label: "Order confirmed", note: "Payment checked and order confirmed." },
   { key: "packed", label: "Packed", note: "Folded with love and ready to go." },
   { key: "shipped", label: "Shipped", note: "On its way with our courier partner." },
   { key: "out_for_delivery", label: "Out for delivery", note: "Arriving today." },

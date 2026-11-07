@@ -33,7 +33,13 @@ export const STORE = {
 export const FEEDBACK_REWARD = { code: "FBK5", percent: 5, days: 30 } as const;
 
 /** Shown beside shipping wherever it appears: prices already include all taxes. */
-export const SHIPPING_LABEL = "Shipping (incl. all taxes)";
+export const SHIPPING_LABEL = "Shipping";
+/** The grand total's label: every price already includes all taxes. */
+export const TOTAL_LABEL = "Total (incl. all taxes)";
+/** What the items cost before any discount or shipping. */
+export const SELLING_LABEL = "Selling price";
+/** Rounds money to the paisa (e.g. a 10% discount on ₹398 is ₹39.80). */
+export const paise = (n: number) => Math.round(n * 100) / 100;
 
 /** The WhatsApp number as people read it, e.g. "+91 77081 00362". */
 export const whatsappDisplay = STORE.whatsappNumber.replace(/^(\d{2})(\d{5})(\d+)$/, "+$1 $2 $3");
@@ -87,7 +93,10 @@ export const shippingLine = shippingIsFree
   : `Free shipping over ${inr(STORE.freeShippingAbove)}`;
 
 export function inr(amount: number) {
-  return "₹" + amount.toLocaleString("en-IN");
+  const n = Number(amount);
+  // Whole rupees show as ₹398; amounts with paise show both digits, ₹39.80.
+  const paiseShown = Math.round(n * 100) % 100 !== 0;
+  return "₹" + n.toLocaleString("en-IN", { minimumFractionDigits: paiseShown ? 2 : 0, maximumFractionDigits: 2 });
 }
 
 /**

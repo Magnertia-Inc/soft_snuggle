@@ -175,6 +175,9 @@ CREATE TABLE IF NOT EXISTS coupons (
 );
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS coupon_code TEXT;
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS discount    INTEGER NOT NULL DEFAULT 0;
+-- Discounts and totals keep paise (10% of ₹398 is ₹39.80), so they are decimals.
+ALTER TABLE orders ALTER COLUMN discount TYPE NUMERIC(10,2);
+ALTER TABLE orders ALTER COLUMN total TYPE NUMERIC(10,2);
 
 -- Google sign-in. google_sub is Google's id for the person (it never changes,
 -- unlike their email). A Google-only account has no password.

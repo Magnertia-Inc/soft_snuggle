@@ -115,7 +115,7 @@ export async function createOrder(input: NewOrderInput) {
     }
   }
 
-  const total = subtotal - discount + shipping + codFee;
+  const total = Math.round((subtotal - discount + shipping + codFee) * 100) / 100;
   const accessKey = randomBytes(12).toString("hex");
 
   let res;
@@ -172,8 +172,8 @@ export async function getOrder(code: string, accessKey: string): Promise<Order |
     code: r.code, accessKey: r.access_key, customerName: r.customer_name, phone: r.phone,
     email: r.email, address: r.address, city: r.city, state: r.state, pincode: r.pincode,
     items: typeof r.items === "string" ? JSON.parse(r.items) : r.items,
-    subtotal: r.subtotal, discount: r.discount ?? 0, couponCode: r.coupon_code,
-    shipping: r.shipping, codFee: r.cod_fee ?? 0, total: r.total,
+    subtotal: r.subtotal, discount: Number(r.discount ?? 0), couponCode: r.coupon_code,
+    shipping: r.shipping, codFee: r.cod_fee ?? 0, total: Number(r.total),
     paymentMethod: r.payment_method, paymentStatus: r.payment_status, utr: r.utr,
     status: r.status, createdAt: new Date(r.created_at).toISOString(),
   };
@@ -240,7 +240,7 @@ function toTrackInfo(r: TrackRow): TrackInfo {
     status: r.status as TrackInfo["status"],
     paymentMethod: r.payment_method,
     paymentStatus: r.payment_status,
-    total: r.total,
+    total: Number(r.total),
     items: items.map((i) => ({ name: i.name, size: i.size, colour: i.colour, qty: i.qty })),
     city: r.city,
     pincode: r.pincode,
@@ -441,7 +441,7 @@ export async function getCustomerOrders(customerId: number): Promise<OrderSummar
     status: r.status,
     paymentMethod: r.payment_method,
     paymentStatus: r.payment_status,
-    total: r.total,
+    total: Number(r.total),
     items: typeof r.items === "string" ? JSON.parse(r.items) : r.items,
     placedAt: new Date(r.created_at).toISOString(),
   }));

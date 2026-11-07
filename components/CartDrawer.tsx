@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect } from "react";
-import { SHIPPING_LABEL, STORE, inr, shippingFor, shippingIsFree } from "@/lib/store";
+import { SELLING_LABEL, SHIPPING_LABEL, STORE, inr, shippingFor, shippingIsFree } from "@/lib/store";
 import { ProductThumb } from "./shop/ProductThumb";
 import { FlowerMark } from "./art/FlowerMark";
 import { useCart } from "./providers/CartProvider";
@@ -129,10 +129,12 @@ export function CartDrawer() {
                 </ul>
 
                 <div className="space-y-2 border-t border-line px-6 py-5">
-                  <Row label="Subtotal" value={inr(subtotal)} />
+                  <Row label={SELLING_LABEL} value={inr(subtotal)} />
                   <Row label={SHIPPING_LABEL} value={shipping === 0 ? "Free" : inr(shipping)} />
                   <div className="flex justify-between pt-1 font-display text-xl">
-                    <span>Total</span>
+                    <span>
+                      Total <span className="font-sans text-xs font-semibold text-ink-soft">(incl. all taxes)</span>
+                    </span>
                     <span>{inr(subtotal + shipping)}</span>
                   </div>
                   <Link href="/checkout" onClick={close} className="btn-primary mt-3 w-full">

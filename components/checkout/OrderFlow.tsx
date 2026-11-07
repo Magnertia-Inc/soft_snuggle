@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { SHIPPING_LABEL, STORE, deliveryBy, inr } from "@/lib/store";
+import { SHIPPING_LABEL, STORE, TOTAL_LABEL, deliveryBy, inr } from "@/lib/store";
 import type { Order } from "@/lib/types";
 import { orderMessage, whatsappLink } from "@/lib/whatsapp";
 import { FlowerMark } from "../art/FlowerMark";
@@ -314,7 +314,7 @@ export function OrderFlow({ order, upiUrl, upiId, payee, qrSvg, feedback, reward
               </li>
             )}
             <li className="flex justify-between font-display text-xl">
-              <span>Total</span>
+              <span>{TOTAL_LABEL}</span>
               <span>{inr(order.total)}</span>
             </li>
             {order.status !== "cancelled" && order.status !== "delivered" && (
