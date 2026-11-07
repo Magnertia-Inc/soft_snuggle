@@ -4,7 +4,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { isStudioShot } from "@/lib/photo";
-import { inr, isSoldOut, percentOff } from "@/lib/store";
+import { inr, isLargestSize, isSoldOut, LARGEST_SIZE_EXTRA, percentOff, priceForSize } from "@/lib/store";
 import type { Product } from "@/lib/types";
 import { Garment } from "../art/Garment";
 import { BagIcon } from "../Navbar";
@@ -20,7 +20,7 @@ export function ProductCard({ product, wide = false }: { product: Product; wide?
   const addSize = (size: string) => {
     add({
       productId: product.id, slug: product.slug, name: product.name, category: product.category,
-      price: product.price, size, colour: product.colours[0]?.name, qty: 1, tint: product.tint, garment: product.garment, image: front,
+      price: priceForSize(product, size), size, colour: product.colours[0]?.name, qty: 1, tint: product.tint, garment: product.garment, image: front,
     });
     setPicking(false);
   };
@@ -93,6 +93,7 @@ export function ProductCard({ product, wide = false }: { product: Product; wide?
                       className="rounded-full border border-ink/15 bg-paper px-2.5 py-1.5 text-xs font-bold transition-colors hover:bg-ink hover:text-paper disabled:pointer-events-none disabled:bg-transparent disabled:text-ink-soft/60 disabled:line-through sm:px-3"
                     >
                       {s}
+                      {isLargestSize(product.sizes, s) && <span className="ml-1 text-[0.65rem] text-[#A9442F]">+₹{LARGEST_SIZE_EXTRA}</span>}
                     </button>
                   ))}
                 </div>

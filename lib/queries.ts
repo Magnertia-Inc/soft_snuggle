@@ -3,7 +3,7 @@ import { getDb } from "./db";
 import { coloursFor } from "./colours";
 import { productImages } from "./images";
 import { CouponError, checkCoupon, claimCoupon, releaseCoupon } from "./coupons";
-import { STORE, inr, listPrice, shippingFor } from "./store";
+import { STORE, inr, listPrice, priceForSize, shippingFor } from "./store";
 import { courierLink, type TrackInfo } from "./tracking";
 import type { Order, OrderItem, PaymentMethod, Product } from "./types";
 
@@ -92,7 +92,7 @@ export async function createOrder(input: NewOrderInput) {
     const options = coloursFor({ slug: p.slug, colour: p.colour, garment: p.garment, category: p.category });
     const colour = i.colour ? options.find((c) => c.name === i.colour)?.name : undefined;
     if (i.colour && !colour) throw new OrderError(`Colour ${i.colour} is not available for ${p.name}.`);
-    return { productId: p.id, name: p.name, size: i.size, ...(colour ? { colour } : {}), qty: i.qty, price: p.price };
+    return { productId: p.id, name: p.name, size: i.size, ...(colour ? { colour } : {}), qty: i.qty, price: priceForSize({ price: p.price, sizes: p.sizes }, i.size) };
   });
 
   const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);

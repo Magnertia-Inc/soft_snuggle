@@ -6,7 +6,7 @@ import { useLenis } from "lenis/react";
 import { useEffect, useRef, useState } from "react";
 import { defaultColour } from "@/lib/colours";
 import { isStudioShot } from "@/lib/photo";
-import { CATEGORY_LABELS, DELIVERY_DAYS, STORE, deliveryBy, inr, isSoldOut, percentOff, shippingIsFree } from "@/lib/store";
+import { CATEGORY_LABELS, DELIVERY_DAYS, STORE, deliveryBy, inr, isLargestSize, isSoldOut, LARGEST_SIZE_EXTRA, percentOff, priceForSize, shippingIsFree } from "@/lib/store";
 import type { Product } from "@/lib/types";
 import { FlowerMark } from "../art/FlowerMark";
 import { Garment } from "../art/Garment";
@@ -27,6 +27,9 @@ export function ProductDetail({ product }: { product: Product }) {
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
   const [needSize, setNeedSize] = useState(false);
+  // The largest size costs ₹10 more; the shown price follows the chosen size.
+  const unitPrice = priceForSize(product, size);
+  const unitCompare = product.compareAt ? product.compareAt + (unitPrice - product.price) : null;
   const [openPanel, setOpenPanel] = useState<string | null>("details");
   // Phones: once the main "Add to bag" row scrolls away, a slim bar keeps it in reach
   const buyRef = useRef<HTMLDivElement>(null);
@@ -91,7 +94,7 @@ export function ProductDetail({ product }: { product: Product }) {
     }
     add({
       productId: product.id, slug: product.slug, name: product.name, category: product.category,
-      price: product.price, size, colour: colour?.name, qty, tint: product.tint, garment: product.garment,
+      price: priceForSize(product, size), size, colour: colour?.name, qty, tint: product.tint, garment: product.garment,
       image: colour?.image ?? photos[0],
     });
     setAdded(true);
@@ -264,11 +267,11 @@ export function ProductDetail({ product }: { product: Product }) {
           </p>
         )}
         <p className="mt-3 font-display text-[1.75rem] sm:mt-5 sm:text-4xl">
-          {inr(product.price)}
-          {product.compareAt && <s className="ml-3 text-xl text-ink-soft">{inr(product.compareAt)}</s>}
-          {percentOff(product.price, product.compareAt) > 0 && (
+          {inr(unitPrice)}
+          {unitCompare && <s className="ml-3 text-xl text-ink-soft">{inr(unitCompare)}</s>}
+          {percentOff(unitPrice, unitCompare) > 0 && (
             <span className="ml-3 rounded-full bg-[#F7DCD3] px-2.5 py-1 align-middle text-sm font-extrabold text-[#A9442F]">
-              {percentOff(product.price, product.compareAt)}% off
+              {percentOff(unitPrice, unitCompare)}% off
             </span>
           )}
         </p>
@@ -332,6 +335,11 @@ export function ProductDetail({ product }: { product: Product }) {
                 >
                   {size === s && <motion.span layoutId="size-pill" className="absolute inset-0 rounded-2xl bg-ink" />}
                   <span className="relative">{s}</span>
+                  {isLargestSize(product.sizes, s) && (
+                    <span className={`relative ml-1 text-[0.7rem] font-extrabold ${size === s ? "text-paper/80" : "text-[#A9442F]"}`}>
+                      +₹{LARGEST_SIZE_EXTRA}
+                    </span>
+                  )}
                 </button>
               ))}
             </LayoutGroup>
@@ -366,7 +374,7 @@ export function ProductDetail({ product }: { product: Product }) {
                 exit={{ y: -14, opacity: 0 }}
                 transition={{ duration: 0.2 }}
               >
-                {!available ? "Sold out" : added ? "Added to bag ✓" : size ? `Add to bag · ${inr(product.price * qty)}` : "Select a size"}
+                {!available ? "Sold out" : added ? "Added to bag ✓" : size ? `Add to bag · ${inr(unitPrice * qty)}` : "Select a size"}
               </motion.span>
             </AnimatePresence>
           </motion.button>
@@ -432,7 +440,7 @@ export function ProductDetail({ product }: { product: Product }) {
               <div className="min-w-0 flex-1">
                 <p className="truncate font-display text-base leading-tight">{product.name}</p>
                 <p className="text-sm font-bold">
-                  {inr(product.price)}
+                  {inr(unitPrice)}
                   {size && <span className="ml-1.5 font-semibold text-ink-soft">· {size}</span>}
                 </p>
               </div>

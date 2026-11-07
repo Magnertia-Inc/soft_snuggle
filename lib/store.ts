@@ -130,3 +130,16 @@ export function deliveryBy(from: Date | string = new Date()): string {
   d.setDate(d.getDate() + DELIVERY_DAYS);
   return d.toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", weekday: "short", day: "numeric", month: "short" });
 }
+
+/** The largest size of a product costs this much more than its other sizes. */
+export const LARGEST_SIZE_EXTRA = 10;
+
+/** True when `size` is the biggest size a product comes in (the last in its list). */
+export function isLargestSize(sizes: string[], size: string | null | undefined): boolean {
+  return !!size && sizes.length > 1 && size === sizes[sizes.length - 1];
+}
+
+/** A product's price for one size: the largest size is ₹10 more. */
+export function priceForSize(p: { price: number; sizes: string[] }, size: string | null | undefined): number {
+  return p.price + (isLargestSize(p.sizes, size) ? LARGEST_SIZE_EXTRA : 0);
+}

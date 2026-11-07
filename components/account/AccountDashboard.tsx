@@ -29,10 +29,13 @@ export function AccountDashboard({ google = false, notice = null }: { google?: b
 
   return (
     <div>
+      <Link href="/" className="mb-6 inline-flex items-center gap-1.5 text-sm font-bold text-ink-soft hover:text-ink">
+        ← Back to home
+      </Link>
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
+        <div className="min-w-0">
           <p className="eyebrow">Your account</p>
-          <h1 className="mt-2 font-display text-5xl tracking-tight">Hello, {customer.name.split(" ")[0]}</h1>
+          <h1 className="mt-2 break-words font-display text-4xl tracking-tight sm:text-5xl">Hello, {customer.name.split(" ")[0]}</h1>
           <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-ink-soft">
             <span>+91 {customer.phone}</span>
             {customer.phoneVerified ? (
@@ -43,15 +46,20 @@ export function AccountDashboard({ google = false, notice = null }: { google?: b
             {customer.email && <span>· {customer.email}</span>}
           </p>
         </div>
-        <button
-          onClick={async () => {
-            await logout();
-            router.push("/");
-          }}
-          className="rounded-full border border-line bg-paper px-5 py-2.5 text-sm font-bold hover:border-ink/40"
-        >
-          Log out
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <Link href="/shop" className="btn-primary px-5 py-2.5 text-sm">
+            Continue shopping →
+          </Link>
+          <button
+            onClick={async () => {
+              await logout();
+              router.push("/");
+            }}
+            className="rounded-full border border-line bg-paper px-5 py-2.5 text-sm font-bold hover:border-ink/40"
+          >
+            Log out
+          </button>
+        </div>
       </div>
 
       {notice && <p role="status" className="mt-6 rounded-2xl bg-sage/70 px-4 py-3 text-sm">{notice}</p>}
