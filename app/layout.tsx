@@ -17,7 +17,7 @@ const fraunces = Fraunces({
 const nunito = Nunito({ subsets: ["latin"], variable: "--font-nunito" });
 
 const description =
-  "Soft, thoughtful baby essentials made for milk-drunk mornings, first wiggles and every cuddle in between. Pure cotton muslin frocks, jablas, nappy covers, sets and gift packs for 0–12 months.";
+  "Soft, thoughtful baby essentials made for milk-drunk mornings, first wiggles and every cuddle in between. 100% cotton muslin frocks, jablas, nappy covers, sets and gift packs for 0–3 years, made to order and freshly stitched.";
 
 export const metadata: Metadata = {
   // Link previews (WhatsApp, Instagram, Google) need absolute image addresses.
@@ -44,6 +44,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         mismatches in the app are still reported.
       */}
       <body suppressHydrationWarning>
+        {/* Tells Google who the shop is and which logo to show beside it in search results */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: STORE.name,
+              url: publicSiteUrl(),
+              logo: `${publicSiteUrl()}/logo.png`,
+              email: STORE.email,
+              sameAs: [STORE.instagram],
+            }),
+          }}
+        />
         <IntroProvider>
           <AccountProvider>
             <CartProvider>
