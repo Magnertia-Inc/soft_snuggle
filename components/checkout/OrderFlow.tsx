@@ -41,6 +41,10 @@ export function OrderFlow({ order, upiUrl, upiId, payee, qrSvg, feedbackGiven }:
 
   const saveUtr = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!/^\d{12}$/.test(utr)) {
+      setUtrError(`The UTR is 12 digits; you've entered ${utr.length}. Please check it in your UPI app.`);
+      return;
+    }
     setSaving(true);
     setUtrError(null);
     try {
@@ -223,12 +227,21 @@ export function OrderFlow({ order, upiUrl, upiId, payee, qrSvg, feedbackGiven }:
                 <input
                   className="field text-center font-mono text-xl tracking-[0.2em]"
                   value={utr}
-                  onChange={(e) => setUtr(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ""))}
+                  onChange={(e) => {
+                    setUtr(e.target.value.replace(/\D/g, "").slice(0, 12));
+                    setUtrError(null);
+                  }}
                   placeholder="e.g. 412345678901"
-                  maxLength={24}
+                  inputMode="numeric"
+                  autoComplete="off"
+                  aria-label="12-digit UTR"
+                  aria-describedby="utr-count"
                   required
                   autoFocus
                 />
+                <p id="utr-count" className={`mt-1.5 text-center text-xs font-bold ${utr.length === 12 ? "text-sage-deep" : "text-ink-soft"}`}>
+                  {utr.length}/12 digits
+                </p>
                 {utrError && <p className="mt-2 text-sm font-semibold text-[#B4513F]">{utrError}</p>}
                 <div className="mt-5 flex gap-3">
                   <button type="button" onClick={() => setStep("pay")} className="btn-ghost">
