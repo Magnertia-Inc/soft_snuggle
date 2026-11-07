@@ -6,6 +6,7 @@ import { Footer } from "./Footer";
 import { Loader } from "./Loader";
 import { Navbar } from "./Navbar";
 import { SmoothScroll } from "./providers/SmoothScroll";
+import { WhatsAppFloat } from "./WhatsAppFloat";
 
 /**
  * The shop's frame: smooth scrolling, intro, navbar, footer and bag. The admin
@@ -22,6 +23,7 @@ export function ShopChrome({ children }: { children: React.ReactNode }) {
       <main>{children}</main>
       <Footer />
       <CartDrawer />
+      <WhatsAppFloat />
     </SmoothScroll>
   );
 }
