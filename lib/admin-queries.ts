@@ -164,6 +164,13 @@ export interface AdminOrder extends AdminOrderRow {
   accountVerified: boolean;
   /** When the admin saw the customer's WhatsApp message for this order. */
   whatsappAt: string | null;
+  /** For the customer's own links (order page, feedback page) */
+  accessKey: string;
+  deliveredAt: string | null;
+  /** When the "How was your order?" email went out */
+  feedbackMailAt: string | null;
+  /** The overall rating from the feedback form, if they've filled it in */
+  feedbackRating: number | null;
   events: OrderEvent[];
 }
 
@@ -173,9 +180,11 @@ export async function getAdminOrder(code: string): Promise<AdminOrder | null> {
     id: number; email: string | null; address: string; state: string; pincode: string; subtotal: number;
     shipping: number; cod_fee: number | null; utr: string | null; courier: string | null; tracking_number: string | null;
     tracking_url: string | null; customer_id: number | null; discount: number | null; coupon_code: string | null;
-    whatsapp_at: Date | string | null; account_verified: boolean | null;
+    whatsapp_at: Date | string | null; account_verified: boolean | null; access_key: string;
+    delivered_at: Date | string | null; feedback_mail_at: Date | string | null; feedback_rating: number | null;
   }>(
-    `SELECT o.*, c.phone_verified_at IS NOT NULL AS account_verified
+    `SELECT o.*, c.phone_verified_at IS NOT NULL AS account_verified,
+       (SELECT f.rating FROM feedback f WHERE f.order_id = o.id) AS feedback_rating
      FROM orders o LEFT JOIN customers c ON c.id = o.customer_id WHERE o.code = $1`,
     [code],
   );
@@ -205,6 +214,10 @@ codFee: r.cod_fee ?? 0,
     hasAccount: r.customer_id !== null,
     accountVerified: r.account_verified === true,
     whatsappAt: r.whatsapp_at ? new Date(r.whatsapp_at).toISOString() : null,
+    accessKey: r.access_key,
+    deliveredAt: r.delivered_at ? new Date(r.delivered_at).toISOString() : null,
+    feedbackMailAt: r.feedback_mail_at ? new Date(r.feedback_mail_at).toISOString() : null,
+    feedbackRating: r.feedback_rating,
     events: events.rows.map((e) => ({ kind: e.kind, note: e.note, actor: e.actor, at: new Date(e.created_at).toISOString() })),
   };
 }

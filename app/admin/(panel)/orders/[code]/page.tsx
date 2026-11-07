@@ -1,12 +1,16 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CopyButton } from "@/components/admin/CopyButton";
+import { FeedbackPanel } from "@/components/admin/FeedbackPanel";
 import { OrderActions } from "@/components/admin/OrderActions";
 import { StatusBadge } from "@/components/admin/OrderList";
 import { requireAdmin } from "@/lib/admin";
 import { getAdminOrder } from "@/lib/admin-queries";
 import { EVENT_LABELS, paymentLabel, when } from "@/lib/admin-labels";
-import { SHIPPING_LABEL, STORE, inr } from "@/lib/store";
+import { FEEDBACK_MAIL_AFTER_DAYS, SHIPPING_LABEL, STORE, inr } from "@/lib/store";
+import { publicSiteUrl } from "@/lib/site";
+
+const feedbackDelayHours = () => Number(process.env.FEEDBACK_MAIL_DELAY_HOURS ?? FEEDBACK_MAIL_AFTER_DAYS * 24);
 
 export async function generateMetadata({ params }: { params: Promise<{ code: string }> }) {
   return { title: (await params).code };
@@ -95,6 +99,28 @@ export default async function AdminOrderPage({ params }: { params: Promise<{ cod
               </p>
             )}
           </section>
+
+          {(order.status === "delivered" || order.feedbackRating != null) && (
+            <section className={card}>
+              <h2 className="font-display text-xl">Feedback</h2>
+              <div className="mt-2">
+                <FeedbackPanel
+                  code={order.code}
+                  customerName={order.customerName}
+                  phone={order.phone}
+                  email={order.email?.trim() || null}
+                  link={`${publicSiteUrl()}/feedback/${order.code}?k=${order.accessKey}`}
+                  mailDueAt={
+                    order.deliveredAt && !order.feedbackMailAt
+                      ? new Date(new Date(order.deliveredAt).getTime() + feedbackDelayHours() * 3_600_000).toISOString()
+                      : null
+                  }
+                  mailedAt={order.feedbackMailAt}
+                  rating={order.feedbackRating}
+                />
+              </div>
+            </section>
+          )}
 
           <section className={card}>
             <h2 className="font-display text-xl">History</h2>

@@ -45,6 +45,8 @@ export const EVENT_LABELS: Record<string, string> = {
   note: "Note",
   whatsapp: "WhatsApp received",
   feedback: "Customer feedback",
+  feedback_mail: "Feedback email sent",
+  review: "Customer review",
 };
 
 /** "31 Oct, 4:05 pm" in Indian time, whatever zone the server runs in. */

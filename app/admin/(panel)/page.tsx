@@ -2,13 +2,14 @@ import Link from "next/link";
 import { OrderList } from "@/components/admin/OrderList";
 import { requireAdmin } from "@/lib/admin";
 import { getDashboard } from "@/lib/admin-queries";
+import { reviewCounts } from "@/lib/reviews";
 import { STORE, inr } from "@/lib/store";
 
 export const metadata = { title: "Dashboard" };
 
 export default async function Dashboard() {
   await requireAdmin();
-  const { counts, sales, recent } = await getDashboard();
+  const [{ counts, sales, recent }, reviews] = await Promise.all([getDashboard(), reviewCounts()]);
 
   // What needs doing, in the order it gets done. Each opens the matching tab.
   const todo = [
@@ -58,6 +59,13 @@ export default async function Dashboard() {
         <p className="mt-3 text-sm text-ink-soft">
           {counts.awaiting_payment} UPI {counts.awaiting_payment === 1 ? "order has" : "orders have"} no UTR yet: the customer
           may not have paid. Check your bank before confirming.
+        </p>
+      )}
+
+      {reviews.pending > 0 && (
+        <p className="mt-3 text-sm text-ink-soft">
+          {reviews.pending} product {reviews.pending === 1 ? "review is" : "reviews are"} waiting for you to approve.{" "}
+          <Link href="/admin/reviews" className="font-bold text-ink underline underline-offset-4">Check reviews →</Link>
         </p>
       )}
 

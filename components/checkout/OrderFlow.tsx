@@ -7,8 +7,6 @@ import { SHIPPING_LABEL, STORE, TOTAL_LABEL, deliveryBy, inr } from "@/lib/store
 import type { Order } from "@/lib/types";
 import { orderMessage, whatsappLink } from "@/lib/whatsapp";
 import { FlowerMark } from "../art/FlowerMark";
-import { FeedbackCard } from "./FeedbackCard";
-import type { Feedback } from "@/lib/feedback";
 import { WhatsAppIcon } from "@/components/art/WhatsAppIcon";
 
 interface Props {
@@ -17,14 +15,13 @@ interface Props {
   upiId: string;
   payee: string;
   qrSvg: string;
-  feedback: Feedback | null;
-  /** Whether the feedback thank-you code is switched on */
-  rewardOn: boolean;
+  /** Whether the customer has filled in the feedback form */
+  feedbackGiven: boolean;
 }
 
 type Step = "pay" | "utr" | "whatsapp";
 
-export function OrderFlow({ order, upiUrl, upiId, payee, qrSvg, feedback, rewardOn }: Props) {
+export function OrderFlow({ order, upiUrl, upiId, payee, qrSvg, feedbackGiven }: Props) {
   const isUpi = order.paymentMethod === "upi";
   const [step, setStep] = useState<Step>(!isUpi || order.utr ? "whatsapp" : "pay");
   const [utr, setUtr] = useState(order.utr ?? "");
@@ -282,8 +279,18 @@ export function OrderFlow({ order, upiUrl, upiId, payee, qrSvg, feedback, reward
         )}
       </div>
 
-      {!cancelled && (
-        <FeedbackCard code={order.code} accessKey={order.accessKey} phone={order.phone} initial={feedback} rewardOn={rewardOn} />
+      {order.status === "delivered" && (
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-[1.75rem] border border-line bg-sage/50 p-6">
+          <div>
+            <p className="font-display text-2xl">{feedbackGiven ? "Thanks for your feedback!" : "Your order has arrived. How was it?"}</p>
+            <p className="mt-1 text-sm text-ink-soft">
+              {feedbackGiven ? "Your thank-you codes and reviews are on your feedback page." : "Rate your order and review what you bought: each gets you 5% off your next order."}
+            </p>
+          </div>
+          <Link href={`/feedback/${order.code}?k=${order.accessKey}`} className="btn-primary px-7">
+            {feedbackGiven ? "See feedback" : "Give feedback"}
+          </Link>
+        </div>
       )}
 
       {/* Summary */}

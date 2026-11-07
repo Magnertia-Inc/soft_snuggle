@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { Coupon } from "@/lib/coupons";
-import { FEEDBACK_REWARD, inr } from "@/lib/store";
+import { inr, rewardFor } from "@/lib/store";
 
 /** One discount code: what it does, how often it has been used, and switching it on or off. */
 export function CouponRow({ coupon: c, label, expires, expired }: { coupon: Coupon; label: string; expires: string | null; expired: boolean }) {
@@ -30,12 +30,13 @@ export function CouponRow({ coupon: c, label, expires, expired }: { coupon: Coup
   const toggle = () =>
     call({ method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ active: !c.active }) });
 
+  const reward = rewardFor(c.code);
   const usedUp = c.maxUses != null && c.usedCount >= c.maxUses;
   const state = !c.active ? "Off" : expired ? "Expired" : usedUp ? "Used up" : "Live";
   const conditions = [
     c.minOrder > 0 && `on orders of ${inr(c.minOrder)}+`,
     expires && `${expired ? "ended" : "until"} ${expires}`,
-    c.code === FEEDBACK_REWARD.code && `only for numbers that left feedback, within ${FEEDBACK_REWARD.days} days`,
+    reward && `only for numbers that ${reward.earnedBy === "feedback" ? "filled in the feedback form" : "reviewed a piece"}, within ${reward.days} days`,
     c.oncePerPhone && "once per customer",
   ].filter(Boolean);
 
@@ -70,7 +71,7 @@ export function CouponRow({ coupon: c, label, expires, expired }: { coupon: Coup
           </>
         ) : (
           <>
-            {c.usedCount === 0 && c.code !== FEEDBACK_REWARD.code && (
+            {c.usedCount === 0 && !reward && (
               <button onClick={() => setConfirmDelete(true)} className="px-2 text-sm font-bold text-[#a0573f] underline underline-offset-4">
                 Delete
               </button>
