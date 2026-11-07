@@ -19,7 +19,7 @@ export const STORE = {
   shippingFlat: 29,
   freeShippingAbove: Number(process.env.NEXT_PUBLIC_FREE_SHIPPING_ABOVE ?? 1499),
   codFee: 7,
-  instagram: "https://instagram.com/",
+  instagram: "https://www.instagram.com/veviba.baby",
   // The shop's one email address, used everywhere on the site: shown to
   // customers, and where every new-order email is sent.
   email: "veviba2026@gmail.com",
@@ -95,6 +95,12 @@ export function phoneDigits(raw: string) {
 /** The struck-out price shown beside every product: 10% above the selling
  *  price, rounded up to end in 9 (₹349 -> ₹389, ₹199 -> ₹219).
  *  A product with its own "compare at" price set in the admin panel uses that. */
+/** How much cheaper than the struck-out price, as a whole percentage (e.g. 10). */
+export function percentOff(price: number, compareAt: number | null | undefined): number {
+  if (!compareAt || compareAt <= price) return 0;
+  return Math.round(((compareAt - price) / compareAt) * 100);
+}
+
 export function listPrice(price: number): number {
   return Math.ceil((price * 1.1) / 10) * 10 - 1;
 }

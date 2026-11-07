@@ -4,7 +4,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { isStudioShot } from "@/lib/photo";
-import { inr, isSoldOut } from "@/lib/store";
+import { inr, isSoldOut, percentOff } from "@/lib/store";
 import type { Product } from "@/lib/types";
 import { Garment } from "../art/Garment";
 import { BagIcon } from "../Navbar";
@@ -133,6 +133,9 @@ export function ProductCard({ product, wide = false }: { product: Product; wide?
         <p className="mt-1.5 font-bold">
           {inr(product.price)}
           {product.compareAt && <s className="ml-1.5 text-sm font-normal text-ink-soft">{inr(product.compareAt)}</s>}
+          {percentOff(product.price, product.compareAt) > 0 && (
+            <span className="ml-1.5 text-xs font-extrabold text-[#C0563F]">{percentOff(product.price, product.compareAt)}% off</span>
+          )}
         </p>
       </Link>
     </div>

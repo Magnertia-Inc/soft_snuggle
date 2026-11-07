@@ -1,21 +1,7 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import { Story } from "@/components/home/Story";
-import { storyImage } from "@/lib/images";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = { title: "About" };
-
+// There is no separate About page any more: the story lives on the home page.
+// Old links to /about land there instead of on a "not found" page.
 export default function AboutPage() {
-  return (
-    <div className="speckle">
-      <div className="pt-16">
-        <Story photo={storyImage()} heading="h1" />
-      </div>
-      <div className="-mt-10 pb-24 text-center sm:-mt-16">
-        <Link href="/shop" className="btn-primary">
-          Shop the collection →
-        </Link>
-      </div>
-    </div>
-  );
+  redirect("/#story");
 }

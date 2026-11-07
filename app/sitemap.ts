@@ -6,7 +6,7 @@ import { publicSiteUrl } from "@/lib/site";
 // Built on request: the product list lives in the database, which the build can't reach.
 export const dynamic = "force-dynamic";
 
-const PAGES = ["/", "/shop", "/about", "/contact", "/track", "/policies/shipping", "/policies/returns", "/policies/privacy", "/policies/terms"];
+const PAGES = ["/", "/shop", "/contact", "/track", "/policies/shipping", "/policies/returns", "/policies/privacy", "/policies/terms"];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const site = publicSiteUrl();

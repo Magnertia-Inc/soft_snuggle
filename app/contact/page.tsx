@@ -27,7 +27,7 @@ export default function ContactPage() {
     {
       title: "Instagram",
       body: "New arrivals, little moments and offers first.",
-      cta: "Follow us",
+      cta: "@veviba.baby",
       href: STORE.instagram,
       tint: "#DCE6EE",
       icon: <span className="text-lg">📸</span>,

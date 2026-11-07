@@ -21,8 +21,8 @@ const STEPS = [
 // Thread geometry for the wide layout (viewBox 700 x 300): stops alternate
 // low and high, so labels sit above the high ones and below the low ones.
 const W = 700;
-const HIGH = 110;
-const LOW = 190;
+const HIGH = 60;
+const LOW = 135;
 const pts = STEPS.map((_, i) => ({ x: (i + 0.5) * (W / STEPS.length), y: i % 2 ? HIGH : LOW }));
 const thread = pts.reduce((d, p, i) => {
   if (i === 0) return `M ${p.x} ${p.y}`;
@@ -47,7 +47,7 @@ export function Journey() {
       </Reveal>
 
       {/* ── Wide screens: the stitched-thread roadmap ── */}
-      <div className="relative mx-auto mt-10 hidden h-[19rem] max-w-6xl lg:block">
+      <div className="relative mx-auto mt-12 hidden h-[19.5rem] max-w-6xl lg:block">
         {/* The whole thread is always drawn end to end; it's revealed left to
             right as the section scrolls in, so it can never stop part-way. */}
         <motion.svg
@@ -73,7 +73,6 @@ export function Journey() {
 
         {STEPS.map((s, i) => {
           const p = pts[i];
-          const high = p.y === HIGH;
           return (
             <motion.div
               key={s.title}
@@ -84,15 +83,18 @@ export function Journey() {
               viewport={{ once: true, margin: "-10% 0px" }}
               transition={{ duration: 0.6, delay: 0.25 + i * 0.22, ease }}
             >
-              {/* the stop itself, centred on the thread */}
+              {/* Each day is its own bordered box; its icon sits on the thread */}
               <div
-                className="absolute left-1/2 top-0 grid h-14 w-14 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-2xl border-4 border-cream text-2xl shadow-[0_8px_20px_-10px_rgba(38,59,54,0.45)]"
-                style={{ background: s.tint, rotate: i % 2 ? "6deg" : "-6deg" }}
+                className={`relative rounded-[1.25rem] border-2 bg-paper px-3 pb-4 pt-9 shadow-[0_10px_24px_-16px_rgba(38,59,54,0.45)] ${
+                  i === STEPS.length - 1 ? "border-sage-deep" : "border-line"
+                }`}
               >
-                <span style={{ rotate: i % 2 ? "-6deg" : "6deg" }}>{s.emoji}</span>
-              </div>
-              {/* label above the high stops, below the low ones */}
-              <div className={`absolute inset-x-0 ${high ? "bottom-10" : "top-10"}`}>
+                <div
+                  className="absolute left-1/2 top-0 grid h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-2xl border-4 border-cream text-xl shadow-[0_8px_20px_-10px_rgba(38,59,54,0.45)]"
+                  style={{ background: s.tint }}
+                >
+                  {s.emoji}
+                </div>
                 <p className="text-[0.7rem] font-extrabold uppercase tracking-[0.2em] text-sage-deep">Day {i + 1}</p>
                 <p className="mt-0.5 font-display text-lg leading-tight tracking-tight">{s.title}</p>
                 <p className="mt-1 text-xs leading-snug text-ink-soft">{s.body}</p>

@@ -6,7 +6,7 @@ import { useLenis } from "lenis/react";
 import { useEffect, useRef, useState } from "react";
 import { defaultColour } from "@/lib/colours";
 import { isStudioShot } from "@/lib/photo";
-import { CATEGORY_LABELS, DELIVERY_DAYS, STORE, deliveryBy, inr, isSoldOut, shippingIsFree } from "@/lib/store";
+import { CATEGORY_LABELS, DELIVERY_DAYS, STORE, deliveryBy, inr, isSoldOut, percentOff, shippingIsFree } from "@/lib/store";
 import type { Product } from "@/lib/types";
 import { FlowerMark } from "../art/FlowerMark";
 import { Garment } from "../art/Garment";
@@ -266,6 +266,11 @@ export function ProductDetail({ product }: { product: Product }) {
         <p className="mt-3 font-display text-[1.75rem] sm:mt-5 sm:text-4xl">
           {inr(product.price)}
           {product.compareAt && <s className="ml-3 text-xl text-ink-soft">{inr(product.compareAt)}</s>}
+          {percentOff(product.price, product.compareAt) > 0 && (
+            <span className="ml-3 rounded-full bg-[#F7DCD3] px-2.5 py-1 align-middle text-sm font-extrabold text-[#A9442F]">
+              {percentOff(product.price, product.compareAt)}% off
+            </span>
+          )}
         </p>
 
         {product.colours.length > 1 && (

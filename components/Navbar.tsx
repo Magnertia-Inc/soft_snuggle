@@ -16,7 +16,6 @@ const LEFT = [
   { href: "/shop", label: "Shop" },
 ];
 const RIGHT = [
-  { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
 
