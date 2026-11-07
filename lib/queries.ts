@@ -19,13 +19,13 @@ export type ProductRow = {
 const LISTED = "NOT hidden AND deleted_at IS NULL";
 
 // Every Veviba piece is 100% cotton. Whatever an older database row or an
-// admin edit says, " " never reaches the page.
+// admin edit says, "bamboo" never reaches the page.
 const cottonOnly = (s: string) =>
   s
-    .replace(/nibbling  /gi, "at play")
-    .replace(/50%  ,? 50% cotton/gi, "100% cotton")
-    .replace(/ [- ]cotton/gi, "100% cotton")
-    .replace(/\s* \s*/gi, " ")
+    .replace(/nibbling bamboo/gi, "at play")
+    .replace(/50% bamboo,? 50% cotton/gi, "100% cotton")
+    .replace(/bamboo[- ]cotton/gi, "100% cotton")
+    .replace(/\s*bamboo\s*/gi, " ")
     .trim();
 
 export function toProduct(r: ProductRow): Product {
@@ -34,7 +34,7 @@ export function toProduct(r: ProductRow): Product {
   const images = r.images ?? productImages(r.slug);
   return {
     id: r.id, slug: r.slug, name: r.name, category: r.category,
-    fabric: / /i.test(r.fabric) ? "100% cotton" : r.fabric,
+    fabric: /bamboo/i.test(r.fabric) ? "100% cotton" : r.fabric,
     colour: r.colour, price: r.price, compareAt: r.compare_at ?? listPrice(r.price), badge: r.badge,
     organic: r.organic, sizes: r.sizes, ageGroups: r.age_groups, description: cottonOnly(r.description),
     care: cottonOnly(r.care), tint: r.tint, garment: r.garment, inStock: r.in_stock,

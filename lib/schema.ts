@@ -204,17 +204,17 @@ ALTER TABLE orders ADD COLUMN IF NOT EXISTS whatsapp_at TIMESTAMPTZ;
 
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS cod_fee INTEGER NOT NULL DEFAULT 0;
 
--- Every garment is 100% cotton: clear out any " " wording left on
+-- Every garment is 100% cotton: clear out any "bamboo" wording left on
 -- products edited in the admin panel (the catalogue sync skips those).
--- Only touches rows that still mention  , so it does nothing once clean.
-UPDATE products SET fabric = '100% cotton' WHERE fabric ILIKE '% %';
+-- Only touches rows that still mention bamboo, so it does nothing once clean.
+UPDATE products SET fabric = '100% cotton' WHERE fabric ILIKE '%bamboo%';
 UPDATE products SET
   description = replace(replace(replace(description,
-    'nibbling  ', 'at play'),
-    ' ', '100% cotton'),
-    ' ', '100% cotton'),
-  care = replace(replace(care, ' ', 'cotton'), ' ', 'Cotton')
-WHERE description ILIKE '% %' OR care ILIKE '% %';
+    'nibbling bamboo', 'at play'),
+    'bamboo-cotton', '100% cotton'),
+    'Bamboo-cotton', '100% cotton'),
+  care = replace(replace(care, 'bamboo-cotton', 'cotton'), 'Bamboo-cotton', 'Cotton')
+WHERE description ILIKE '%bamboo%' OR care ILIKE '%bamboo%';
 
 -- Feedback a customer leaves on their order page, one per order. phone is the
 -- order's 10-digit number: the thank-you code FBK5 works for that number.
