@@ -1,6 +1,7 @@
 import { sendMail } from "./mail";
 import { configuredSiteUrl } from "./site";
-import { SHIPPING_LABEL, STORE, inr, whatsappDisplay } from "./store";
+import { rewardIsOn } from "./feedback";
+import { FEEDBACK_REWARD, SHIPPING_LABEL, STORE, inr, whatsappDisplay } from "./store";
 import type { Order } from "./types";
 
 // One email per order, to the admins and (when they gave an address) the
@@ -119,7 +120,7 @@ ${button(adminLink, "Open the order")}`,
   return { to: [STORE.email], subject, html, text };
 }
 
-function customerMail(order: Order, site: string) {
+function customerMail(order: Order, site: string, rewardOn: boolean) {
   const orderLink = `${site}/order/${order.code}?k=${order.accessKey}`;
   const wa = `https://wa.me/${STORE.whatsappNumber}?text=${encodeURIComponent(`Hi ${STORE.name}! About my order ${order.code}`)}`;
   const subject = `Thank you! We've got your order ${order.code}`;
@@ -136,6 +137,7 @@ ${itemsTable(order)}
 <p style="margin:0;font-size:14px;line-height:1.6"><b>Delivering to</b><br>${esc(order.customerName)}, +91 ${esc(order.phone)}<br>
 <span style="color:${SOFT}">${esc(address(order))}</span></p>
 ${button(orderLink, "See your order")}
+${rewardOn ? `<p style="margin:16px 0 0;font-size:14px;line-height:1.5">How was ordering with us? <a href="${esc(`${orderLink}#feedback`)}" style="color:${INK};font-weight:bold">Rate your order</a> and get ${FEEDBACK_REWARD.percent}% off your next one.</p>` : ""}
 <p style="margin:20px 0 0;font-size:13px;line-height:1.5;color:${SOFT}">Questions? Message us on WhatsApp at <a href="${esc(wa)}" style="color:${INK}">${whatsappDisplay}</a>. You can follow your order any time at <a href="${esc(`${site}/track`)}" style="color:${INK}">${esc(site.replace(/^https?:\/\//, ""))}/track</a>.</p>`,
   );
 
@@ -152,6 +154,7 @@ ${button(orderLink, "See your order")}
     address(order),
     "",
     `See your order: ${orderLink}`,
+    ...(rewardOn ? [`Rate your order and get ${FEEDBACK_REWARD.percent}% off your next one: ${orderLink}#feedback`] : []),
     `Questions? WhatsApp ${whatsappDisplay}`,
   ].join("\n");
 
@@ -162,7 +165,7 @@ ${button(orderLink, "See your order")}
 export async function sendOrderEmails(order: Order, moment: OrderMoment, site: string) {
   try {
     await sendMail(ownerMail(order, moment, site));
-    if (order.email && moment !== "utr_changed") await sendMail(customerMail(order, site));
+    if (order.email && moment !== "utr_changed") await sendMail(customerMail(order, site, await rewardIsOn()));
   } catch (err) {
     console.error(`order emails for ${order.code} failed`, err);
   }

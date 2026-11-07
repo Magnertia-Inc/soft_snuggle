@@ -7,6 +7,8 @@ import { SHIPPING_LABEL, STORE, deliveryBy, inr } from "@/lib/store";
 import type { Order } from "@/lib/types";
 import { orderMessage, whatsappLink } from "@/lib/whatsapp";
 import { FlowerMark } from "../art/FlowerMark";
+import { FeedbackCard } from "./FeedbackCard";
+import type { Feedback } from "@/lib/feedback";
 import { WhatsAppIcon } from "@/components/art/WhatsAppIcon";
 
 interface Props {
@@ -15,11 +17,14 @@ interface Props {
   upiId: string;
   payee: string;
   qrSvg: string;
+  feedback: Feedback | null;
+  /** Whether the feedback thank-you code is switched on */
+  rewardOn: boolean;
 }
 
 type Step = "pay" | "utr" | "whatsapp";
 
-export function OrderFlow({ order, upiUrl, upiId, payee, qrSvg }: Props) {
+export function OrderFlow({ order, upiUrl, upiId, payee, qrSvg, feedback, rewardOn }: Props) {
   const isUpi = order.paymentMethod === "upi";
   const [step, setStep] = useState<Step>(!isUpi || order.utr ? "whatsapp" : "pay");
   const [utr, setUtr] = useState(order.utr ?? "");
@@ -276,6 +281,10 @@ export function OrderFlow({ order, upiUrl, upiId, payee, qrSvg }: Props) {
         </AnimatePresence>
         )}
       </div>
+
+      {!cancelled && (
+        <FeedbackCard code={order.code} accessKey={order.accessKey} phone={order.phone} initial={feedback} rewardOn={rewardOn} />
+      )}
 
       {/* Summary */}
       <div className="mt-8 grid gap-4 sm:grid-cols-2">

@@ -215,4 +215,24 @@ UPDATE products SET
     'Bamboo-cotton', '100% cotton'),
   care = replace(replace(care, 'bamboo-cotton', 'cotton'), 'Bamboo-cotton', 'Cotton')
 WHERE description ILIKE '%bamboo%' OR care ILIKE '%bamboo%';
+
+-- Feedback a customer leaves on their order page, one per order. phone is the
+-- order's 10-digit number: the thank-you code FBK5 works for that number.
+CREATE TABLE IF NOT EXISTS feedback (
+  id          SERIAL PRIMARY KEY,
+  order_id    INTEGER UNIQUE NOT NULL REFERENCES orders (id) ON DELETE CASCADE,
+  phone       TEXT NOT NULL,
+  rating      INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
+  comment     TEXT,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS feedback_phone_idx ON feedback (phone, created_at);
+
+-- The thank-you code for feedback (FEEDBACK_REWARD in lib/store.ts): 5% off,
+-- once per number. checkCoupon only lets it through for a number that left
+-- feedback in the last 30 days. Created once; switching it off in the admin
+-- panel sticks.
+INSERT INTO coupons (code, kind, value, once_per_phone, created_by)
+VALUES ('FBK5', 'percent', 5, TRUE, 'feedback')
+ON CONFLICT (code) DO NOTHING;
 `;
