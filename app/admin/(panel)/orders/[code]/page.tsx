@@ -7,7 +7,7 @@ import { StatusBadge } from "@/components/admin/OrderList";
 import { requireAdmin } from "@/lib/admin";
 import { getAdminOrder } from "@/lib/admin-queries";
 import { EVENT_LABELS, paymentLabel, when } from "@/lib/admin-labels";
-import { FEEDBACK_MAIL_AFTER_DAYS, SHIPPING_LABEL, STORE, inr } from "@/lib/store";
+import { FEEDBACK_MAIL_AFTER_DAYS, REFERRAL_REWARD, SHIPPING_LABEL, STORE, inr } from "@/lib/store";
 import { publicSiteUrl } from "@/lib/site";
 
 const feedbackDelayHours = () => Number(process.env.FEEDBACK_MAIL_DELAY_HOURS ?? FEEDBACK_MAIL_AFTER_DAYS * 24);
@@ -90,6 +90,19 @@ export default async function AdminOrderPage({ params }: { params: Promise<{ cod
             {order.utr && (
               <p className="mt-2 flex flex-wrap items-center gap-2 text-sm">
                 UTR <b className="font-mono text-base">{order.utr}</b> <CopyButton text={order.utr} />
+              </p>
+            )}
+            {order.referral?.usedReward && (
+              <p className="mt-2 text-sm">Paid with one of this customer&apos;s {REFERRAL_REWARD.code} referral rewards.</p>
+            )}
+            {order.referral?.code && (
+              <p className="mt-3 border-t border-line pt-3 text-sm">
+                🤝 Referred by <b>{order.referral.referrerName ?? "a deleted account"}</b> ({order.referral.code}) ·{" "}
+                {order.referral.earned
+                  ? `${REFERRAL_REWARD.code} earned`
+                  : order.status === "cancelled"
+                    ? "cancelled, so no reward"
+                    : `earns them ${REFERRAL_REWARD.code} when delivered`}
               </p>
             )}
             {order.courier && (

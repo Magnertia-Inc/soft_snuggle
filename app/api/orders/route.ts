@@ -24,6 +24,7 @@ export async function POST(req: Request) {
   const paymentMethod = body.paymentMethod === "cod" ? "cod" : body.paymentMethod === "upi" ? "upi" : null;
   const rawItems = Array.isArray(body.items) ? body.items : [];
   const couponCode = str(body.couponCode, 40) || null;
+  const referralCode = str(body.referralCode, 40) || null;
 
   const errors: string[] = [];
   if (customerName.length < 2) errors.push("Please enter your name.");
@@ -59,7 +60,7 @@ export async function POST(req: Request) {
     // The order is filed under the customer and their address kept for next time.
     const order = await createOrder({
       customerName, phone, email, address, city, state, pincode,
-      paymentMethod: paymentMethod!, items, customerId: customer?.id ?? null, couponCode,
+      paymentMethod: paymentMethod!, items, customerId: customer?.id ?? null, couponCode, referralCode,
     });
     if (customer) {
       await saveCustomerAddress(customer.id, { name: customerName, email, address, city, state, pincode });

@@ -20,6 +20,15 @@ const STATES = [
 ];
 
 const SAVED_KEY = "ss-customer-v1";
+const REF_COOKIE = "veviba_ref"; // set by a shared link, app/r/[code]
+
+function readReferralCookie() {
+  const m = typeof document === "undefined" ? null : document.cookie.match(/(?:^|;\s*)veviba_ref=([^;]+)/);
+  return m ? decodeURIComponent(m[1]) : "";
+}
+function forgetReferral() {
+  document.cookie = `${REF_COOKIE}=; Max-Age=0; path=/`;
+}
 
 interface Details {
   customerName: string;
@@ -45,13 +54,53 @@ export function CheckoutForm() {
   const [coupon, setCoupon] = useState<{ code: string; discount: number; label: string } | null>(null);
   const [couponError, setCouponError] = useState<string | null>(null);
   const [checkingCoupon, setCheckingCoupon] = useState(false);
+  // A friend's personal code (RE10-MEENA): not a discount, it earns them RE10.
+  const [referralOpen, setReferralOpen] = useState(false);
+  const [referralInput, setReferralInput] = useState("");
+  const [referral, setReferral] = useState<{ code: string; referrer: string } | null>(null);
+  const [referralError, setReferralError] = useState<string | null>(null);
+  const [checkingReferral, setCheckingReferral] = useState(false);
   const shipping = shippingFor(subtotal);
   const discount = coupon?.discount ?? 0;
   // The same sum the server saves the order with (lib/queries.ts createOrder).
   const total = Math.round((subtotal - discount + shipping + codFeeFor(method)) * 100) / 100;
 
+  const checkReferral = async (code: string, quiet = false) => {
+    if (!code.trim()) return;
+    setReferralOpen(true);
+    setCheckingReferral(true);
+    setReferralError(null);
+    try {
+      const res = await fetch("/api/referrals/check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, phone: details.phone }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "That code isn't valid.");
+      setReferral(data);
+      setReferralInput(data.code);
+    } catch (err) {
+      setReferral(null);
+      // A remembered link that doesn't apply (their own code, a repeat order) is dropped quietly.
+      if (quiet) {
+        setReferralInput("");
+        setReferralOpen(false);
+        forgetReferral();
+      } else setReferralError(err instanceof Error ? err.message : "That code isn't valid.");
+    } finally {
+      setCheckingReferral(false);
+    }
+  };
+
   const applyCoupon = async (code: string) => {
     if (!code.trim()) return;
+    // A friend's referral code typed in the discount box goes where it belongs.
+    if (/^RE10-?[A-Z]/i.test(code.replace(/\s/g, ""))) {
+      setCouponInput("");
+      setReferralInput(code.trim().toUpperCase());
+      return checkReferral(code);
+    }
     setCheckingCoupon(true);
     setCouponError(null);
     try {
@@ -76,6 +125,17 @@ export function CheckoutForm() {
   useEffect(() => {
     if (coupon) applyCoupon(coupon.code);
   }, [subtotal]);
+
+  // A shared link (/r/RE10-MEENA) leaves the code in a cookie: check it once
+  // the account is known, so the shopper never has to type it.
+  useEffect(() => {
+    if (!accountReady || !customer || referral || referralInput) return;
+    const fromLink = readReferralCookie();
+    if (fromLink) {
+      setReferralInput(fromLink);
+      checkReferral(fromLink, true);
+    }
+  }, [accountReady, customer]);
 
   useEffect(() => {
     try {
@@ -114,6 +174,7 @@ export function CheckoutForm() {
           ...details,
           paymentMethod: method,
           couponCode: coupon?.code ?? null,
+          referralCode: referral?.code ?? null,
           items: items.map((i) => ({ productId: i.productId, size: i.size, colour: i.colour, qty: i.qty })),
         }),
       });
@@ -122,6 +183,7 @@ export function CheckoutForm() {
       try {
         localStorage.setItem(SAVED_KEY, JSON.stringify(details));
       } catch {}
+      forgetReferral();
       router.push(`/order/${data.code}?k=${data.accessKey}`);
       clear();
     } catch (err) {
@@ -317,6 +379,68 @@ export function CheckoutForm() {
                   </button>
                 </div>
                 {couponError && <p role="alert" className="mt-2 text-sm font-semibold text-[#a0573f]">{couponError}</p>}
+              </div>
+            )}
+          </div>
+
+          <div className="mt-4">
+            {referral ? (
+              <div className="flex items-center justify-between gap-3 rounded-2xl border border-line bg-paper px-4 py-3 text-sm">
+                <span>
+                  🤝 Referred by <b>{referral.referrer}</b> <span className="text-ink-soft">({referral.code})</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setReferral(null);
+                    setReferralInput("");
+                    forgetReferral();
+                  }}
+                  className="font-bold underline underline-offset-4"
+                >
+                  Remove
+                </button>
+              </div>
+            ) : !referralOpen ? (
+              <button type="button" onClick={() => setReferralOpen(true)} className="text-sm font-bold text-ink-soft underline underline-offset-4">
+                Referred by a friend?
+              </button>
+            ) : (
+              <div>
+                <label htmlFor="referral" className="mb-1.5 block text-sm font-bold text-ink-soft">
+                  Friend&apos;s referral code <span className="font-normal">(optional, e.g. RE10-MEENA)</span>
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    id="referral"
+                    className="field uppercase"
+                    autoComplete="off"
+                    autoCapitalize="characters"
+                    spellCheck={false}
+                    maxLength={30}
+                    value={referralInput}
+                    onChange={(e) => {
+                      setReferralInput(e.target.value);
+                      setReferralError(null);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        checkReferral(referralInput);
+                      }
+                    }}
+                  />
+                  <button
+                    type="button"
+                    disabled={checkingReferral || !referralInput.trim()}
+                    onClick={() => checkReferral(referralInput)}
+                    className="btn-ghost shrink-0 px-5 disabled:opacity-50"
+                  >
+                    {checkingReferral ? "Checking…" : "Add"}
+                  </button>
+                </div>
+                {referralError && <p role="alert" className="mt-2 text-sm font-semibold text-[#a0573f]">{referralError}</p>}
+                <p className="mt-1.5 text-xs text-ink-soft">Thanks your friend with 10% off once your order reaches you. It doesn&apos;t change your price.</p>
               </div>
             )}
           </div>

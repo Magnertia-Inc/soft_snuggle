@@ -6,6 +6,7 @@ import { motion } from "motion/react";
 import { TRACK_STEPS } from "@/lib/tracking";
 import { inr } from "@/lib/store";
 import { useAccount } from "../providers/AccountProvider";
+import { ReferCard } from "./ReferCard";
 
 const stepLabel = (status: string) =>
   TRACK_STEPS.find((s) => s.key === status)?.label ?? (status === "cancelled" ? "Cancelled" : "Placed");
@@ -94,6 +95,8 @@ export function AccountDashboard({ google = false, notice = null }: { google?: b
           <p className="mt-1 text-sm text-ink-soft">Everything you&apos;ve sent our way.</p>
         </div>
       </div>
+
+      <ReferCard />
 
       <h2 className="mt-14 font-display text-3xl tracking-tight">Your orders</h2>
 

@@ -280,4 +280,29 @@ CREATE INDEX IF NOT EXISTS reviews_phone_idx ON reviews (phone, created_at);
 INSERT INTO coupons (code, kind, value, once_per_phone, created_by)
 VALUES ('RR5', 'percent', 5, TRUE, 'review')
 ON CONFLICT (code) DO NOTHING;
+
+-- Refer & earn (lib/referrals.ts). Each account gets a personal code to share;
+-- an order placed with it remembers who referred it; when that order is
+-- delivered the referrer earns one RE10 (10% off one order, 30 days).
+ALTER TABLE customers ADD COLUMN IF NOT EXISTS referral_code TEXT;
+CREATE UNIQUE INDEX IF NOT EXISTS customers_referral_code_idx ON customers (referral_code);
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS referred_by INTEGER REFERENCES customers(id) ON DELETE SET NULL;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS referral_code TEXT;
+CREATE TABLE IF NOT EXISTS referral_rewards (
+  id              SERIAL PRIMARY KEY,
+  referrer_id     INTEGER NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+  friend_order_id INTEGER NOT NULL UNIQUE REFERENCES orders(id) ON DELETE CASCADE,
+  -- One reward per friend, ever: two "first" orders placed together earn once.
+  friend_phone    TEXT NOT NULL UNIQUE,
+  earned_at       TIMESTAMPTZ NOT NULL DEFAULT now(),
+  expires_at      TIMESTAMPTZ NOT NULL,
+  used_order_id   INTEGER REFERENCES orders(id) ON DELETE SET NULL,
+  used_at         TIMESTAMPTZ
+);
+CREATE INDEX IF NOT EXISTS referral_rewards_referrer_idx ON referral_rewards (referrer_id);
+-- The referrer's reward code. Like FBK5 it checks who is using it; unlike
+-- FBK5 it can be used once per reward earned.
+INSERT INTO coupons (code, kind, value, once_per_phone, created_by)
+VALUES ('RE10', 'percent', 10, FALSE, 'referral')
+ON CONFLICT (code) DO NOTHING;
 `;

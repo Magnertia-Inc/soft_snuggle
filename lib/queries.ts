@@ -3,7 +3,8 @@ import { getDb } from "./db";
 import { coloursFor } from "./colours";
 import { productImages } from "./images";
 import { CouponError, checkCoupon, claimCoupon, releaseCoupon } from "./coupons";
-import { STORE, inr, listPrice, priceForSize, shippingFor } from "./store";
+import { ReferralError, checkReferral, claimReferralReward } from "./referrals";
+import { REFERRAL_REWARD, STORE, inr, listPrice, priceForSize, shippingFor } from "./store";
 import { courierLink, type TrackInfo } from "./tracking";
 import type { Order, OrderItem, PaymentMethod, Product } from "./types";
 
@@ -69,6 +70,8 @@ export interface NewOrderInput {
   paymentMethod: PaymentMethod;
   items: { productId: number; size: string; colour?: string; qty: number }[];
   couponCode?: string | null;
+  /** A friend's personal code (RE10-MEENA). Not a discount. */
+  referralCode?: string | null;
 }
 
 export class OrderError extends Error { }
@@ -115,6 +118,17 @@ export async function createOrder(input: NewOrderInput) {
     }
   }
 
+  let referrer: { id: number; code: string } | null = null;
+  if (input.referralCode) {
+    try {
+      referrer = await checkReferral(input.referralCode, { customerId: input.customerId ?? null, phone: input.phone });
+    } catch (err) {
+      if (couponCode) await releaseCoupon(couponCode).catch(() => { });
+      if (err instanceof ReferralError) throw new OrderError(`${err.message} Remove the referral code to order without it.`);
+      throw err;
+    }
+  }
+
   const total = Math.round((subtotal - discount + shipping + codFee) * 100) / 100;
   const accessKey = randomBytes(12).toString("hex");
 
@@ -124,14 +138,14 @@ export async function createOrder(input: NewOrderInput) {
       `INSERT INTO orders
         (access_key, customer_name, phone, email, address, city, state, pincode,
          items, subtotal, shipping, cod_fee, total, payment_method, payment_status, customer_id,
-         coupon_code, discount)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)
+         coupon_code, discount, referred_by, referral_code)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)
        RETURNING id, code`,
       [
         accessKey, input.customerName, input.phone, input.email, input.address, input.city,
         input.state, input.pincode, JSON.stringify(items), subtotal, shipping, codFee, total,
         input.paymentMethod, input.paymentMethod === "cod" ? "cod" : "pending",
-        input.customerId ?? null, couponCode, discount,
+        input.customerId ?? null, couponCode, discount, referrer?.id ?? null, referrer?.code ?? null,
       ],
     );
   } catch (err) {
@@ -139,8 +153,14 @@ export async function createOrder(input: NewOrderInput) {
     if (couponCode) await releaseCoupon(couponCode).catch(() => { });
     throw err;
   }
+  // RE10 uses up one of the referrer's rewards. Checked above, so one is there
+  // unless the same person placed two orders with it at the same moment.
+  if (couponCode === REFERRAL_REWARD.code && !(await claimReferralReward(res.rows[0].id, input.phone))) {
+    console.error(`order ${res.rows[0].code}: RE10 applied but no referral reward was left to claim`);
+  }
   const how = input.paymentMethod === "cod" ? "Cash on delivery" : "UPI";
-  await logOrderEvent(res.rows[0].id, "placed", couponCode ? `${how} · ${couponCode} −${inr(discount)}` : how, "customer");
+  const notes = [how, couponCode && `${couponCode} −${inr(discount)}`, referrer && `referred by ${referrer.code}`].filter(Boolean);
+  await logOrderEvent(res.rows[0].id, "placed", notes.join(" · "), "customer");
   return { code: res.rows[0].code, accessKey, total };
 }
 
