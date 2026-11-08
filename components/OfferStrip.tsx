@@ -14,9 +14,9 @@ function left(ms: number) {
 }
 
 /**
- * The thin strip above the menu. While an offer runs (PROMO in lib/store) it
- * turns marigold and scrolls the offer with a countdown; tapping it copies the
- * code. When the offer ends it goes back to the usual green line by itself.
+ * The thin strip above the menu. While an offer runs (PROMO in lib/store) the
+ * same green strip scrolls the offer with a countdown; tapping it copies the
+ * code. When the offer ends it goes back to the usual line by itself.
  */
 export function OfferStrip() {
   // The clock starts after the page loads, so the server and browser render the
@@ -74,7 +74,7 @@ export function OfferStrip() {
   };
 
   return (
-    <div className="group relative overflow-hidden bg-[#9C3A16] text-[0.6563rem] font-bold uppercase tracking-[0.12em] text-paper sm:text-[0.6875rem] sm:tracking-[0.14em]">
+    <div className="group relative overflow-hidden bg-sage-deep text-[0.6563rem] font-bold uppercase tracking-[0.12em] text-paper sm:text-[0.6875rem] sm:tracking-[0.14em]">
       <button
         type="button"
         onClick={copy}
@@ -87,7 +87,7 @@ export function OfferStrip() {
               {[...items, ...items].map((t, i) => (
                 <span key={i} className="px-4">
                   {t}
-                  <span className="pl-8 text-[#FFD27A]">✦</span>
+                  <span className="pl-8 text-paper/60">✦</span>
                 </span>
               ))}
             </span>
