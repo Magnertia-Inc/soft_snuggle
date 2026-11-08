@@ -50,7 +50,7 @@ END $$;
 
 CREATE TABLE IF NOT EXISTS orders (
   id              SERIAL PRIMARY KEY,
-  code            TEXT GENERATED ALWAYS AS ('SS-' || (id + 1000)::text) STORED,
+  code            TEXT GENERATED ALWAYS AS ('VVB-' || (id + 1000)::text) STORED,
   access_key      TEXT NOT NULL,
   customer_name   TEXT NOT NULL,
   phone           TEXT NOT NULL,
@@ -305,4 +305,18 @@ CREATE INDEX IF NOT EXISTS referral_rewards_referrer_idx ON referral_rewards (re
 INSERT INTO coupons (code, kind, value, once_per_phone, created_by)
 VALUES ('RE10', 'percent', 10, FALSE, 'referral')
 ON CONFLICT (code) DO NOTHING;
+
+-- Order IDs became VVB-1001 instead of SS-1001 (the shop is Veviba now). A
+-- generated column's formula can't be changed in place on every Postgres, so
+-- the column is rebuilt once; the numbers stay the same.
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns
+             WHERE table_name = 'orders' AND column_name = 'code'
+               AND generation_expression LIKE '%SS-%') THEN
+    ALTER TABLE orders DROP COLUMN code;
+    ALTER TABLE orders ADD COLUMN code TEXT GENERATED ALWAYS AS ('VVB-' || (id + 1000)::text) STORED;
+    CREATE UNIQUE INDEX IF NOT EXISTS orders_code_idx ON orders (code);
+  END IF;
+END $$;
 `;

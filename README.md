@@ -17,7 +17,7 @@ npm run dev                  # http://localhost:3000
 
 Tables (`products`, `orders`) are created automatically on first start (`lib/schema.ts`),
 and the 8 catalogue products from the PDF are seeded if `products` is empty (`lib/seed.ts`).
-Orders get IDs like `SS-1001` automatically.
+Orders get IDs like `VVB-1001` automatically.
 
 Orders and stock are managed in the admin panel (below). Products, prices and photos still live in
 `lib/seed.ts` and `public/products/`.
@@ -27,7 +27,7 @@ Orders and stock are managed in the admin panel (below). Products, prices and ph
 1. Customer adds items (size + qty) → bag is kept in the browser.
 2. Checkout: name, WhatsApp number, address, pincode, **UPI** or **Cash on Delivery**.
 3. `POST /api/orders` re-prices everything from the database and saves the order.
-4. Order page (`/order/SS-1001?k=…`, private link):
+4. Order page (`/order/VVB-1001?k=…`, private link):
    - **UPI** → QR code (desktop) or "Pay in UPI app" button (mobile) with amount + order ID filled in → customer enters the UTR → saved to the order.
    - **COD** → goes straight to the WhatsApp step.
 5. "Send order on WhatsApp" opens WhatsApp with a pre-filled message (items, total, UTR or COD, address). The customer taps Send.

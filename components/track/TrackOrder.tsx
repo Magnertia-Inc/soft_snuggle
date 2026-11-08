@@ -82,14 +82,14 @@ export function TrackOrder({ initialCode }: { initialCode?: string }) {
           Track your <em className="text-sage-deep">order</em>
         </h1>
         <p className="mx-auto mt-3 max-w-md text-ink-soft">
-          Enter the order ID from your confirmation (like SS-1042) and the mobile number you ordered with.
+          Enter the order ID from your confirmation (like VVB-1042) and the mobile number you ordered with.
         </p>
       </div>
 
       <form onSubmit={submit} className="mt-10 grid gap-3 rounded-[1.75rem] bg-paper p-5 shadow-[0_30px_60px_-40px_rgba(38,59,54,0.4)] sm:grid-cols-[1fr_1fr_auto] sm:p-6">
         <label className="block">
           <span className="mb-1.5 block text-sm font-bold text-ink-soft">Order ID</span>
-          <input className="field uppercase" required value={code} onChange={(e) => setCode(e.target.value)} placeholder="SS-1042" />
+          <input className="field uppercase" required value={code} onChange={(e) => setCode(e.target.value)} placeholder="VVB-1042" />
         </label>
         <label className="block">
           <span className="mb-1.5 block text-sm font-bold text-ink-soft">Mobile number</span>
