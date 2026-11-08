@@ -5,8 +5,9 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import { useLenis } from "lenis/react";
 import { useEffect, useRef, useState } from "react";
-import { STORE, inr, shippingLine } from "@/lib/store";
+import { STORE } from "@/lib/store";
 import { Logo } from "./art/Logo";
+import { OfferStrip } from "./OfferStrip";
 import { WhatsAppIcon } from "@/components/art/WhatsAppIcon";
 import { useAccount } from "./providers/AccountProvider";
 import { useCart } from "./providers/CartProvider";
@@ -75,20 +76,8 @@ export function Navbar() {
   return (
     <>
       <header ref={headerRef} className="fixed inset-x-0 top-0 z-50">
-        {/* Offer strip */}
-        {/* One line on every screen: phones get the short version so it never wraps */}
-        <div className="relative truncate bg-sage-deep px-4 py-1.5 text-center text-[0.6563rem] font-bold uppercase tracking-[0.12em] text-paper sm:text-[0.6875rem] sm:tracking-[0.14em]">
-          <span className="hidden sm:inline">24×7 ordering available · </span>
-          {shippingLine}
-          <span className="sm:hidden"> · COD available</span>
-          <span className="hidden lg:inline"> · Cash on Delivery</span>
-          <Link
-            href="/track"
-            className="absolute right-6 top-1/2 hidden -translate-y-1/2 underline decoration-paper/50 underline-offset-2 hover:decoration-paper md:block"
-          >
-            Track order
-          </Link>
-        </div>
+        {/* Offer strip: the running offer (PROMO), or the usual promises */}
+        <OfferStrip />
 
         {/* Main bar: links split around a centred logo */}
         <nav className="border-b border-line/80 bg-cream/85 backdrop-blur-md">

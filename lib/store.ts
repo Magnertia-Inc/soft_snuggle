@@ -194,3 +194,14 @@ export function isLargestSize(sizes: string[], size: string | null | undefined):
 export function priceForSize(p: { price: number; sizes: string[] }, size: string | null | undefined): number {
   return p.price + (isLargestSize(p.sizes, size) ? LARGEST_SIZE_EXTRA : 0);
 }
+
+/**
+ * A time-limited offer shown in the top strip. It disappears by itself when
+ * endsAt passes. Set to null when there is no offer running.
+ */
+export const PROMO: { title: string; code: string; percent: number; endsAt: string } | null = {
+  title: "Diwali launch offer",
+  code: "DIWALI10",
+  percent: 10,
+  endsAt: "2026-11-08T23:59:59+05:30",
+};
