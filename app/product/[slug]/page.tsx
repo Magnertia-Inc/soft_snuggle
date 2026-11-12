@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ProductDetail } from "@/components/shop/ProductDetail";
 import { ProductCard } from "@/components/shop/ProductCard";
+import { ProductReviews } from "@/components/shop/ProductReviews";
 import { Reveal } from "@/components/Reveal";
 import { getProduct, getProducts } from "@/lib/queries";
+import { productReviews } from "@/lib/reviews";
 import { STORE, inr } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
@@ -27,7 +29,8 @@ export default async function ProductPage({ params }: Params) {
   const product = await getProduct(slug);
   if (!product) notFound();
 
-  const related = (await getProducts())
+  const [all, reviews] = await Promise.all([getProducts(), productReviews(product.id)]);
+  const related = all
     .filter((p) => p.id !== product.id)
     .sort((a, b) => Number(b.category === product.category) - Number(a.category === product.category))
     .slice(0, 4);
@@ -35,6 +38,7 @@ export default async function ProductPage({ params }: Params) {
   return (
     <div className="speckle">
       <ProductDetail product={product} />
+      <ProductReviews {...reviews} />
       <section className="shell pb-24">
         <Reveal>
           <h2 className="mb-6 font-display text-3xl tracking-tight sm:mb-8 sm:text-4xl">

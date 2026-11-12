@@ -30,10 +30,10 @@ export interface TrackInfo {
   trackingUrl: string | null;
 }
 
-/** Accepts "SS-1042", "ss1042" or just "1042". */
+/** Accepts "VVB-1042", "vvb1042", the old "SS-1042" or just "1042". */
 export function normaliseOrderCode(input: string) {
   const digits = input.replace(/\D/g, "");
-  return digits ? `SS-${digits}` : "";
+  return digits ? `VVB-${digits}` : "";
 }
 
 /** The courier's own link if the owner saved one, otherwise a search that finds the courier's tracking page. */

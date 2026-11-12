@@ -27,11 +27,62 @@ export const STORE = {
 };
 
 /**
- * The thank-you for leaving feedback on an order: this code takes `percent`
- * off the items of a later order, once per mobile number, within `days` of
- * the feedback. The coupon row itself is created in lib/schema.ts.
+ * The thank-you codes. Each takes `percent` off the items of a later order,
+ * once per mobile number, within `days` of what earned it, and only for the
+ * number on the order that earned it. Checkout takes one code per order. The
+ * coupon rows themselves are created in lib/schema.ts.
+ *   FBK5  for the feedback form (sent by email a couple of days after delivery)
+ *   RR5   for a rating & review of a piece the customer bought
  */
 export const FEEDBACK_REWARD = { code: "FBK5", percent: 5, days: 30 } as const;
+export const REVIEW_REWARD = { code: "RR5", percent: 5, days: 30 } as const;
+/**
+ * Refer & earn: every customer has a personal code (RE10-MEENA) to share. When
+ * a friend's first order with it is delivered, the customer earns one RE10:
+ * 10% off one order, for 30 days. The friend pays the normal price.
+ */
+export const REFERRAL_REWARD = { code: "RE10", percent: 10, days: 30, prefix: "RE10-" } as const;
+
+/** Which thank-you a code is, if it is one. */
+export function rewardFor(code: string) {
+  if (code === FEEDBACK_REWARD.code) return { ...FEEDBACK_REWARD, earnedBy: "feedback" as const };
+  if (code === REVIEW_REWARD.code) return { ...REVIEW_REWARD, earnedBy: "review" as const };
+  return null;
+}
+
+/** How long after "Mark delivered" the feedback email goes out. */
+export const FEEDBACK_MAIL_AFTER_DAYS = 2;
+
+/** The areas of the feedback form, rated 1–5 next to the overall rating. */
+export const FEEDBACK_ASPECTS = [
+  { key: "quality", label: "Fabric & product quality" },
+  { key: "comfort", label: "Comfort & softness" },
+  { key: "design", label: "Design & appearance" },
+  { key: "value", label: "Value for money" },
+  { key: "delivery", label: "Delivery experience" },
+  { key: "packaging", label: "Packaging experience" },
+] as const;
+
+/** "Which areas should we improve?" on the feedback form. */
+export const IMPROVE_AREAS = [
+  { key: "fabric", label: "Fabric quality" },
+  { key: "stitching", label: "Stitching & finishing" },
+  { key: "comfort", label: "Comfort & softness" },
+  { key: "fit", label: "Size & fitting" },
+  { key: "design", label: "Design & colours" },
+  { key: "durability", label: "Durability" },
+  { key: "packaging", label: "Packaging" },
+  { key: "pricing", label: "Pricing" },
+  { key: "delivery", label: "Delivery experience" },
+] as const;
+
+/** "Would you recommend us?", and how each answer counts in the recommend score. */
+export const RECOMMEND_ANSWERS = [
+  { key: "definitely", label: "Definitely", counts: "promoter" },
+  { key: "probably", label: "Probably", counts: "passive" },
+  { key: "not_sure", label: "Not sure", counts: "detractor" },
+  { key: "probably_not", label: "Probably not", counts: "detractor" },
+] as const;
 
 /** Shown beside shipping wherever it appears: prices already include all taxes. */
 export const SHIPPING_LABEL = "Shipping";
@@ -144,3 +195,14 @@ export function isLargestSize(sizes: string[], size: string | null | undefined):
 export function priceForSize(p: { price: number; sizes: string[] }, size: string | null | undefined): number {
   return p.price + (isLargestSize(p.sizes, size) ? LARGEST_SIZE_EXTRA : 0);
 }
+
+/**
+ * A time-limited offer shown in the top strip. It disappears by itself when
+ * endsAt passes. Set to null when there is no offer running.
+ */
+export const PROMO: { title: string; code: string; percent: number; endsAt: string } | null = {
+  title: "Diwali launch offer",
+  code: "DIWALI10",
+  percent: 10,
+  endsAt: "2026-11-08T23:59:59+05:30",
+};

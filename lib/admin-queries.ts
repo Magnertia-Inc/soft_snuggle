@@ -1,6 +1,8 @@
 import { reclaimCoupon, releaseCoupon } from "./coupons";
 import { getDb } from "./db";
 import { claimGuestOrders, logOrderEvent } from "./queries";
+import { claimReferralReward, earnReferral, referralForOrder, releaseReferralReward, type EarnedReward } from "./referrals";
+import { REFERRAL_REWARD } from "./store";
 import type { OrderItem, PaymentMethod } from "./types";
 
 // ── Order views ────────────────────────────────────────────────────────────
@@ -164,6 +166,15 @@ export interface AdminOrder extends AdminOrderRow {
   accountVerified: boolean;
   /** When the admin saw the customer's WhatsApp message for this order. */
   whatsappAt: string | null;
+  /** For the customer's own links (order page, feedback page) */
+  accessKey: string;
+  deliveredAt: string | null;
+  /** When the "How was your order?" email went out */
+  feedbackMailAt: string | null;
+  /** The overall rating from the feedback form, if they've filled it in */
+  feedbackRating: number | null;
+  /** A friend's referral code on this order, and whether it has earned its RE10 yet. */
+  referral: { code: string | null; referrerName: string | null; earned: boolean; usedReward: boolean } | null;
   events: OrderEvent[];
 }
 
@@ -173,9 +184,11 @@ export async function getAdminOrder(code: string): Promise<AdminOrder | null> {
     id: number; email: string | null; address: string; state: string; pincode: string; subtotal: number;
     shipping: number; cod_fee: number | null; utr: string | null; courier: string | null; tracking_number: string | null;
     tracking_url: string | null; customer_id: number | null; discount: number | null; coupon_code: string | null;
-    whatsapp_at: Date | string | null; account_verified: boolean | null;
+    whatsapp_at: Date | string | null; account_verified: boolean | null; access_key: string;
+    delivered_at: Date | string | null; feedback_mail_at: Date | string | null; feedback_rating: number | null;
   }>(
-    `SELECT o.*, c.phone_verified_at IS NOT NULL AS account_verified
+    `SELECT o.*, c.phone_verified_at IS NOT NULL AS account_verified,
+       (SELECT f.rating FROM feedback f WHERE f.order_id = o.id) AS feedback_rating
      FROM orders o LEFT JOIN customers c ON c.id = o.customer_id WHERE o.code = $1`,
     [code],
   );
@@ -205,6 +218,11 @@ codFee: r.cod_fee ?? 0,
     hasAccount: r.customer_id !== null,
     accountVerified: r.account_verified === true,
     whatsappAt: r.whatsapp_at ? new Date(r.whatsapp_at).toISOString() : null,
+    accessKey: r.access_key,
+    deliveredAt: r.delivered_at ? new Date(r.delivered_at).toISOString() : null,
+    feedbackMailAt: r.feedback_mail_at ? new Date(r.feedback_mail_at).toISOString() : null,
+    feedbackRating: r.feedback_rating,
+    referral: await referralForOrder(r.id),
     events: events.rows.map((e) => ({ kind: e.kind, note: e.note, actor: e.actor, at: new Date(e.created_at).toISOString() })),
   };
 }
@@ -249,7 +267,9 @@ export interface ActionInput {
   note?: string;
 }
 
-export async function updateOrder(code: string, action: OrderAction, input: ActionInput, actor: string) {
+export async function updateOrder(
+  code: string, action: OrderAction, input: ActionInput, actor: string,
+): Promise<{ referral: EarnedReward | null } | void> {
   const db = await getDb();
   const courier = input.courier?.trim().slice(0, 60) || null;
   const trackingNumber = input.trackingNumber?.trim().slice(0, 60) || null;
@@ -296,9 +316,9 @@ export async function updateOrder(code: string, action: OrderAction, input: Acti
 
   const params: unknown[] = [code, step.from];
   if (action === "ship") params.push(courier, trackingNumber, trackingUrl);
-  const { rows } = await db.query<{ id: number; coupon_code: string | null }>(
+  const { rows } = await db.query<{ id: number; coupon_code: string | null; phone: string }>(
     `UPDATE orders SET status = '${step.to}', updated_at = now()${step.set ? `, ${step.set}` : ""}
-     WHERE code = $1 AND status = ANY($2::text[]) RETURNING id, coupon_code`,
+     WHERE code = $1 AND status = ANY($2::text[]) RETURNING id, coupon_code, phone`,
     params,
   );
   if (!rows[0]) throw new AdminError("This order has moved on since the page loaded. Refresh to see where it is.");
@@ -307,10 +327,15 @@ export async function updateOrder(code: string, action: OrderAction, input: Acti
   const coupon = rows[0].coupon_code;
   if (coupon && action === "cancel") await releaseCoupon(coupon);
   if (coupon && action === "reopen") await reclaimCoupon(coupon);
+  // The same for the RE10 reward behind it (a referrer's 10%).
+  if (coupon === REFERRAL_REWARD.code && action === "cancel") await releaseReferralReward(rows[0].id);
+  if (coupon === REFERRAL_REWARD.code && action === "reopen") await claimReferralReward(rows[0].id, rows[0].phone);
 
   const detail = action === "ship" ? `${courier} · ${trackingNumber}` : note;
   await logOrderEvent(rows[0].id, action, detail, actor);
   if (action === "confirm") await verifyFromOrder(rows[0].id);
+  // A friend's order arriving earns the person who referred them RE10.
+  if (action === "deliver") return { referral: await earnReferral(rows[0].id) };
 }
 
 /**

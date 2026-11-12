@@ -1,7 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { currentAdmin } from "@/lib/admin";
 import { AdminError, ORDER_ACTIONS, type OrderAction, updateOrder } from "@/lib/admin-queries";
-import { fromOwnSite } from "@/lib/site";
+import { emailSiteUrl } from "@/lib/order-emails";
+import { sendReferralRewardMail } from "@/lib/referrals";
+import { fromOwnSite, siteOrigin } from "@/lib/site";
 
 const str = (v: unknown) => (typeof v === "string" ? v : undefined);
 
@@ -17,12 +19,18 @@ export async function POST(req: Request, { params }: { params: Promise<{ code: s
   if (!ORDER_ACTIONS.includes(action)) return NextResponse.json({ error: "Unknown action." }, { status: 400 });
 
   try {
-    await updateOrder(
+    const result = await updateOrder(
       code,
       action,
       { courier: str(body.courier), trackingNumber: str(body.trackingNumber), trackingUrl: str(body.trackingUrl), note: str(body.note) },
       admin.email,
     );
+    // A friend's order delivered: the referrer gets their RE10 by email.
+    const earned = result?.referral;
+    if (earned) {
+      const site = emailSiteUrl(siteOrigin(req));
+      after(() => sendReferralRewardMail(earned, site).then(() => {}).catch((err) => console.error("referral reward email failed", err)));
+    }
     return NextResponse.json({ ok: true });
   } catch (err) {
     if (err instanceof AdminError) return NextResponse.json({ error: err.message }, { status: 409 });

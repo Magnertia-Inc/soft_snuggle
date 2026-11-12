@@ -1,6 +1,7 @@
 import { getDb } from "./db";
 import { rewardEndsFor } from "./feedback";
-import { FEEDBACK_REWARD, inr } from "./store";
+import { isReferralCode, referralCredit } from "./referrals";
+import { REFERRAL_REWARD, inr, rewardFor } from "./store";
 
 // Discount codes the owner creates in the admin panel. A code takes either a
 // percentage or a fixed amount off the items (never off shipping), and can be
@@ -67,18 +68,40 @@ export async function checkCoupon(rawCode: string, subtotal: number, phone?: str
   const { rows } = await db.query<CouponRow>("SELECT * FROM coupons WHERE code = $1", [code]);
   const c = rows[0] ? toCoupon(rows[0]) : null;
 
+  if (!c && isReferralCode(rawCode)) {
+    throw new CouponError(`${code} is a friend's referral code, not a discount. Enter it under "Referred by a friend?" instead.`);
+  }
   if (!c || !c.active) throw new CouponError("That code isn't valid.");
   if (c.expiresAt && new Date(c.expiresAt).getTime() < Date.now()) throw new CouponError("That code has expired.");
   if (c.maxUses != null && c.usedCount >= c.maxUses) throw new CouponError("That code has been fully used.");
-  // The feedback thank-you only works for a number that rated an order recently.
-  if (c.code === FEEDBACK_REWARD.code) {
-    if (!phone) throw new CouponError(`Enter your mobile number above first: ${c.code} works with the number you left feedback with.`);
-    const ends = await rewardEndsFor(phone);
+  // A thank-you code only works for a number that recently left feedback (FBK5)
+  // or reviewed a piece (RR5).
+  const reward = rewardFor(c.code);
+  if (reward) {
+    const what = reward.earnedBy === "feedback" ? "your feedback" : "your review";
+    if (!phone) throw new CouponError(`Enter your mobile number above first: ${c.code} works with the number on the order you rated.`);
+    const ends = await rewardEndsFor(phone, reward.earnedBy);
     if (!ends) {
-      throw new CouponError(`${c.code} is our thank-you for rating an order. It works with the mobile number you left feedback with.`);
+      throw new CouponError(
+        reward.earnedBy === "feedback"
+          ? `${c.code} is our thank-you for filling in the feedback form. It works with the mobile number on the order you rated.`
+          : `${c.code} is our thank-you for reviewing a piece you bought. It works with the mobile number on that order.`,
+      );
     }
     if (ends.getTime() < Date.now()) {
-      throw new CouponError(`${c.code} works for ${FEEDBACK_REWARD.days} days after your feedback, and that time has passed.`);
+      throw new CouponError(`${c.code} works for ${reward.days} days after ${what}, and that time has passed.`);
+    }
+  }
+  // RE10 works once for each friend whose referred order was delivered.
+  if (c.code === REFERRAL_REWARD.code) {
+    if (!phone) throw new CouponError(`Enter your mobile number above first: ${c.code} works with your account's number.`);
+    const credit = await referralCredit(phone);
+    if (!credit.available) {
+      throw new CouponError(
+        credit.earned
+          ? `You've no ${c.code} left to use: each one works once, for ${REFERRAL_REWARD.days} days. Refer another friend to earn one more.`
+          : `${c.code} is our thank-you for referring friends. Share your code from your account page; when a friend's first order reaches them, you get ${REFERRAL_REWARD.percent}% off.`,
+      );
     }
   }
   if (subtotal < c.minOrder) {
@@ -185,8 +208,8 @@ export async function deleteCoupon(id: number) {
   const db = await getDb();
   const { rows } = await db.query<{ code: string; used_count: number }>("SELECT code, used_count FROM coupons WHERE id = $1", [id]);
   if (!rows[0]) return;
-  if (rows[0].code === FEEDBACK_REWARD.code) {
-    throw new CouponError(`${rows[0].code} is the thank-you code customers get for feedback. Switch it off instead.`);
+  if (rewardFor(rows[0].code) || rows[0].code === REFERRAL_REWARD.code) {
+    throw new CouponError(`${rows[0].code} is a thank-you code customers earn for feedback or reviews. Switch it off instead.`);
   }
   const used = await db.query("SELECT 1 FROM orders WHERE coupon_code = $1 LIMIT 1", [rows[0].code]);
   if (rows[0].used_count > 0 || used.rows.length) {

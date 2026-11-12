@@ -1,7 +1,6 @@
 import { sendMail } from "./mail";
 import { configuredSiteUrl } from "./site";
-import { rewardIsOn } from "./feedback";
-import { FEEDBACK_REWARD, SELLING_LABEL, SHIPPING_LABEL, STORE, TOTAL_LABEL, inr, whatsappDisplay } from "./store";
+import { SELLING_LABEL, SHIPPING_LABEL, STORE, TOTAL_LABEL, inr, whatsappDisplay } from "./store";
 import type { Order } from "./types";
 
 // One email per order, to the admins and (when they gave an address) the
@@ -23,14 +22,14 @@ export function emailSiteUrl(fallback: string) {
   return configuredSiteUrl() ?? fallback;
 }
 
-const esc = (s: string) =>
+export const esc = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 
-const INK = "#263B36";
-const SOFT = "#5E6F69";
+export const INK = "#263B36";
+export const SOFT = "#5E6F69";
 const LINE = "#E6E0D4";
 
-function layout(title: string, body: string) {
+export function layout(title: string, body: string) {
   return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body style="margin:0;background:#F6F1E8;font-family:Arial,Helvetica,sans-serif;color:${INK}">
 <div style="max-width:560px;margin:0 auto;padding:24px 16px">
 <div style="background:#FDFBF6;border-radius:20px;padding:28px 24px;border:1px solid ${LINE}">
@@ -42,7 +41,7 @@ ${body}
 </div></body></html>`;
 }
 
-const button = (href: string, label: string) =>
+export const button = (href: string, label: string) =>
   `<p style="margin:20px 0 0"><a href="${esc(href)}" style="display:inline-block;background:${INK};color:#FDFBF6;text-decoration:none;font-weight:bold;padding:12px 22px;border-radius:999px">${esc(label)}</a></p>`;
 
 function itemsTable(order: Order) {
@@ -120,7 +119,7 @@ ${button(adminLink, "Open the order")}`,
   return { to: [STORE.email], subject, html, text };
 }
 
-function customerMail(order: Order, site: string, rewardOn: boolean) {
+function customerMail(order: Order, site: string) {
   const orderLink = `${site}/order/${order.code}?k=${order.accessKey}`;
   const wa = `https://wa.me/${STORE.whatsappNumber}?text=${encodeURIComponent(`Hi ${STORE.name}! About my order ${order.code}`)}`;
   const subject = `Thank you! We've got your order ${order.code}`;
@@ -137,7 +136,6 @@ ${itemsTable(order)}
 <p style="margin:0;font-size:14px;line-height:1.6"><b>Delivering to</b><br>${esc(order.customerName)}, +91 ${esc(order.phone)}<br>
 <span style="color:${SOFT}">${esc(address(order))}</span></p>
 ${button(orderLink, "See your order")}
-${rewardOn ? `<p style="margin:16px 0 0;font-size:14px;line-height:1.5">How was ordering with us? <a href="${esc(`${orderLink}#feedback`)}" style="color:${INK};font-weight:bold">Rate your order</a> and get ${FEEDBACK_REWARD.percent}% off your next one.</p>` : ""}
 <p style="margin:20px 0 0;font-size:13px;line-height:1.5;color:${SOFT}">Questions? Message us on WhatsApp at <a href="${esc(wa)}" style="color:${INK}">${whatsappDisplay}</a>. You can follow your order any time at <a href="${esc(`${site}/track`)}" style="color:${INK}">${esc(site.replace(/^https?:\/\//, ""))}/track</a>.</p>`,
   );
 
@@ -154,7 +152,6 @@ ${rewardOn ? `<p style="margin:16px 0 0;font-size:14px;line-height:1.5">How was 
     address(order),
     "",
     `See your order: ${orderLink}`,
-    ...(rewardOn ? [`Rate your order and get ${FEEDBACK_REWARD.percent}% off your next one: ${orderLink}#feedback`] : []),
     `Questions? WhatsApp ${whatsappDisplay}`,
   ].join("\n");
 
@@ -165,7 +162,7 @@ ${rewardOn ? `<p style="margin:16px 0 0;font-size:14px;line-height:1.5">How was 
 export async function sendOrderEmails(order: Order, moment: OrderMoment, site: string) {
   try {
     await sendMail(ownerMail(order, moment, site));
-    if (order.email && moment !== "utr_changed") await sendMail(customerMail(order, site, await rewardIsOn()));
+    if (order.email && moment !== "utr_changed") await sendMail(customerMail(order, site));
   } catch (err) {
     console.error(`order emails for ${order.code} failed`, err);
   }

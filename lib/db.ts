@@ -11,7 +11,7 @@ export interface Db {
 // Bump this whenever SCHEMA_SQL changes. The connection below outlives a code
 // reload, so without a version the new schema is never applied to it and the
 // site keeps failing until someone restarts the server by hand.
-const SCHEMA_VERSION = 28;
+const SCHEMA_VERSION = 31;
 
 // Survives hot reloads in dev so we never open the database twice.
 const globalForDb = globalThis as unknown as {

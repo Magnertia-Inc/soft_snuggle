@@ -50,7 +50,7 @@ END $$;
 
 CREATE TABLE IF NOT EXISTS orders (
   id              SERIAL PRIMARY KEY,
-  code            TEXT GENERATED ALWAYS AS ('SS-' || (id + 1000)::text) STORED,
+  code            TEXT GENERATED ALWAYS AS ('VVB-' || (id + 1000)::text) STORED,
   access_key      TEXT NOT NULL,
   customer_name   TEXT NOT NULL,
   phone           TEXT NOT NULL,
@@ -238,4 +238,85 @@ CREATE INDEX IF NOT EXISTS feedback_phone_idx ON feedback (phone, created_at);
 INSERT INTO coupons (code, kind, value, once_per_phone, created_by)
 VALUES ('FBK5', 'percent', 5, TRUE, 'feedback')
 ON CONFLICT (code) DO NOTHING;
+
+-- The full feedback form (sent by email a couple of days after delivery).
+-- rating above is the overall score; ratings holds the other areas, 1-5 each,
+-- keyed as FEEDBACK_ASPECTS in lib/store.ts. comment is from the first,
+-- shorter form and stays for the rows it has.
+ALTER TABLE feedback ADD COLUMN IF NOT EXISTS ratings        JSONB NOT NULL DEFAULT '{}';
+ALTER TABLE feedback ADD COLUMN IF NOT EXISTS improve        TEXT[] NOT NULL DEFAULT '{}';
+ALTER TABLE feedback ADD COLUMN IF NOT EXISTS liked          TEXT;
+ALTER TABLE feedback ADD COLUMN IF NOT EXISTS wish           TEXT;
+ALTER TABLE feedback ADD COLUMN IF NOT EXISTS recommend      TEXT;
+ALTER TABLE feedback ADD COLUMN IF NOT EXISTS testimonial_ok BOOLEAN NOT NULL DEFAULT FALSE;
+-- The shop's follow-up: new, followed_up or resolved, with a private note.
+ALTER TABLE feedback ADD COLUMN IF NOT EXISTS status         TEXT NOT NULL DEFAULT 'new';
+ALTER TABLE feedback ADD COLUMN IF NOT EXISTS admin_note     TEXT;
+
+-- When the "How was your order?" email went out (lib/feedback-mail.ts).
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS feedback_mail_at TIMESTAMPTZ;
+
+-- A customer's rating & review of a piece they bought, one per piece per
+-- order. Shown on the product page once the shop approves it (status).
+-- name is how it is signed: the customer's first name and initial.
+CREATE TABLE IF NOT EXISTS reviews (
+  id          SERIAL PRIMARY KEY,
+  order_id    INTEGER NOT NULL REFERENCES orders (id) ON DELETE CASCADE,
+  product_id  INTEGER NOT NULL REFERENCES products (id) ON DELETE CASCADE,
+  phone       TEXT NOT NULL,
+  name        TEXT NOT NULL,
+  rating      INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
+  body        TEXT NOT NULL,
+  status      TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'hidden')),
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  checked_at  TIMESTAMPTZ,
+  UNIQUE (order_id, product_id)
+);
+CREATE INDEX IF NOT EXISTS reviews_product_idx ON reviews (product_id, status);
+CREATE INDEX IF NOT EXISTS reviews_phone_idx ON reviews (phone, created_at);
+
+-- The thank-you code for a review (REVIEW_REWARD in lib/store.ts), on the
+-- same terms as FBK5 but earned by reviewing a piece.
+INSERT INTO coupons (code, kind, value, once_per_phone, created_by)
+VALUES ('RR5', 'percent', 5, TRUE, 'review')
+ON CONFLICT (code) DO NOTHING;
+
+-- Refer & earn (lib/referrals.ts). Each account gets a personal code to share;
+-- an order placed with it remembers who referred it; when that order is
+-- delivered the referrer earns one RE10 (10% off one order, 30 days).
+ALTER TABLE customers ADD COLUMN IF NOT EXISTS referral_code TEXT;
+CREATE UNIQUE INDEX IF NOT EXISTS customers_referral_code_idx ON customers (referral_code);
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS referred_by INTEGER REFERENCES customers(id) ON DELETE SET NULL;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS referral_code TEXT;
+CREATE TABLE IF NOT EXISTS referral_rewards (
+  id              SERIAL PRIMARY KEY,
+  referrer_id     INTEGER NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+  friend_order_id INTEGER NOT NULL UNIQUE REFERENCES orders(id) ON DELETE CASCADE,
+  -- One reward per friend, ever: two "first" orders placed together earn once.
+  friend_phone    TEXT NOT NULL UNIQUE,
+  earned_at       TIMESTAMPTZ NOT NULL DEFAULT now(),
+  expires_at      TIMESTAMPTZ NOT NULL,
+  used_order_id   INTEGER REFERENCES orders(id) ON DELETE SET NULL,
+  used_at         TIMESTAMPTZ
+);
+CREATE INDEX IF NOT EXISTS referral_rewards_referrer_idx ON referral_rewards (referrer_id);
+-- The referrer's reward code. Like FBK5 it checks who is using it; unlike
+-- FBK5 it can be used once per reward earned.
+INSERT INTO coupons (code, kind, value, once_per_phone, created_by)
+VALUES ('RE10', 'percent', 10, FALSE, 'referral')
+ON CONFLICT (code) DO NOTHING;
+
+-- Order IDs became VVB-1001 instead of SS-1001 (the shop is Veviba now). A
+-- generated column's formula can't be changed in place on every Postgres, so
+-- the column is rebuilt once; the numbers stay the same.
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns
+             WHERE table_name = 'orders' AND column_name = 'code'
+               AND generation_expression LIKE '%SS-%') THEN
+    ALTER TABLE orders DROP COLUMN code;
+    ALTER TABLE orders ADD COLUMN code TEXT GENERATED ALWAYS AS ('VVB-' || (id + 1000)::text) STORED;
+    CREATE UNIQUE INDEX IF NOT EXISTS orders_code_idx ON orders (code);
+  END IF;
+END $$;
 `;
