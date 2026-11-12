@@ -20,6 +20,7 @@ export const STORE = {
   freeShippingAbove: Number(process.env.NEXT_PUBLIC_FREE_SHIPPING_ABOVE ?? 1499),
   codFee: 7,
   instagram: "https://www.instagram.com/veviba.baby",
+  whatsappChannel: "https://whatsapp.com/channel/0029Vb9X9M3AO7R9GeKOOF0g",
   // The shop's one email address, used everywhere on the site: shown to
   // customers, and where every new-order email is sent.
   email: "veviba2026@gmail.com",

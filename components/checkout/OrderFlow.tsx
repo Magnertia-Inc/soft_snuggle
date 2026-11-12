@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { SHIPPING_LABEL, STORE, TOTAL_LABEL, deliveryBy, inr } from "@/lib/store";
+import { SHIPPING_LABEL, STORE, deliveryBy, inr } from "@/lib/store";
 import type { Order } from "@/lib/types";
 import { orderMessage, whatsappLink } from "@/lib/whatsapp";
 import { FlowerMark } from "../art/FlowerMark";
 import { FeedbackCard } from "./FeedbackCard";
 import type { Feedback } from "@/lib/feedback";
 import { WhatsAppIcon } from "@/components/art/WhatsAppIcon";
+import { ChannelCTA } from "@/components/ChannelCTA";
 
 interface Props {
   order: Order;
@@ -106,6 +107,13 @@ export function OrderFlow({ order, upiUrl, upiId, payee, qrSvg, feedback, reward
               ? "is confirmed."
               : <>is saved. {isUpi ? "Just pay and send it to us on WhatsApp to confirm." : "Send it to us on WhatsApp to confirm."}</>}
         </p>
+        {!cancelled && (
+          <ChannelCTA
+            className="mx-auto mt-6 max-w-md text-left"
+            title="Get a coupon for your next order"
+            text="Join the Veviba WhatsApp channel — we share coupons for every purchase."
+          />
+        )}
       </div>
 
       {/* Progress */}
@@ -314,7 +322,7 @@ export function OrderFlow({ order, upiUrl, upiId, payee, qrSvg, feedback, reward
               </li>
             )}
             <li className="flex justify-between font-display text-xl">
-              <span>{TOTAL_LABEL}</span>
+              <span>Total</span>
               <span>{inr(order.total)}</span>
             </li>
             {order.status !== "cancelled" && order.status !== "delivered" && (

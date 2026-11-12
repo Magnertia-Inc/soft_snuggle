@@ -77,6 +77,21 @@ export function Footer() {
           <a href={`https://wa.me/${STORE.whatsappNumber}`} target="_blank" rel="noreferrer" className={social} aria-label="WhatsApp">
             <WhatsAppIcon className="h-4 w-4" />
           </a>
+          <a
+            href={STORE.whatsappChannel}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Join our WhatsApp channel for coupons"
+            title="Join our WhatsApp channel — coupons on every purchase"
+            className="relative grid h-9 w-9 place-items-center rounded-full bg-[#25D366] text-white transition-transform hover:scale-110"
+          >
+            <WhatsAppIcon className="h-4 w-4" />
+            <span className="absolute -right-1 -top-1 grid h-4 w-4 place-items-center rounded-full bg-paper shadow ring-1 ring-[#25D366]">
+              <svg viewBox="0 0 24 24" className="h-2.5 w-2.5 text-[#1da851]" fill="currentColor" aria-hidden="true">
+                <path d="M3 10v4a1 1 0 0 0 1 1h2l6 4.5V4.5L6 9H4a1 1 0 0 0-1 1zm13.5 2a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z" />
+              </svg>
+            </span>
+          </a>
           <a href={STORE.instagram} target="_blank" rel="noreferrer" className={social} aria-label="Instagram">
             <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
               <rect x="3" y="3" width="18" height="18" rx="5" />

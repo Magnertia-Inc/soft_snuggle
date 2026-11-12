@@ -6,6 +6,7 @@ import { motion } from "motion/react";
 import { TRACK_STEPS } from "@/lib/tracking";
 import { inr } from "@/lib/store";
 import { useAccount } from "../providers/AccountProvider";
+import { ChannelCTA } from "../ChannelCTA";
 
 const stepLabel = (status: string) =>
   TRACK_STEPS.find((s) => s.key === status)?.label ?? (status === "cancelled" ? "Cancelled" : "Placed");
@@ -61,6 +62,8 @@ export function AccountDashboard({ google = false, notice = null }: { google?: b
           </button>
         </div>
       </div>
+
+      <ChannelCTA className="mt-6" title="Coupons on every purchase" text="Join the Veviba WhatsApp channel for new drops and coupon codes." />
 
       {notice && <p role="status" className="mt-6 rounded-2xl bg-sage/70 px-4 py-3 text-sm">{notice}</p>}
 
