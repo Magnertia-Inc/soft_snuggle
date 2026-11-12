@@ -12,24 +12,13 @@ const USPS: { icon: string; title: string; text: string; bg: string; href?: stri
   { icon: "🎁", title: "Coupons on every purchase", text: "Join our WhatsApp channel to get them first.", bg: "#DDF5E5", href: STORE.whatsappChannel },
 ];
 
-const KEY = "veviba-usp-seen";
-
-/** Small rotating USP cards, bottom-left on the home page. Shown once per visit. */
+/** Small rotating USP cards, bottom-left on the home page. */
 export function UspToasts() {
   const [i, setI] = useState(-1);
 
   useEffect(() => {
-    try {
-      if (sessionStorage.getItem(KEY)) return;
-    } catch {}
-    // Mark as seen only when the first card actually appears, so a remount
-    // (page change, dev reload) before then doesn't swallow it.
-    const start = setTimeout(() => {
-      try {
-        sessionStorage.setItem(KEY, "1");
-      } catch {}
-      setI(0);
-    }, 4000);
+    // Shows every time the home page opens, once the intro loader has cleared.
+    const start = setTimeout(() => setI(0), 3000);
     return () => clearTimeout(start);
   }, []);
 
