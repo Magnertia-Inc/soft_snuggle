@@ -6,10 +6,7 @@ import { motion } from "motion/react";
 import { TRACK_STEPS } from "@/lib/tracking";
 import { inr } from "@/lib/store";
 import { useAccount } from "../providers/AccountProvider";
-<<<<<<< HEAD
-=======
 import { ReferCard } from "./ReferCard";
->>>>>>> 80bc67a7677a41ee33f01877f7155ca1a3e91ddf
 
 const stepLabel = (status: string) =>
   TRACK_STEPS.find((s) => s.key === status)?.label ?? (status === "cancelled" ? "Cancelled" : "Placed");
