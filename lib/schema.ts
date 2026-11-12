@@ -302,9 +302,15 @@ CREATE TABLE IF NOT EXISTS referral_rewards (
 CREATE INDEX IF NOT EXISTS referral_rewards_referrer_idx ON referral_rewards (referrer_id);
 -- The referrer's reward code. Like FBK5 it checks who is using it; unlike
 -- FBK5 it can be used once per reward earned.
+-- The reward code is now REF10 (10% off). Rename the old RE10 row once, so
+-- its usage count carries over; personal share codes (RE10-NAME) are unchanged.
+UPDATE coupons SET code = 'REF10'
+WHERE code = 'RE10' AND NOT EXISTS (SELECT 1 FROM coupons WHERE code = 'REF10');
 INSERT INTO coupons (code, kind, value, once_per_phone, created_by)
-VALUES ('RE10', 'percent', 10, FALSE, 'referral')
+VALUES ('REF10', 'percent', 10, FALSE, 'referral')
 ON CONFLICT (code) DO NOTHING;
+-- A leftover RE10 must not work as an open 10% code for everyone.
+UPDATE coupons SET active = FALSE WHERE code = 'RE10';
 
 -- Order IDs became VVB-1001 instead of SS-1001 (the shop is Veviba now). A
 -- generated column's formula can't be changed in place on every Postgres, so

@@ -38,10 +38,10 @@ export const FEEDBACK_REWARD = { code: "FBK5", percent: 5, days: 30 } as const;
 export const REVIEW_REWARD = { code: "RR5", percent: 5, days: 30 } as const;
 /**
  * Refer & earn: every customer has a personal code (RE10-MEENA) to share. When
- * a friend's first order with it is delivered, the customer earns one RE10:
+ * a friend's first order with it is delivered, the customer earns one REF10:
  * 10% off one order, for 30 days. The friend pays the normal price.
  */
-export const REFERRAL_REWARD = { code: "RE10", percent: 10, days: 30, prefix: "RE10-" } as const;
+export const REFERRAL_REWARD = { code: "REF10", percent: 10, days: 30, prefix: "RE10-" } as const;
 
 /** Which thank-you a code is, if it is one. */
 export function rewardFor(code: string) {
