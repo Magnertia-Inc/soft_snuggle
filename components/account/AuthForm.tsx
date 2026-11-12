@@ -8,6 +8,7 @@ import { phoneDigits } from "@/lib/store";
 import { FlowerMark } from "../art/FlowerMark";
 import { useAccount } from "../providers/AccountProvider";
 import { GoogleButton } from "./GoogleButton";
+import { ChannelCTA } from "../ChannelCTA";
 
 type Mode = "login" | "signup";
 
@@ -207,8 +208,14 @@ export function AuthForm({ google = false, notice = null }: { google?: boolean; 
         <Link href="/shop" className="font-bold text-ink underline underline-offset-4">
           keep shopping
         </Link>{" "}
-        — you can order without an account.
+        and log in when you&apos;re ready to order.
       </p>
+
+      <ChannelCTA
+        className="mt-6"
+        title="Coupons on every purchase"
+        text="Join the Veviba WhatsApp channel for new drops and coupon codes."
+      />
 
       <p className="mt-6 text-center text-xs text-ink-soft">
         Forgotten your password? Message us on WhatsApp and we&apos;ll sort it out.

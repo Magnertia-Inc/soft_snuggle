@@ -7,7 +7,6 @@ import { TRACK_STEPS } from "@/lib/tracking";
 import { inr } from "@/lib/store";
 import { useAccount } from "../providers/AccountProvider";
 <<<<<<< HEAD
-import { ChannelCTA } from "../ChannelCTA";
 =======
 import { ReferCard } from "./ReferCard";
 >>>>>>> 80bc67a7677a41ee33f01877f7155ca1a3e91ddf
@@ -66,8 +65,6 @@ export function AccountDashboard({ google = false, notice = null }: { google?: b
           </button>
         </div>
       </div>
-
-      <ChannelCTA className="mt-6" title="Coupons on every purchase" text="Join the Veviba WhatsApp channel for new drops and coupon codes." />
 
       {notice && <p role="status" className="mt-6 rounded-2xl bg-sage/70 px-4 py-3 text-sm">{notice}</p>}
 

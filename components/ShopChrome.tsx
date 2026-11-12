@@ -16,8 +16,8 @@ import { UspToasts } from "./home/UspToasts";
 export function ShopChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   if (pathname === "/admin" || pathname.startsWith("/admin/")) return <>{children}</>;
-  // USP pop-ups only on the home page and product pages
-  const showUsp = pathname === "/" || pathname.startsWith("/product/");
+  // USP pop-ups only on the home page
+  const showUsp = pathname === "/";
 
   return (
     <SmoothScroll>

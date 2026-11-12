@@ -13,23 +13,9 @@
  * bundle that cannot reach the filesystem.
  */
 export async function register() {
-  if (process.env.NEXT_RUNTIME !== "nodejs") return;
-  // The "How was your order?" emails go out on a timer (lib/feedback-mail.ts).
-  // Never let it stop the server starting.
-  try {
-    const { startFeedbackMailer } = await import("./lib/feedback-mail");
-    startFeedbackMailer();
-  } catch (err) {
-    console.error("feedback email timer failed to start", err);
-  }
-  if (process.env.DATABASE_URL) return;
-  // Hosted deploys refuse the embedded database (see lib/db.ts), so there is nothing to warm up.
-  if (process.env.VERCEL || process.env.RAILWAY_ENVIRONMENT) return;
-  try {
-    const { getPglite } = await import("./lib/pglite");
-    await getPglite();
-  } catch (err) {
-    // Not fatal: the first request opens it instead, as it did before.
-    console.error("database warm-up failed", err);
+  // Everything sits inside this check (not an early return) so the bundler drops
+  // these imports from the edge build — nodemailer can't load there.
+  if (process.env.NEXT_RUNTIME === "nodejs") {
+    await import("./instrumentation-node").then((m) => m.registerNode());
   }
 }
