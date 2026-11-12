@@ -112,7 +112,7 @@ export function OrderFlow({ order, upiUrl, upiId, payee, qrSvg, feedbackGiven }:
           <ChannelCTA
             className="mx-auto mt-6 max-w-md text-left"
             title="Get a coupon for your next order"
-            text="Join the Veviba WhatsApp channel — we share coupons for every purchase."
+            text="Join the Veviba channel — we share a coupon for every purchase."
           />
         )}
       </div>

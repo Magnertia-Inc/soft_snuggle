@@ -214,7 +214,7 @@ export function AuthForm({ google = false, notice = null }: { google?: boolean; 
       <ChannelCTA
         className="mt-6"
         title="Coupons on every purchase"
-        text="Join the Veviba WhatsApp channel for new drops and coupon codes."
+        text="Be the first to get new drops and coupon codes."
       />
 
       <p className="mt-6 text-center text-xs text-ink-soft">

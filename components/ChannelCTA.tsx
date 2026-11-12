@@ -28,22 +28,25 @@ export function ChannelCTA({
     );
   }
   return (
-    <div className={`flex flex-wrap items-center gap-4 rounded-2xl border border-[#25D366]/40 bg-[#25D366]/10 p-4 ${className}`}>
-      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#25D366] text-white">
+    <div className={`flex flex-wrap items-center gap-4 rounded-3xl border border-[#25D366]/30 bg-gradient-to-br from-[#25D366]/15 to-[#25D366]/5 p-5 ${className}`}>
+      <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[#25D366] text-white shadow-md shadow-[#25D366]/30">
         <WhatsAppIcon className="h-6 w-6" />
       </span>
-      <div className="min-w-0 flex-1">
-        {title && <p className="font-bold text-ink">🎁 {title}</p>}
-        <p className="text-sm text-ink-soft">{text}</p>
+      <div className="min-w-0 flex-1 basis-48">
+        <p className="text-[0.625rem] font-extrabold uppercase tracking-[0.2em] text-[#1da851]">WhatsApp channel</p>
+        {title && <p className="mt-1 font-display text-xl leading-snug tracking-tight text-ink">{title} 🎁</p>}
+        <p className="mt-1 text-sm leading-relaxed text-ink-soft">{text}</p>
       </div>
-      <a
-        href={STORE.whatsappChannel}
-        target="_blank"
-        rel="noreferrer"
-        className="shrink-0 rounded-full bg-[#25D366] px-5 py-2.5 text-sm font-bold text-white hover:bg-[#1da851]"
-      >
-        Join channel
-      </a>
+      <div className="flex basis-full justify-center">
+        <a
+          href={STORE.whatsappChannel}
+          target="_blank"
+          rel="noreferrer"
+          className="rounded-full bg-[#25D366] px-8 py-3 text-center text-sm font-bold text-white shadow-md shadow-[#25D366]/30 transition-colors hover:bg-[#1da851]"
+        >
+          Join channel →
+        </a>
+      </div>
     </div>
   );
 }
